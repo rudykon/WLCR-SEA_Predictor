@@ -135,6 +135,8 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea -v
 此公开仓库只包含 WLCR-SEA 核心源码、其直接依赖、聚焦的单元测试、最小依赖清单和
 上方五张论文图。
 
+本仓库采用 Apache License 2.0，详见 <code>LICENSE</code>。
+
 ## 仓库结构
 
 | 路径 | 用途 |

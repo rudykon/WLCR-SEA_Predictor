@@ -139,6 +139,8 @@ This public repository intentionally contains only the WLCR-SEA core source,
 its direct dependency, focused unit tests, minimal dependency list, and the
 five manuscript figures shown above.
 
+This repository is licensed under the Apache License 2.0; see <code>LICENSE</code>.
+
 ## Repository Layout
 
 | Path | Purpose |
