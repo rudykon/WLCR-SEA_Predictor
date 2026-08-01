@@ -137,9 +137,7 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea -v
 
 This public repository intentionally contains only the WLCR-SEA core source,
 its direct dependency, focused unit tests, minimal dependency list, and the
-five manuscript figures shown above. It excludes datasets, checkpoints,
-competition pipelines, submission code, generated outputs, and manuscript
-source files.
+five manuscript figures shown above.
 
 ## Repository Layout
 
