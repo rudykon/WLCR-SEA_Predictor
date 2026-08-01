@@ -1,0 +1,19 @@
+# Source-only public repository
+/data/
+/artifacts/
+/archive/
+/paper/
+/submission/
+/dist/
+.runtime/
+.venv/
+__pycache__/
+*.py[cod]
+*.pt
+*.pth
+*.pkl
+*.joblib
+*.zip
+*.tar
+*.gz
+github_token.json
