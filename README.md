@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Request-local cellular traffic forecasting with structured seasonal expert routing</strong><br>
-  Open-source implementation of the WLCR-SEA method, its test suite, and five rendered manuscript figures.
+  Open-source implementation of the WLCR-SEA method, its analysis/ablation baselines, and validation tests.
 </p>
 
 <p align="center">
@@ -115,13 +115,15 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ~~~
 
+For the full training, analysis, ablation, comparison, and audit workflow, see [docs/REPRODUCTION_GUIDE.md](docs/REPRODUCTION_GUIDE.md).
+
 <a id="validation"></a>
 ## Validation
 
 Run the WLCR-SEA unit tests:
 
 ~~~bash
-PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea -v
+PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 ~~~
 
 <a id="resources"></a>
@@ -135,9 +137,10 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea -v
 <a id="scope"></a>
 ## Scope
 
-This public repository intentionally contains only the WLCR-SEA core source,
-its direct dependency, focused unit tests, minimal dependency list, and the
-five manuscript figures shown above.
+This repository publishes the WLCR-SEA source implementation, paper-related
+analysis/ablation/comparison programs, tests, and reproducibility documentation.
+Manuscript files, figure-generation/writing code, datasets, checkpoints,
+predictions, reports, and experiment outputs are intentionally excluded.
 
 This repository is licensed under the Apache License 2.0; see <code>LICENSE</code>.
 
@@ -145,8 +148,8 @@ This repository is licensed under the Apache License 2.0; see <code>LICENSE</cod
 
 | Path | Purpose |
 | --- | --- |
-| <code>experiments/wlcr_sea.py</code> | WLCR-SEA experts, routing, bounded residual, losses, and metrics |
+| <code>experiments/wlcr_sea_model.py</code> | WLCR-SEA experts, routing, bounded residual, losses, and metrics |
 | <code>experiments/missingness_protocol.py</code> | Deterministic missing-telemetry protocol used by WLCR-SEA |
-| <code>tests/test_wlcr_sea.py</code> | Focused unit tests for the public method |
+| <code>tests/test_wlcr_sea_model.py</code> | Focused unit tests for the public method |
 | <code>docs/images/</code> | Five manuscript figures rendered for this README |
 | <code>requirements.txt</code> | Minimal Python dependencies |

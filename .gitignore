@@ -1,19 +1,52 @@
-# Source-only public repository
-/data/
-/artifacts/
-/archive/
-/paper/
-/submission/
-/dist/
-.runtime/
+# Python caches and local environments
 .venv/
+.runtime/
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Local private credentials and machine-specific config
+github_token.json
+config/private/*.json
+.env
+.env.*
+*.pem
+*.key
+
+# Large local-only competition artifacts
+*.zip
+dist/
+artifacts/final_solution_4024_13/final_submission_4024_13.zip
+archive/early_submission_zips/
+archive/early_model_artifacts/
+archive/early_code/third_party/
+
+# Generated model/binary artifacts
 *.pt
 *.pth
 *.pkl
 *.joblib
-*.zip
-*.tar
-*.gz
-github_token.json
+*.npz
+
+# Runtime logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# OS/editor noise
+.DS_Store
+*~
+
+# LaTeX build intermediates
+paper/*.aux
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/*.blg
+paper/*.xdv
+*.orig

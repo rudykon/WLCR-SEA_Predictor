@@ -1,2 +1,4 @@
-numpy
-torch
+lightgbm>=4.0
+numpy>=1.24
+pandas>=2.0
+torch>=2.2

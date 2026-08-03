@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from experiments import wlcr_sea as sea
+from experiments import wlcr_sea_model as sea
 
 
 class SeasonalExpertConstructionTest(unittest.TestCase):

@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>具有结构化季节专家路由的请求局部蜂窝流量预测</strong><br>
-  WLCR-SEA 主方法的开源实现，包含对应测试与五张论文图件。
+  WLCR-SEA 主方法、论文相关分析/消融/对比程序与验证测试的开源实现。
 </p>
 
 <p align="center">
@@ -112,13 +112,15 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ~~~
 
+完整的训练、分析、消融、对比和审计流程见 [docs/REPRODUCTION_GUIDE.md](docs/REPRODUCTION_GUIDE.md)。
+
 <a id="validation"></a>
 ## 验证
 
 运行 WLCR-SEA 单元测试：
 
 ~~~bash
-PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea -v
+PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 ~~~
 
 <a id="resources"></a>
@@ -132,8 +134,7 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea -v
 <a id="scope"></a>
 ## 发布范围
 
-此公开仓库只包含 WLCR-SEA 核心源码、其直接依赖、聚焦的单元测试、最小依赖清单和
-上方五张论文图。
+本仓库公开 WLCR-SEA 主方法源码、论文相关分析/消融/对比程序、测试和复现文档。论文正文、写作/绘图源码、数据集、检查点、预测、报告和实验产物均不上传。
 
 本仓库采用 Apache License 2.0，详见 <code>LICENSE</code>。
 
@@ -141,8 +142,8 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea -v
 
 | 路径 | 用途 |
 | --- | --- |
-| <code>experiments/wlcr_sea.py</code> | WLCR-SEA 专家、路由、有界残差、损失与指标 |
+| <code>experiments/wlcr_sea_model.py</code> | WLCR-SEA 专家、路由、有界残差、损失与指标 |
 | <code>experiments/missingness_protocol.py</code> | WLCR-SEA 使用的确定性缺失遥测协议 |
-| <code>tests/test_wlcr_sea.py</code> | 公开方法的聚焦单元测试 |
+| <code>tests/test_wlcr_sea_model.py</code> | 公开方法的聚焦单元测试 |
 | <code>docs/images/</code> | 为 README 导出的五张论文图 |
 | <code>requirements.txt</code> | 最小 Python 依赖 |

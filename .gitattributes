@@ -1,0 +1,2 @@
+# Preserve official dataset bytes and CRLF line endings.
+*.csv -text
