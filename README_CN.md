@@ -131,10 +131,8 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 | 数据下载 | [下载 ZIP](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip) |
 | 源码 | [github.com/rudykon/WLCR-SEA_Predictor](https://github.com/rudykon/WLCR-SEA_Predictor) |
 
-<a id="scope"></a>
-## 发布范围
-
-本仓库公开 WLCR-SEA 主方法源码、论文相关分析/消融/对比程序、测试和复现文档。论文正文、写作/绘图源码、数据集、检查点、预测、报告和实验产物均不上传。
+<a id="license"></a>
+## 许可证
 
 本仓库采用 Apache License 2.0，详见 <code>LICENSE</code>。
 

@@ -134,13 +134,8 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 | Data download | [Download ZIP](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip) |
 | Source code | [github.com/rudykon/WLCR-SEA_Predictor](https://github.com/rudykon/WLCR-SEA_Predictor) |
 
-<a id="scope"></a>
-## Scope
-
-This repository publishes the WLCR-SEA source implementation, paper-related
-analysis/ablation/comparison programs, tests, and reproducibility documentation.
-Manuscript files, figure-generation/writing code, datasets, checkpoints,
-predictions, reports, and experiment outputs are intentionally excluded.
+<a id="license"></a>
+## License
 
 This repository is licensed under the Apache License 2.0; see <code>LICENSE</code>.
 
