@@ -58,7 +58,7 @@ WLCR-SEA 会针对每个预测步和每个指标，从输入请求构建八个�
 以下五张 PNG 均由论文正文引用的五个图直接以 300 dpi 导出，未包含任何无关插图。
 
 <p align="center">
-  <a href="paper/figures/Scene_Diagram.pdf">
+  <a href="docs/images/Scene_Diagram.pdf">
     <img src="docs/images/paper_figure_scenario.png" alt="请求局部服务场景" width="96%">
   </a>
 </p>
