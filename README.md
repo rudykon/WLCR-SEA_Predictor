@@ -61,7 +61,7 @@ The following five PNG files are direct 300 dpi renders of the five figures
 referenced by the manuscript. No unrelated illustrations are included.
 
 <p align="center">
-  <a href="docs/images/paper_figure_scenario.png">
+  <a href="paper/figures/Scene_Diagram.pdf">
     <img src="docs/images/paper_figure_scenario.png" alt="Conceptual request-local serving scenario" width="96%">
   </a>
 </p>
