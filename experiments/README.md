@@ -19,14 +19,25 @@ PYTHONPATH=. python3 experiments/train_wlcr_sea.py \
   --output artifacts/reproduction/wlcr_sea \
   --gpu-devices 0,1,2,3 \
   --seeds 42,43,44,45,46 \
-  --max-epochs 100 --patience 10
+  --max-epochs 100 --patience 10 \
+  --batch-size 256
 
 PYTHONPATH=. python3 experiments/train_neural_baselines.py \
   --output artifacts/reproduction/neural_baselines/mixed \
-  --models dlinear,patchtst,grud_direct \
+  --models dlinear,patchtst \
   --seeds 42,43,44,45,46 \
   --gpu-devices 0,1,2,3 \
   --max-epochs 100 --patience 10 \
+  --batch-size 128 \
+  --augmentation mixed --augmentation-rate 0.15
+
+PYTHONPATH=. python3 experiments/train_neural_baselines.py \
+  --output artifacts/reproduction/neural_baselines/grud_mixed \
+  --models grud_direct \
+  --seeds 42,43,44,45,46 \
+  --gpu-devices 0,1,2,3 \
+  --max-epochs 100 --patience 10 \
+  --batch-size 128 \
   --augmentation mixed --augmentation-rate 0.15
 
 PYTHONPATH=. python3 experiments/train_traffic_only_73d_lightgbm.py \
@@ -41,15 +52,18 @@ PYTHONPATH=. python3 experiments/analyze_paper_clean_results.py
 PYTHONPATH=. python3 experiments/analyze_missingness_robustness.py \
   --gpu-devices 0,1,2,3
 PYTHONPATH=. python3 experiments/evaluate_cell_disjoint_generalization.py \
-  --gpu-devices 0,1,2,3
+  --output artifacts/reproduction/cell_disjoint_protocol_matched \
+  --gpu-devices 0,1,2,3 \
+  --wlcr-batch-size 256 --neural-batch-size 128
 PYTHONPATH=. python3 experiments/audit_method_evidence.py \
   --gpu-devices 0,1,2,3
 PYTHONPATH=. python3 experiments/benchmark_end_to_end_latency.py
 ```
 
-The analysis programs read only registered training/context inputs and write
-new results under `artifacts/reproduction/`. They do not require or open the
-held-out test traffic file.
+The current analysis programs read only the registered training trace
+`data/train_data.csv` and write new results under `artifacts/reproduction/`.
+They do not require or open parameter/weather context or the held-out test
+traffic file.
 
 ## Tests
 

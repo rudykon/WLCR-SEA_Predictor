@@ -73,6 +73,7 @@ TUNING_CANDIDATES = 2
 DEFAULT_MAX_EPOCHS = 100
 DEFAULT_PATIENCE = 10
 DEFAULT_BATCH_SIZE = 128
+FINAL_AUGMENTATION_SEED_OFFSET = 100_000
 
 MODEL_CONFIGS: dict[str, tuple[dict[str, object], ...]] = {
     "dlinear": (
@@ -1326,7 +1327,7 @@ def run_worker(
         final_train,
         augmentation=augmentation,
         requested_rate=fit_rate,
-        seed=seed + 100_000,
+        seed=seed + FINAL_AUGMENTATION_SEED_OFFSET,
     )
     final_tensors = prepared_tensors(
         dataset,
@@ -1363,6 +1364,7 @@ def run_worker(
             "normalization": asdict(final_normalization),
             "augmentation": augmentation,
             "augmentation_rate": fit_rate,
+            "batch_size": batch_size,
             "fit_augmentation": fit_augmentation,
             "final_train_augmentation": final_augmentation,
             "state_dict": copy_state_dict(model),
@@ -1388,6 +1390,7 @@ def run_worker(
         "holdout_windows": len(holdout),
         "augmentation": augmentation,
         "augmentation_rate": fit_rate,
+        "batch_size": batch_size,
         "fit_augmentation": fit_augmentation,
         "final_train_augmentation": final_augmentation,
         "selection_and_holdout_views_are_clean": True,
@@ -1963,6 +1966,12 @@ def run_master(args: argparse.Namespace) -> int:
                 "all fit+inner dates for the selected epoch count. Holdout is "
                 "used only once for final evaluation."
             ),
+            "selection_metric": (
+                "highest inner MAPEAUC using fifth-percentile eligibility "
+                "estimated from the inner targets; lower inner mean MAPE and "
+                "candidate order break ties; best epoch is selected within "
+                "the same inner layer"
+            ),
             "candidate_count_per_model": 1 if args.smoke else TUNING_CANDIDATES,
             "candidate_configurations": {
                 model: [
@@ -1976,6 +1985,7 @@ def run_master(args: argparse.Namespace) -> int:
             "max_epochs_per_candidate": max_epochs,
             "patience": patience,
             "batch_size": args.batch_size,
+            "final_augmentation_seed_offset": FINAL_AUGMENTATION_SEED_OFFSET,
             "seeds": requested_seeds,
             "seed_reporting": "all seeds + mean/sample SD + prediction ensemble",
             "determinism": {

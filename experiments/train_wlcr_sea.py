@@ -52,6 +52,7 @@ DEFAULT_VARIANTS = (
 )
 PRIMARY_VARIANT = "A6_mixed_aug"
 AUGMENTATION_RATE = 0.15
+DEFAULT_BATCH_SIZE = 256
 ROBUSTNESS_RATES = (0.0, 0.10, 0.20, 0.30, 0.50)
 ROBUSTNESS_MECHANISMS = ("mcar", "block", "recent_tail", "asynchronous")
 CORRUPTION_SEEDS = (42, 43, 44, 45, 46)
@@ -560,7 +561,11 @@ def run_worker(args: argparse.Namespace) -> int:
     final_train = np.concatenate((fit, inner))
     final_prior = sea.training_prior_log(dataset.targets, dataset.target_masks, final_train)
     final_tensors, final_corruption = make_training_tensors(
-        dataset, final_train, final_prior, variant, seed=args.seed + 100_000
+        dataset,
+        final_train,
+        final_prior,
+        variant,
+        seed=args.seed + neural.FINAL_AUGMENTATION_SEED_OFFSET,
     )
     holdout_batch, holdout_tensors = make_eval_tensors(dataset, holdout, final_prior)
     model, outputs, final_report = train_final(
@@ -592,6 +597,11 @@ def run_worker(args: argparse.Namespace) -> int:
             "experiment_version": EXPERIMENT_VERSION,
             "variant": asdict(variant),
             "seed": args.seed,
+            "batch_size": args.batch_size,
+            "fit_augmentation_seed": args.seed,
+            "final_augmentation_seed": (
+                args.seed + neural.FINAL_AUGMENTATION_SEED_OFFSET
+            ),
             "selected_config": selected_config,
             "selected_epoch": selected_epoch,
             "prior_log": final_prior,
@@ -624,6 +634,11 @@ def run_worker(args: argparse.Namespace) -> int:
         "variant": variant.name,
         "variant_config": asdict(variant),
         "seed": args.seed,
+        "batch_size": args.batch_size,
+        "fit_augmentation_seed": args.seed,
+        "final_augmentation_seed": (
+            args.seed + neural.FINAL_AUGMENTATION_SEED_OFFSET
+        ),
         "physical_gpu": args.physical_device,
         "visible_gpu_name": torch.cuda.get_device_name(0),
         "fit_windows": len(fit),
@@ -1293,15 +1308,20 @@ def run_master(args: argparse.Namespace) -> int:
             "selection_metric": "lowest inner macro-over-indicator WAPE; frozen-threshold hit score is a tie break",
             "max_epochs": 2 if args.smoke else args.max_epochs,
             "patience": 1 if args.smoke else args.patience,
+            "batch_size": args.batch_size,
             "seeds": seeds,
             "gpu_devices": devices,
             "augmentation_rate": AUGMENTATION_RATE,
             "augmentation_input_history_only": True,
             "augmentation_labels_and_target_masks_retained": True,
+            "final_augmentation_seed_offset": (
+                neural.FINAL_AUGMENTATION_SEED_OFFSET
+            ),
             "training_prior": {
                 "estimator": "median of observed log1p targets",
                 "shape": [sea.FORECAST_HOURS, sea.TARGET_COUNT],
-                "fit_layer_only": True,
+                "selection_scope": "fit dates",
+                "final_evaluation_scope": "fit plus inner dates",
             },
             "expert_definition_constants": {
                 "weekly_trend_clip_kappa": sea.TREND_CLIP,
@@ -1420,7 +1440,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--gpu-devices", default="0,1,2,3")
     parser.add_argument("--max-epochs", type=int, default=100)
     parser.add_argument("--patience", type=int, default=10)
-    parser.add_argument("--batch-size", type=int, default=256)
+    parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE)
     parser.add_argument("--max-existing-gpu-memory-mb", type=int, default=1024)
     parser.add_argument(
         "--legacy-seed42-audit",
