@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/brand-mark.svg" width="520" alt="WLCR-SEA brand mark">
+</p>
+
 <h1 align="center">WLCR-SEA Predictor</h1>
 
 <p align="center">
@@ -148,3 +152,4 @@ This repository is licensed under the Apache License 2.0; see <code>LICENSE</cod
 | <code>tests/test_wlcr_sea_model.py</code> | Focused unit tests for the public method |
 | <code>docs/images/</code> | Five manuscript figures rendered for this README |
 | <code>requirements.txt</code> | Minimal Python dependencies |
+
