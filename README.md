@@ -15,11 +15,15 @@
 
 <p align="center">
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.11+"></a>
+  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/"><img src="https://img.shields.io/badge/Project-Website-172B4D?style=flat-square" alt="Project website"></a>
+  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor"><img src="https://img.shields.io/badge/🤗-Live%20Audit%20Lab-FEBD08?style=flat-square" alt="Hugging Face Audit Lab"></a>
   <a href="#validation"><img src="https://img.shields.io/badge/Validation-unittest-2CA02C?style=flat-square" alt="Unit tests"></a>
   <a href="#scope"><img src="https://img.shields.io/badge/Release-WLCR--SEA%20only-6A5ACD?style=flat-square" alt="WLCR-SEA-only release"></a>
 </p>
 
 <p align="center">
+  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/">Website</a> ·
+  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">Live Demo</a> ·
   <a href="#overview">Overview</a> ·
   <a href="#method">Method</a> ·
   <a href="#figures">Figures</a> ·
@@ -121,6 +125,20 @@ python3 -m pip install -r requirements.txt
 
 For the full training, analysis, ablation, comparison, and audit workflow, see [docs/REPRODUCTION_GUIDE.md](docs/REPRODUCTION_GUIDE.md).
 
+## Interactive Audit Lab
+
+The [Hugging Face Space](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor)
+uses the repository's real CSV contract, expert builder, missingness protocol,
+hard mask, and registered parameter-free `A0_fixed` mixture. Upload one
+336-hour request—or use the bundled synthetic example—to inspect expert values,
+availability, reliability, routing mass, the 24-hour forecast, and a
+downloadable JSON audit record.
+
+The repository does **not** distribute the trained A6 checkpoint or frozen
+training prior. The Space is therefore a method audit lab, not a reproduction
+of the paper model's reported predictions. See the
+[Demo scope and input contract](https://rudykon.github.io/WLCR-SEA_Predictor/deployment/hugging-face/).
+
 <a id="validation"></a>
 ## Validation
 
@@ -135,6 +153,10 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 
 | Resource | Link |
 | --- | --- |
+| Project website | [rudykon.github.io/WLCR-SEA_Predictor](https://rudykon.github.io/WLCR-SEA_Predictor/) |
+| Interactive Audit Lab | [Hugging Face Space](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor) |
+| English paper | [paper/main.pdf](paper/main.pdf) |
+| Chinese paper | [paper/main_zh.pdf](paper/main_zh.pdf) |
 | Data download | [Download ZIP](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip) |
 | Source code | [github.com/rudykon/WLCR-SEA_Predictor](https://github.com/rudykon/WLCR-SEA_Predictor) |
 
@@ -150,6 +172,6 @@ This repository is licensed under the Apache License 2.0; see <code>LICENSE</cod
 | <code>experiments/wlcr_sea_model.py</code> | WLCR-SEA experts, routing, bounded residual, losses, and metrics |
 | <code>experiments/missingness_protocol.py</code> | Deterministic missing-telemetry protocol used by WLCR-SEA |
 | <code>tests/test_wlcr_sea_model.py</code> | Focused unit tests for the public method |
+| <code>demo/</code> | Gradio request audit lab and deterministic synthetic request |
 | <code>docs/images/</code> | Five manuscript figures rendered for this README |
-| <code>requirements.txt</code> | Minimal Python dependencies |
-
+| <code>requirements.txt</code> | Research and Gradio runtime dependencies |

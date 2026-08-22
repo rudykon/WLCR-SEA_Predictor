@@ -1,0 +1,160 @@
+site_name: WLCR-SEA Predictor
+site_url: https://rudykon.github.io/WLCR-SEA_Predictor/
+site_description: >-
+  Auditable request-local cellular traffic forecasting with structured
+  seasonal expert routing, reproducible experiments, and an interactive demo.
+
+repo_name: rudykon/WLCR-SEA_Predictor
+repo_url: https://github.com/rudykon/WLCR-SEA_Predictor
+edit_uri: edit/main/docs/
+
+exclude_docs: |
+  README.md
+  CODE_STRUCTURE.md
+  REPRODUCTION_GUIDE.md
+  RESEARCH_REPRODUCTION.md
+
+theme:
+  name: material
+  language: en
+  logo: brand-mark.svg
+  favicon: brand-mark.svg
+  font: false
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search:
+      lang: en
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: zh
+          name: 简体中文
+          build: true
+          site_name: WLCR-SEA 蜂窝流量预测
+          site_description: >-
+            具有结构化季节专家路由、可复现实验和交互演示的可审计请求局部蜂窝流量预测。
+          theme:
+            palette:
+              - media: "(prefers-color-scheme: light)"
+                scheme: default
+                primary: custom
+                accent: custom
+                toggle:
+                  icon: material/weather-night
+                  name: 切换至深色模式
+              - media: "(prefers-color-scheme: dark)"
+                scheme: slate
+                primary: custom
+                accent: custom
+                toggle:
+                  icon: material/weather-sunny
+                  name: 切换至浅色模式
+          nav_translations:
+            Home: 首页
+            Get started: 开始使用
+            Installation: 安装
+            Quick start: 快速开始
+            Method: 方法
+            Serving problem: 服务问题
+            Architecture: 架构
+            Data contract: 数据契约
+            Research: 研究
+            Paper evidence: 论文证据
+            Scope & limitations: 范围与局限
+            Demo: 在线演示
+            Audit lab: 审计实验室
+            Reference: 参考
+            Code map: 代码地图
+            Reproduction: 复现
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+  - "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/rudykon
+      name: rudykon on GitHub
+    - icon: fontawesome/solid/face-smile
+      link: https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor
+      name: WLCR-SEA method demo on Hugging Face
+  generator: false
+
+copyright: Copyright &copy; 2026 WLCR-SEA contributors · Apache-2.0
+
+nav:
+  - Home: index.md
+  - Get started:
+      - Installation: getting-started/installation.md
+      - Quick start: getting-started/quickstart.md
+  - Method:
+      - Serving problem: guide/problem.md
+      - Architecture: guide/method.md
+      - Data contract: guide/data-contract.md
+  - Research:
+      - Paper evidence: research/evidence.md
+      - Scope & limitations: research/limitations.md
+  - Demo:
+      - Audit lab: deployment/hugging-face.md
+  - Reference:
+      - Code map: reference/code-map.md
+      - Reproduction: reference/reproduction.md
