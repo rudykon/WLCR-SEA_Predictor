@@ -228,7 +228,11 @@ def run_audit_demo(
     from experiments import wlcr_sea_model as sea
 
     history_log = np.where(original_mask, np.log1p(raw_values), 0.0).astype(np.float32)
-    prior_log = _request_fallback_prior(raw_values, original_mask)
+    # The public Demo has no fitted frozen training prior. Its explicitly
+    # labelled request-derived fallback must therefore obey the same effective
+    # evidence boundary as every other expert; observations selected for
+    # removal cannot remain embedded in this last-resort slot.
+    prior_log = _request_fallback_prior(raw_values, effective_mask)
     experts = sea.build_expert_batch(
         history_log,
         original_mask,

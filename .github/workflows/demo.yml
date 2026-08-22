@@ -68,3 +68,22 @@ jobs:
           MPLBACKEND: Agg
           MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
         run: python -c "from demo.app import demo; assert demo is not None"
+
+      - name: Start the Gradio entrypoint
+        env:
+          GRADIO_ANALYTICS_ENABLED: "False"
+          MPLBACKEND: Agg
+          MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
+        run: |
+          python demo/app.py > "${RUNNER_TEMP}/gradio.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "${server_pid}" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error \
+              http://127.0.0.1:7860/config > "${RUNNER_TEMP}/gradio-config.json"; then
+              exit 0
+            fi
+            sleep 1
+          done
+          sed -n '1,160p' "${RUNNER_TEMP}/gradio.log"
+          exit 1

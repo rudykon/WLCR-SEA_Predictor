@@ -44,6 +44,18 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         self.assertEqual(float(np.sum(result.attention[~result.availability])), 0.0)
         self.assertTrue(np.allclose(result.attention.sum(axis=-1), 1.0, atol=1e-7))
 
+    def test_demo_fallback_cannot_read_values_removed_by_the_effective_mask(self) -> None:
+        _, window = runtime.load_request(SAMPLE)
+        values, original_mask = runtime._request_arrays(window)
+        effective_mask = original_mask.copy()
+        effective_mask[:, -168:, :] = False
+        original_prior = runtime._request_fallback_prior(values, effective_mask)
+
+        poisoned = values.copy()
+        poisoned[~effective_mask] = 1_000_000_000.0
+        poisoned_prior = runtime._request_fallback_prior(poisoned, effective_mask)
+        self.assertTrue(np.array_equal(original_prior, poisoned_prior))
+
     def test_exports_and_visuals_are_materialized(self) -> None:
         result = runtime.run_audit_demo(SAMPLE)
         forecast_path, audit_path = runtime.export_outputs(result)
