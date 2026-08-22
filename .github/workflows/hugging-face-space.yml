@@ -1,0 +1,65 @@
+name: Sync Hugging Face Space
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hugging-face-space-production
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Create and synchronize public ZeroGPU Space
+    runs-on: ubuntu-latest
+    env:
+      HF_SPACE_ID: config-h/WLCR-SEA_Predictor
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - name: Check out the complete repository
+        uses: actions/checkout@v4
+
+      - name: Require the repository-scoped Hugging Face token
+        run: >-
+          test -n "${HF_TOKEN}" ||
+          (echo "Add a write-enabled HF_TOKEN as this repository's Actions secret." && exit 1)
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+
+      - name: Create the free ZeroGPU Gradio Space
+        run: >-
+          uvx hf repos create "${HF_SPACE_ID}"
+          --type space
+          --sdk gradio
+          --flavor zero-a10g
+          --public
+          --exist-ok
+
+      - name: Prepare the Hugging Face repository
+        run: |
+          HF_SPACE_STAGE="$(mktemp -d "${RUNNER_TEMP}/hugging-face-space.XXXXXX")"
+          printf 'HF_SPACE_STAGE=%s\n' "${HF_SPACE_STAGE}" >> "${GITHUB_ENV}"
+          rsync -a \
+            --exclude ".git/" \
+            --exclude ".github/" \
+            --exclude "site/" \
+            --exclude "paper/" \
+            --exclude "demo/space-readme-frontmatter.md" \
+            ./ "${HF_SPACE_STAGE}/"
+          sed -n '1,$p' demo/space-readme-frontmatter.md > "${HF_SPACE_STAGE}/README.md"
+          printf '\n' >> "${HF_SPACE_STAGE}/README.md"
+          sed -n '1,$p' README.md >> "${HF_SPACE_STAGE}/README.md"
+
+      - name: Mirror GitHub main to Hugging Face
+        run: >-
+          uvx hf upload "${HF_SPACE_ID}" "${HF_SPACE_STAGE}" .
+          --type space
+          --delete "*"
+          --commit-message "Sync from ${GITHUB_REPOSITORY}"
+          --commit-description "GitHub commit ${GITHUB_SHA}"

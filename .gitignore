@@ -19,6 +19,7 @@ config/private/*.json
 # Large local-only competition artifacts
 *.zip
 dist/
+site/
 artifacts/final_solution_4024_13/final_submission_4024_13.zip
 archive/early_submission_zips/
 archive/early_model_artifacts/
