@@ -5,10 +5,6 @@ hide:
 
 <section class="home-hero">
   <div class="hero-copy">
-    <div class="hero-brand-lockup">
-      <img class="hero-brand-logo hero-brand-logo--light" src="../assets/brand/logo.svg" alt="WLCR-SEA Predictor 项目 Logo" loading="eager" decoding="async">
-      <img class="hero-brand-logo hero-brand-logo--dark" src="../assets/brand/logo-dark.svg" alt="WLCR-SEA Predictor 深色模式项目 Logo" loading="eager" decoding="async">
-    </div>
     <span class="hero-kicker">蜂窝流量预测 · 未来 24 小时 · 结果可检查</span>
     <h1>只使用本小区数据，<span class="gradient-text">预测明天的流量。</span></h1>
     <p class="hero-lead">WLCR-SEA 根据单个小区过去 14 天的四项流量指标，预测接下来 24 小时的流量。它适用于模型只能使用当前请求所附数据的场景。除了预测结果，系统还会返回本次计算采用了哪些历史规律。</p>
@@ -23,11 +19,9 @@ hide:
       <span>预测结果附带计算记录</span>
     </div>
   </div>
-  <figure class="hero-visual">
-    <a href="../images/paper_figure_scenario.png" target="_blank" rel="noopener">
-      <img src="../images/paper_figure_scenario.png" alt="一个小区的数据从输入准备到预测与计算记录的流程" loading="eager" decoding="async">
-    </a>
-    <figcaption class="hero-caption">论文图 1 · 数据入口准备单个小区的数据，模型不能查询其他小区的实时流量</figcaption>
+  <figure class="hero-visual hero-logo-visual">
+    <img class="hero-brand-logo hero-brand-logo--light" src="../assets/brand/logo.svg" alt="WLCR-SEA Predictor 项目 Logo" loading="eager" decoding="async">
+    <img class="hero-brand-logo hero-brand-logo--dark" src="../assets/brand/logo-dark.svg" alt="WLCR-SEA Predictor 深色模式项目 Logo" loading="eager" decoding="async">
   </figure>
 </section>
 

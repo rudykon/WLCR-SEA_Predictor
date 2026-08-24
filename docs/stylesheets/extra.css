@@ -244,11 +244,6 @@ pre {
 .hero-copy,
 .hero-visual { position: relative; z-index: 1; }
 
-.hero-brand-lockup {
-  width: min(13.75rem, 70%);
-  margin: 0 0 1.3rem;
-}
-
 .hero-brand-logo {
   display: block;
   width: 100%;
@@ -256,10 +251,6 @@ pre {
   border-radius: var(--wl-radius-md);
   filter: drop-shadow(0 10px 18px rgba(3, 38, 94, 0.14));
 }
-
-.hero-brand-logo--dark { display: none; }
-[data-md-color-scheme="slate"] .hero-brand-logo--light { display: none; }
-[data-md-color-scheme="slate"] .hero-brand-logo--dark { display: block; }
 
 .hero-kicker,
 .section-eyebrow {
@@ -346,6 +337,18 @@ pre {
 [data-md-color-scheme="slate"] .hero-visual { background: rgba(16, 32, 51, 0.9); }
 .hero-visual img { display: block; width: 100%; border-radius: 0.95rem; }
 .hero-caption { margin: 0.7rem 0.4rem 0.25rem; color: var(--wl-muted); font-size: 0.68rem; text-align: center; }
+
+.hero-logo-visual {
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 3vw, 2.2rem);
+  transform: none;
+}
+
+.hero-logo-visual .hero-brand-logo { width: min(100%, 26rem); }
+.hero-logo-visual .hero-brand-logo--dark { display: none; }
+[data-md-color-scheme="slate"] .hero-logo-visual .hero-brand-logo--light { display: none; }
+[data-md-color-scheme="slate"] .hero-logo-visual .hero-brand-logo--dark { display: block; }
 
 .metric-strip {
   display: grid;
