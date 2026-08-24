@@ -15,7 +15,7 @@ hide:
       336-hour history into a forecast and a replayable evidence trail.
     </p>
     <div class="hero-actions">
-      <a class="hero-button primary" href="guide/problem/">Follow the operational story</a>
+      <a class="hero-button primary" href="guide/problem/">Understand the problem and use cases</a>
       <a class="hero-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">Try one request</a>
       <a class="hero-button" href="research/evidence/">Inspect the paper evidence</a>
     </div>
@@ -40,36 +40,36 @@ hide:
   <div class="metric"><strong>4</strong><span>traffic indicators</span></div>
 </div>
 
-<span class="section-eyebrow">The operational story</span>
+<span class="section-eyebrow">Operating context</span>
 
 ## From one authorized request to a forecast that can be replayed {: .section-title }
 
 <p class="section-lead">The project begins with an operational constraint, not a model diagram. A downstream planner needs a short-horizon traffic signal, while the online prediction service must remain inside the evidence explicitly packaged for one cell.</p>
 
-<div class="story-steps">
-  <article class="story-step">
-    <span class="story-number">01</span>
+<div class="process-steps">
+  <article class="process-step">
+    <span class="step-number">01</span>
     <div>
       <h3>A forecast is requested</h3>
       <p>At a midnight forecast origin, the next 24 hours matter for proactive radio-resource and service-capacity planning. The prediction is decision support; scheduling and control remain downstream.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">02</span>
+  <article class="process-step">
+    <span class="step-number">02</span>
     <div>
       <h3>The ingress seals the evidence</h3>
       <p>An identity-aware front end authorizes the target cell and materializes its ordered 336-hour history plus the authoritative observation mask. Identity is retained outside the model for routing and audit.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">03</span>
+  <article class="process-step">
+    <span class="step-number">03</span>
     <div>
       <h3>The scorer explains its references</h3>
       <p>Yesterday, last week, two weeks ago, robust seasonal medians, a bounded trend and summary fallbacks become named candidates. Missing evidence is removed before routing, not hidden behind a numerical fill.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">04</span>
+  <article class="process-step">
+    <span class="step-number">04</span>
     <div>
       <h3>The forecast leaves with a trace</h3>
       <p>The service returns four 24-hour series together with expert values, availability, routing mass, baseline, bounded correction and envelope checks that can be replayed from the same request.</p>
@@ -77,7 +77,7 @@ hide:
   </article>
 </div>
 
-<p class="story-bridge"><a href="guide/problem/">Read the complete serving scenario →</a></p>
+<p class="section-link"><a href="guide/problem/">Read the complete serving scenario →</a></p>
 
 <span class="section-eyebrow">Where it fits</span>
 
@@ -149,7 +149,7 @@ hide:
   </article>
 </div>
 
-<p class="story-bridge"><a href="guide/architecture/">Walk through the complete system architecture →</a></p>
+<p class="section-link"><a href="guide/architecture/">Open the complete system architecture →</a></p>
 
 <span class="section-eyebrow">What the study found</span>
 
@@ -173,7 +173,7 @@ hide:
 
 <div class="demo-cta">
   <div>
-    <h2>Take one request through the same story</h2>
+    <h2>Inspect one request end to end</h2>
     <p>Load the bundled 336-hour example, remove telemetry, inspect the surviving experts and download the 24-hour forecast plus its audit record. The public lab runs the real A0 fixed method path—not the undistributed trained A6 checkpoint.</p>
   </div>
   <a class="md-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">Launch the guided audit lab</a>

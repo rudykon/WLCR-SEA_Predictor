@@ -371,16 +371,16 @@ pre {
 .evidence-card p { color: var(--wl-muted); }
 .feature-number { display: inline-flex; color: var(--wl-indigo); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; }
 
-.story-steps {
+.process-steps {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   margin: 1.5rem 0 1rem;
 }
 
-.story-steps--compact { margin-bottom: 1.8rem; }
+.process-steps--compact { margin-bottom: 1.8rem; }
 
-.story-step {
+.process-step {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 1rem;
@@ -392,11 +392,11 @@ pre {
   box-shadow: var(--wl-shadow-sm);
 }
 
-[data-md-color-scheme="slate"] .story-step {
+[data-md-color-scheme="slate"] .process-step {
   background: linear-gradient(145deg, var(--wl-surface), rgba(79, 70, 229, 0.08));
 }
 
-.story-number {
+.step-number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -410,9 +410,9 @@ pre {
   font-weight: 800;
 }
 
-.story-step h3 { margin: 0.08rem 0 0.42rem; }
-.story-step p { margin: 0; color: var(--wl-muted); }
-.story-bridge { margin: 0 0 3rem; text-align: right; font-weight: 750; }
+.process-step h3 { margin: 0.08rem 0 0.42rem; }
+.process-step p { margin: 0; color: var(--wl-muted); }
+.section-link { margin: 0 0 3rem; text-align: right; font-weight: 750; }
 
 .scenario-grid {
   display: grid;
@@ -504,7 +504,7 @@ pre {
   .hero-actions { flex-direction: column; }
   .hero-button { width: 100%; }
   .feature-grid,
-  .story-steps,
+  .process-steps,
   .scenario-grid,
   .metric-strip { grid-template-columns: 1fr; }
   .demo-cta { grid-template-columns: 1fr; }

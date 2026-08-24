@@ -13,37 +13,37 @@ recorded**. The forecasting method then operates inside that boundary.
 
 ## Five components, five responsibilities
 
-<div class="story-steps">
-  <article class="story-step">
-    <span class="story-number">01</span>
+<div class="process-steps">
+  <article class="process-step">
+    <span class="step-number">01</span>
     <div>
       <h3>Identity-aware ingress</h3>
       <p>The serving layer authenticates the source and resolves operational identity. It assembles one 336-hour history and its observation mask, then keeps the cell ID outside the forecasting feature path.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">02</span>
+  <article class="process-step">
+    <span class="step-number">02</span>
     <div>
       <h3>Sealed request boundary</h3>
       <p>The scorer receives only the ordered four-indicator tensor, the authoritative mask and frozen global assets. It cannot reach into another request, another cell or a live topology service.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">03</span>
+  <article class="process-step">
+    <span class="step-number">03</span>
     <div>
       <h3>Seasonal expert builder</h3>
       <p>For every horizon and indicator, the builder materializes eight named candidates plus their availability and reliability. Removed evidence is recomputed rather than hidden behind a numerical fill.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">04</span>
+  <article class="process-step">
+    <span class="step-number">04</span>
     <div>
       <h3>Available-set router and bounded predictor</h3>
       <p>The router assigns mass only across surviving experts. Their convex combination forms the baseline; a bounded residual can refine it without leaving the finite expert envelope by more than the configured margin.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">05</span>
+  <article class="process-step">
+    <span class="step-number">05</span>
     <div>
       <h3>Forecast and audit output</h3>
       <p>The response returns four 24-hour forecasts. A semantic audit record can retain the request hash, model version, expert state, routing weights, baseline, residual and envelope checks for replay.</p>

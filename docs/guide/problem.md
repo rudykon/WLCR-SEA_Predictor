@@ -26,32 +26,32 @@ cells, a topology service or a cross-request cache. That separation may arise
 in compartmentalized edge domains where access, fault containment and later
 replay require a small, explicit online evidence surface.
 
-## A concrete operating story
+## How one request is processed
 
-<div class="story-steps story-steps--compact">
-  <article class="story-step">
-    <span class="story-number">01</span>
+<div class="process-steps process-steps--compact">
+  <article class="process-step">
+    <span class="step-number">01</span>
     <div>
       <h3>The observed day closes</h3>
       <p>The final observed hour is 23:00. The next target is 00:00, and the requested horizon continues for 24 hours. The downstream goal is a demand signal—not an autonomous scheduling command.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">02</span>
+  <article class="process-step">
+    <span class="step-number">02</span>
     <div>
       <h3>The ingress authorizes one cell</h3>
       <p>It materializes 336 consecutive history hours, four traffic indicators and one authoritative Boolean observation mask. An opaque origin ID may remain outside the model for authorization, routing and audit.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">03</span>
+  <article class="process-step">
+    <span class="step-number">03</span>
     <div>
       <h3>The scorer stays inside the request</h3>
       <p>It combines the sealed window with a versioned global checkpoint and frozen global statistics. It does not receive the cell identity as a feature and cannot issue identity-conditioned lookups.</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">04</span>
+  <article class="process-step">
+    <span class="step-number">04</span>
     <div>
       <h3>A forecast and trace move downstream</h3>
       <p>The result contains four 24-hour series. A proposed audit record can preserve the request hash, model version, expert values, availability, weights, baseline, bounded residual and envelope checks for later review.</p>

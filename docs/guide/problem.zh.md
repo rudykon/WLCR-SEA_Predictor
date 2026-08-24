@@ -19,32 +19,32 @@ WLCR-SEA 从一个现实问题出发：**当预测服务只能读取当前请求
 但评分过程不能再查询邻近小区的实时流量、拓扑服务或跨请求缓存。
 这种职责分离适用于隔离的边缘域：访问约束、故障隔离与事后重放共同要求在线证据面足够小且明确。
 
-## 一条具体的运营故事线
+## 一次请求如何完成预测
 
-<div class="story-steps story-steps--compact">
-  <article class="story-step">
-    <span class="story-number">01</span>
+<div class="process-steps process-steps--compact">
+  <article class="process-step">
+    <span class="step-number">01</span>
     <div>
       <h3>已观测的一天结束</h3>
       <p>最后一个已观测小时是 23:00，下一个预测目标是 00:00，随后覆盖连续 24 小时。输出是需求信号，而不是自动下发的调度命令。</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">02</span>
+  <article class="process-step">
+    <span class="step-number">02</span>
     <div>
       <h3>入口授权单个小区</h3>
       <p>入口生成连续 336 小时历史、四个流量指标与一份权威布尔观测掩码。不透明来源 ID 可以留在模型外，用于授权、路由和审计。</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">03</span>
+  <article class="process-step">
+    <span class="step-number">03</span>
     <div>
       <h3>评分器留在请求边界内</h3>
       <p>评分器把密封窗口与版本化全局检查点、冻结全局统计量组合起来。它不会把小区身份作为特征，也不能发起按身份查询。</p>
     </div>
   </article>
-  <article class="story-step">
-    <span class="story-number">04</span>
+  <article class="process-step">
+    <span class="step-number">04</span>
     <div>
       <h3>预测与证据轨迹进入下游</h3>
       <p>结果包含四条 24 小时序列。拟议的审计记录可保留请求哈希、模型版本、专家值、可用性、权重、基线、有界残差与包络检查，供日后复盘。</p>
