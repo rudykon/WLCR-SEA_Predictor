@@ -41,7 +41,11 @@ archive/early_code/third_party/
 .DS_Store
 *~
 
-# LaTeX build intermediates
+# Unpublished paper sources and generated outputs (local only)
+/paper/main.tex
+/paper/main_zh.tex
+/paper/references.bib
+/paper/rq4_evidence.tex
 /paper/main.pdf
 /paper/main_zh.pdf
 paper/*.aux
