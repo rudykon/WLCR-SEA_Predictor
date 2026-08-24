@@ -5,6 +5,7 @@ hide:
 
 <section class="home-hero">
   <div class="hero-copy">
+    <img class="hero-brand-logo" src="assets/brand/logo-horizontal.svg" alt="WLCR-SEA Predictor project logo" loading="eager" decoding="async">
     <span class="hero-kicker">Cellular traffic forecasting · Next 24 hours · Inspectable results</span>
     <h1>Forecast tomorrow's traffic for one cell—<span class="gradient-text">without reading other cells.</span></h1>
     <p class="hero-lead">WLCR-SEA uses four traffic indicators from the previous 14 days to forecast the next 24 hours for one cell. It is designed for cases in which the model may use only the data supplied with the current request. Along with the forecast, it returns a record of the historical patterns used in the calculation.</p>

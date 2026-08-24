@@ -17,8 +17,8 @@ exclude_docs: |
 theme:
   name: material
   language: en
-  logo: brand-mark.svg
-  favicon: brand-mark.svg
+  logo: assets/brand/logo-icon.svg
+  favicon: assets/brand/favicon.svg
   font: false
   icon:
     repo: fontawesome/brands/github

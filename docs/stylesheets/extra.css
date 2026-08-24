@@ -88,19 +88,18 @@ pre {
 }
 
 .md-header__button.md-logo {
-  width: 3.3rem;
-  padding: 0.15rem;
-  border-radius: 0.62rem;
-  background: #fff;
-  box-shadow: 0 3px 11px rgba(0, 0, 0, 0.24);
+  width: 2.75rem;
+  padding: 0.2rem 0.35rem;
 }
 
 .md-header__button.md-logo img,
 .md-header__button.md-logo svg {
-  width: 3rem;
-  height: 1.5rem;
-  object-fit: cover;
-  object-position: left;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.45rem;
+  object-fit: contain;
+  object-position: center;
+  box-shadow: 0 3px 11px rgba(0, 0, 0, 0.24);
 }
 
 .md-tabs {
@@ -244,6 +243,18 @@ pre {
 
 .hero-copy,
 .hero-visual { position: relative; z-index: 1; }
+
+.hero-brand-logo {
+  display: block;
+  width: min(18rem, 100%);
+  height: auto;
+  margin: 0 0 1.3rem;
+  padding: 0.42rem 0.6rem;
+  border: 1px solid rgba(7, 137, 244, 0.16);
+  border-radius: var(--wl-radius-md);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--wl-shadow-sm);
+}
 
 .hero-kicker,
 .section-eyebrow {

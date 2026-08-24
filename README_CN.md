@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="docs/brand-mark.svg" width="520" alt="WLCR-SEA 品牌标识">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/brand/logo.svg">
+    <img src="docs/assets/brand/logo.svg" width="360" alt="WLCR-SEA Predictor 项目 Logo">
+  </picture>
 </p>
 
 <h1 align="center">WLCR-SEA Predictor</h1>

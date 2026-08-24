@@ -5,6 +5,7 @@ hide:
 
 <section class="home-hero">
   <div class="hero-copy">
+    <img class="hero-brand-logo" src="../assets/brand/logo-horizontal.svg" alt="WLCR-SEA Predictor 项目 Logo" loading="eager" decoding="async">
     <span class="hero-kicker">蜂窝流量预测 · 未来 24 小时 · 结果可检查</span>
     <h1>只使用本小区数据，<span class="gradient-text">预测明天的流量。</span></h1>
     <p class="hero-lead">WLCR-SEA 根据单个小区过去 14 天的四项流量指标，预测接下来 24 小时的流量。它适用于模型只能使用当前请求所附数据的场景。除了预测结果，系统还会返回本次计算采用了哪些历史规律。</p>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-labelledby="title desc">
+  <title id="title">WLCR-SEA Predictor app icon</title>
+  <desc id="desc">Radio tower above coastal ridges with a rising forecast chart and verification badge.</desc>
+  
+  <defs>
+    <linearGradient id="icon-sky" x1="0" y1="0" x2="0.88" y2="1">
+      <stop offset="0" stop-color="#0789F4"/>
+      <stop offset="0.52" stop-color="#1AAAF4"/>
+      <stop offset="1" stop-color="#43D0EA"/>
+    </linearGradient>
+    <linearGradient id="icon-ridge-a" x1="0" y1="0" x2="1" y2="0.8">
+      <stop offset="0" stop-color="#12B6A4"/>
+      <stop offset="1" stop-color="#08A999"/>
+    </linearGradient>
+    <linearGradient id="icon-ridge-b" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05999B"/>
+      <stop offset="1" stop-color="#10B7A5"/>
+    </linearGradient>
+    <linearGradient id="icon-tower" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#073B80"/>
+      <stop offset="1" stop-color="#03265E"/>
+    </linearGradient>
+    <linearGradient id="icon-data" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12B0A5"/>
+      <stop offset="1" stop-color="#009D9A"/>
+    </linearGradient>
+    <linearGradient id="icon-bars" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B9DCFF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#86BFFF" stop-opacity="0.64"/>
+    </linearGradient>
+    <linearGradient id="icon-badge" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#00A89E"/>
+      <stop offset="1" stop-color="#00B6AA"/>
+    </linearGradient>
+    <clipPath id="icon-clip"><rect width="800" height="800" rx="145"/></clipPath>
+    <filter id="icon-shadow" x="-18%" y="-18%" width="136%" height="142%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#09295C" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <g>
+    <g clip-path="url(#icon-clip)">
+      <rect width="800" height="800" fill="url(#icon-sky)"/>
+
+      <path d="M0 373 C75 342 135 363 219 420 C299 475 358 464 443 404 C527 345 587 339 657 373 C710 399 758 396 800 371 V800 H0Z" fill="url(#icon-ridge-a)"/>
+      <path d="M0 512 C63 450 138 451 213 486 C288 521 356 506 426 471 C503 432 577 443 645 486 C703 523 752 535 800 512 V800 H0Z" fill="url(#icon-ridge-b)" opacity="0.96"/>
+
+      <g fill="none" stroke="url(#icon-tower)" stroke-linecap="butt" stroke-linejoin="miter">
+        <path d="M202 284 L291 395 M266 284 L177 395 M173 400 L330 548 M297 400 L138 551" stroke-width="17"/>
+        <path d="M201 282 H268 M174 397 H296" stroke-width="18"/>
+        <path d="M223 190 L132 574 M245 190 L336 566" stroke-width="19"/>
+      </g>
+      <circle cx="234" cy="165" r="27" fill="url(#icon-tower)"/>
+
+      <g fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="round">
+        <path d="M184 132 C164 150 164 181 183 199"/>
+        <path d="M151 101 C116 136 115 207 151 241"/>
+        <path d="M117 67 C63 121 62 220 117 270"/>
+        <path d="M284 132 C304 150 304 181 285 199"/>
+        <path d="M317 101 C352 136 353 207 317 241"/>
+        <path d="M351 67 C405 121 406 220 351 270"/>
+      </g>
+
+      <path d="M538 126 C538 105 554 90 575 90 C596 90 611 104 614 124 C621 119 629 117 637 117 C656 117 671 132 671 151 C671 170 656 183 637 183 H529 C511 183 498 170 498 153 C498 136 511 124 528 124 C532 124 535 125 538 126Z" fill="#FFFFFF"/>
+      <path d="M466 248 C466 236 475 227 487 227 C499 227 508 235 510 247 C514 244 519 243 524 243 C535 243 544 252 544 263 C544 274 535 282 524 282 H454 C443 282 435 274 435 264 C435 254 443 247 453 247 C458 247 462 247 466 248Z" fill="#FFFFFF"/>
+
+      <path d="M0 679 C31 610 77 577 132 562 C194 546 247 566 315 538 C402 503 463 430 535 354 C616 268 683 223 743 230 C765 232 785 240 800 248 V800 H0Z" fill="#FFFFFF"/>
+
+      <g fill="url(#icon-bars)">
+        <rect x="302" y="711" width="52" height="45" rx="6"/>
+        <rect x="383" y="682" width="53" height="74" rx="6"/>
+        <rect x="464" y="630" width="53" height="126" rx="6"/>
+        <rect x="545" y="572" width="53" height="184" rx="6"/>
+        <path d="M626 523 Q626 515 634 508 L670 475 Q679 467 679 480 V756 H626Z"/>
+      </g>
+
+      <g fill="none" stroke="url(#icon-data)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M140 707 L291 634 L382 634 L470 552"/>
+        <path d="M513 539 C577 504 635 461 676 424" stroke-dasharray="20 19" stroke-dashoffset="4"/>
+        <path d="M687 414 L744 357"/>
+      </g>
+      <g fill="url(#icon-data)">
+        <circle cx="140" cy="707" r="25"/>
+        <circle cx="291" cy="634" r="25"/>
+        <circle cx="470" cy="552" r="25"/>
+        <path d="M708 342 L759 327 Q772 325 770 339 L762 391 Q760 404 749 403 Q738 402 739 390 L742 369 L723 372 Q712 374 709 364 Q706 353 708 342Z"/>
+      </g>
+
+      <g fill="none" stroke="url(#icon-data)" stroke-width="13" stroke-linecap="round">
+        <path d="M730 574 L735 548"/>
+        <path d="M758 585 L776 564"/>
+        <path d="M778 611 L798 600"/>
+      </g>
+      <circle cx="694" cy="674" r="83" fill="url(#icon-badge)"/>
+      <path d="M661 671 L687 699 L733 644" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <rect x="1.25" y="1.25" width="797.5" height="797.5" rx="144" fill="none" stroke="#DDEAF4" stroke-width="2.5"/>
+  </g>
+
+</svg>
