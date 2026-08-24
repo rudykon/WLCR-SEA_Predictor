@@ -1,20 +1,21 @@
 # 代码地图
 
-仓库将公开方法、实验编排、物理 CSV 工具、证据审计、论文源码和网站/Demo 层分开组织。
+本页面向需要快速定位实现的开发者。仓库把模型代码、实验脚本、CSV 处理、结果检查、论文文件和
+网站/Demo 分开组织。
 
 | 路径 | 职责 |
 | --- | --- |
 | `experiments/wlcr_sea_model.py` | 专家构造、Entmax、WLCR-SEA 变体、损失、指标与审计范围 |
-| `experiments/missingness_protocol.py` | 确定性绝对小区—时间损坏及比率统计 |
-| `experiments/train_wlcr_sea.py` | WLCR-SEA 训练编排 |
-| `experiments/analyze_matched_missingness.py` | 配对鲁棒性分析 |
-| `experiments/audit_expert_routing.py` | 路由质量、删除与影响审计 |
-| `experiments/audit_request_locality.py` | 服务字段白名单和请求对象不变性 |
+| `experiments/missingness_protocol.py` | 按固定、可重复的方式移除数据并统计实际比例 |
+| `experiments/train_wlcr_sea.py` | 运行 WLCR-SEA 训练 |
+| `experiments/analyze_matched_missingness.py` | 在移除相同数据点后比较不同模型 |
+| `experiments/audit_expert_routing.py` | 检查候选权重并测量删除候选后的影响 |
+| `experiments/audit_request_locality.py` | 检查模型是否只读取允许的输入字段 |
 | `experiments/benchmark_wlcr_sea_latency.py` | 单线程延迟与内存基准 |
-| `experiments/validate_evidence_integrity.py` | 跨产物证据一致性 |
-| `Model/traffic_window_forecasting.py` | 六列 CSV 契约与确定性季节基线 |
-| `tests/test_wlcr_sea_model.py` | 公开方法聚焦不变量 |
-| `demo/` | 双语 Gradio 审计实验室、合成请求和 Space 元数据 |
+| `experiments/validate_evidence_integrity.py` | 检查不同生成文件中的报告结果是否一致 |
+| `Model/traffic_window_forecasting.py` | 六列 CSV 输入与固定季节基线 |
+| `tests/test_wlcr_sea_model.py` | 公开方法的核心行为测试 |
+| `demo/` | 双语 Gradio Demo、合成示例和 Space 配置 |
 | `docs/` | 既有技术指南与本双语 MkDocs 网站 |
 | `paper/` | 中英文论文源码、PDF 和图件源文件 |
 
@@ -22,15 +23,14 @@
 
 | 对象 | 形状 | 含义 |
 | --- | --- | --- |
-| 历史数值 | `N × 336 × 4` | `log1p` 流量，缺失位置可有任意有限填充 |
-| 历史掩码 | `N × 336 × 4` | 权威观测状态 |
-| 专家值 | `N × 24 × 4 × 8` | 预测步—指标候选证据 |
-| 可用性 | `N × 24 × 4 × 8` | 精确路由子集 |
-| 可靠度 | `N × 24 × 4 × 8` | 支持比例或二元支持 |
+| 历史数值 | `N × 336 × 4` | `log1p` 变换后的流量；缺失位置可能含占位数 |
+| 历史掩码 | `N × 336 × 4` | 每个历史数值是否存在 |
+| 候选值 | `N × 24 × 4 × 8` | 每个未来小时和指标的八个候选预测 |
+| 可用性 | `N × 24 × 4 × 8` | 每个候选是否能够使用 |
+| 可靠度 | `N × 24 × 4 × 8` | 每个候选获得多少历史数据支持 |
 | 预测 | `N × 24 × 4` | 逆变换前的对数预测 |
 
 ## 变体
 
-`VARIANTS` 展示了从固定/静态路由到 Softmax、Entmax、硬掩码、可靠度、有界残差、
-缺失增广、一致性和跨指标上下文的递进。论文所选方法为 `A6_mixed_aug`；
-公开交互 Demo 使用不需要未发布拟合参数的 `A0_fixed`。
+`VARIANTS` 包含论文测试的固定基线和不同学习模型。论文最终选择 `A6_mixed_aug`；
+公开 Demo 使用不需要未发布训练参数的 `A0_fixed`。

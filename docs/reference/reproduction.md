@@ -1,8 +1,8 @@
 # Reproduction map
 
-The repository keeps source, tests, bilingual paper, and rendered figures in
-Git. Large datasets, fitted checkpoints, and generated result directories are
-excluded and must be reconstructed from the documented workflow.
+The repository includes source code, tests, both paper versions, and figures.
+Large datasets, trained checkpoints, and generated result folders are not in
+Git. Follow the steps below to recreate them.
 
 ## Start here
 
@@ -12,7 +12,7 @@ excluded and must be reconstructed from the documented workflow.
 4. Inspect [`CODE_STRUCTURE.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/docs/CODE_STRUCTURE.md) before changing experiment paths.
 5. Download the source data from the link recorded in the root README and verify any stated hashes.
 
-## Focused public checks
+## Quick checks that work after a fresh clone
 
 ```bash
 PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
@@ -27,7 +27,7 @@ Run the complete suite when the required local artifacts are available:
 PYTHONPATH=. python -m unittest discover -s tests -v
 ```
 
-## Evidence families
+## Which script answers which question
 
 | Question | Representative scripts |
 | --- | --- |
@@ -39,13 +39,12 @@ PYTHONPATH=. python -m unittest discover -s tests -v
 | Cell-disjoint audit | `evaluate_cell_disjoint_generalization.py` |
 | Manuscript consistency | `validate_evidence_integrity.py`, `tools/sync_rq4_evidence.py` |
 
-## Generated artifacts
+## Files that must be generated locally
 
-The `.gitignore` excludes checkpoints (`*.pt`, `*.pth`), serialized models,
-NumPy bundles, logs, and large experiment directories. Do not treat the absence
-of those files from a fresh clone as evidence that the paper used the public
-Demo baseline. The trained A6 evaluation must be reconstructed from its own
-training and audit workflow.
+The `.gitignore` excludes checkpoints (`*.pt`, `*.pth`), saved models, NumPy
+bundles, logs, and large experiment folders. Their absence after cloning is
+expected. The paper's A6 results require the documented A6 training and
+evaluation process; they do not come from the public Demo.
 
 ## Website and Demo checks
 

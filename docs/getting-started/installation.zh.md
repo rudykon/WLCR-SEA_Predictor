@@ -26,8 +26,8 @@ Windows PowerShell 使用：
 PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
 ```
 
-聚焦测试覆盖季节索引、专家定义、删除值不泄漏、精确硬掩码、Entmax 归一化、
-有界残差和审计范围包含关系。
+这些测试会检查历史小时选择是否正确、缺失值是否仍会影响结果、候选权重是否合法，
+以及最终修正是否保持在设定范围内。
 
 ## 在本地运行公开方法 Demo
 

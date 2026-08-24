@@ -1,7 +1,7 @@
 # 复现地图
 
-仓库把源码、测试、中英文论文和渲染图保存在 Git 中。大型数据集、拟合检查点与生成结果目录被排除，
-需要按照文档工作流重新构建。
+仓库包含源码、测试、中英文论文和图片。大型数据集、训练检查点和生成结果目录不存入 Git，
+需要按以下步骤在本地重新生成。
 
 ## 从这里开始
 
@@ -11,7 +11,7 @@
 4. 修改实验路径前阅读 [`CODE_STRUCTURE.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/docs/CODE_STRUCTURE.md)。
 5. 从根 README 记录的链接下载源数据，并验证文档列出的哈希值。
 
-## 聚焦公开检查
+## 全新克隆后即可运行的快速检查
 
 ```bash
 PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
@@ -26,7 +26,7 @@ PYTHONPATH=. python -m unittest tests.test_rq4_evidence_sync -v
 PYTHONPATH=. python -m unittest discover -s tests -v
 ```
 
-## 证据类别
+## 每类问题对应哪些脚本
 
 | 问题 | 代表脚本 |
 | --- | --- |
@@ -38,10 +38,11 @@ PYTHONPATH=. python -m unittest discover -s tests -v
 | 小区不相交审计 | `evaluate_cell_disjoint_generalization.py` |
 | 论文一致性 | `validate_evidence_integrity.py`、`tools/sync_rq4_evidence.py` |
 
-## 生成产物
+## 需要在本地生成的文件
 
-`.gitignore` 会排除检查点（`*.pt`、`*.pth`）、序列化模型、NumPy 包、日志和大型实验目录。
-全新克隆中缺少这些文件，不代表论文使用了公开 Demo 基线。训练后的 A6 评估必须通过其训练与审计工作流重建。
+`.gitignore` 会排除检查点（`*.pt`、`*.pth`）、保存的模型、NumPy 文件、日志和大型实验目录。
+克隆后缺少这些文件属于正常情况。论文中的 A6 结果需要按照文档完成 A6 训练和评估，
+并非来自公开 Demo。
 
 ## 网站与 Demo 检查
 

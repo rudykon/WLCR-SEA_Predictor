@@ -5,109 +5,109 @@ hide:
 
 <section class="home-hero">
   <div class="hero-copy">
-    <span class="hero-kicker">蜂窝网络运营 · 午夜预测 · 证据可审计</span>
-    <h1>一个小区需要明天的流量计划，但评分器只能读取<span class="gradient-text">本次已授权请求。</span></h1>
+    <span class="hero-kicker">蜂窝流量预测 · 未来 24 小时 · 结果可检查</span>
+    <h1>只使用本小区数据，<span class="gradient-text">预测明天的流量。</span></h1>
     <p class="hero-lead">
-      在最后一个已观测的 23:00 小时结束后，运营方可能需要未来 24 小时的需求信号，
-      用于主动无线资源与服务容量规划。但在隔离的边缘域中，评分器不能悄悄查询邻近小区的实时流量。
-      WLCR-SEA 将一份已授权的 336 小时历史转化为预测，并同时留下可重放的证据链。
+      WLCR-SEA 读取一个小区过去 14 天的四项流量指标，预测未来 24 小时。
+      它适用于模型只能使用当前小区所提交数据的场景。输出不仅包含预测，
+      还会记录计算时参考了哪些历史规律。
     </p>
     <div class="hero-actions">
-      <a class="hero-button primary" href="guide/problem/">了解问题与场景</a>
-      <a class="hero-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">体验一份请求</a>
-      <a class="hero-button" href="research/evidence/">查看论文证据</a>
+      <a class="hero-button primary" href="guide/problem/">查看适用场景</a>
+      <a class="hero-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">体验在线 Demo</a>
+      <a class="hero-button" href="research/evidence/">查看实验结果</a>
     </div>
     <div class="hero-proof">
-      <span>单个目标小区</span>
-      <span>仅使用已授权证据</span>
-      <span>预测与审计记录同时输出</span>
+      <span>每次预测一个小区</span>
+      <span>输入 14 天，预测 24 小时</span>
+      <span>预测与计算记录同时输出</span>
     </div>
   </div>
   <figure class="hero-visual">
     <a href="../images/paper_figure_scenario.png" target="_blank" rel="noopener">
-      <img src="../images/paper_figure_scenario.png" alt="从授权入口到可审计预测的请求局部蜂窝流量预测场景" loading="eager" decoding="async">
+      <img src="../images/paper_figure_scenario.png" alt="一个小区的数据从输入准备到预测与计算记录的流程" loading="eager" decoding="async">
     </a>
-    <figcaption class="hero-caption">论文图 1 · 入口授权并封装单次请求，评分器始终位于明确的证据边界之内</figcaption>
+    <figcaption class="hero-caption">论文图 1 · 入口准备一个小区的数据，模型不能查询其他小区的流量</figcaption>
   </figure>
 </section>
 
 <div class="metric-strip">
-  <div class="metric"><strong>336 小时</strong><span>已授权历史</span></div>
-  <div class="metric"><strong>24 小时</strong><span>次日预测范围</span></div>
-  <div class="metric"><strong>8</strong><span>具名证据专家</span></div>
+  <div class="metric"><strong>336 小时</strong><span>输入历史</span></div>
+  <div class="metric"><strong>24 小时</strong><span>预测范围</span></div>
+  <div class="metric"><strong>8</strong><span>历史候选预测</span></div>
   <div class="metric"><strong>4</strong><span>流量指标</span></div>
 </div>
 
-<span class="section-eyebrow">问题与流程</span>
+<span class="section-eyebrow">要解决的问题</span>
 
-## 从一份已授权请求，到一条可重放的预测路径 {: .section-title }
+## 在严格的数据限制下完成有效预测 {: .section-title }
 
-<p class="section-lead">这个项目的起点不是模型结构图，而是一项运营约束：下游规划者需要短期流量信号，在线预测服务却必须严格限制在为单个小区明确封装的证据范围内。</p>
+<p class="section-lead">网络规划人员需要某个小区明天的流量，但预测服务可能无权查询邻近小区或在线特征库。因此，模型必须充分利用本次提交的单小区历史数据。</p>
 
 <div class="process-steps">
   <article class="process-step">
     <span class="step-number">01</span>
     <div>
-      <h3>预测请求到达</h3>
-      <p>在午夜预测起点，未来 24 小时可为主动无线资源与服务容量规划提供需求信号。预测只承担决策支持，具体调度与控制仍属于下游系统。</p>
+      <h3>需要次日预测</h3>
+      <p>午夜时，规划人员需要未来 24 小时的流量。预测用于辅助规划，不会直接控制网络。</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">02</span>
     <div>
-      <h3>入口封装证据</h3>
-      <p>身份感知入口授权目标小区，并生成其有序的 336 小时历史与权威观测掩码。身份只在模型外用于路由和审计，不会成为预测特征。</p>
+      <h3>入口准备单个小区的数据</h3>
+      <p>服务验证小区身份并整理 336 行小时数据。布尔标记说明哪些数值真实存在，小区 ID 不作为预测特征。</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">03</span>
     <div>
-      <h3>评分器解释参考依据</h3>
-      <p>昨天、上周、两周前、稳健季节中位数、有界趋势与汇总回退值被构造成具名候选。缺失证据会在路由前被移除，而不是藏在某个数值填充值后面。</p>
+      <h3>模型比较不同历史规律</h3>
+      <p>模型根据昨天、上周、两周前、历史中位数和回退值生成八个候选预测。依赖缺失数据的候选会被排除。</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">04</span>
     <div>
-      <h3>预测带着证据离开</h3>
-      <p>服务返回四条 24 小时预测序列，同时保留专家值、可用性、路由质量、基线、有界修正与包络检查，使结果可以从同一请求重新播放。</p>
+      <h3>同时输出预测和计算记录</h3>
+      <p>服务返回四条 24 小时预测，并记录候选值、候选权重、受限修正和范围检查结果。</p>
     </div>
   </article>
 </div>
 
-<p class="section-link"><a href="guide/problem/">阅读完整服务场景 →</a></p>
+<p class="section-link"><a href="guide/problem/">查看适用场景与边界 →</a></p>
 
 <span class="section-eyebrow">适用场景</span>
 
 ## 什么时候会需要这样的预测方式 {: .section-title }
 
-<p class="section-lead">当预测契约和点估计同样重要时，WLCR-SEA 更有意义：评分器只能使用有限证据，遥测可能不完整，并且事后需要有人解释哪些信息真正影响了结果。</p>
+<p class="section-lead">当模型只能访问有限数据、历史记录可能不完整，或事后需要检查预测为何变化时，WLCR-SEA 更有意义。</p>
 
 <div class="scenario-grid">
   <article class="scenario-card">
     <span class="scenario-tag">规划</span>
     <h3>每日无线资源规划</h3>
-    <p>为次日主动资源规划提供小区级需求信号，同时让预测服务与下游调度器或控制器保持职责分离。</p>
+    <p>在分配资源前估计次日需求，同时把预测与后续调度、控制分开。</p>
   </article>
   <article class="scenario-card">
     <span class="scenario-tag">容量</span>
     <h3>服务容量展望</h3>
-    <p>当团队需要面向下一运营周期的紧凑小区视图时，给出四个流量指标的预期变化形态。</p>
+    <p>用一个简洁的小区视图展示四项流量指标在下一天可能怎样变化。</p>
   </article>
   <article class="scenario-card">
     <span class="scenario-tag">中断</span>
-    <h3>遥测数据不完整</h3>
-    <p>严格移除不可用季节参考，并观察随机缺失、连续区块、最近尾部或异步指标缺失如何改变预测路径。</p>
+    <h3>测量数据不完整</h3>
+    <p>排除已经缺失的历史参考，并测量不同缺失方式会怎样影响预测。</p>
   </article>
   <article class="scenario-card">
-    <span class="scenario-tag">治理</span>
-    <h3>审计与故障复盘</h3>
-    <p>根据请求和模型版本重放预测，检查当时哪些证据可用、被选中，或因不可用而被结构性排除。</p>
+    <span class="scenario-tag">复盘</span>
+    <h3>结果检查与故障复盘</h3>
+    <p>使用相同输入和模型版本重新计算，并检查哪些历史参考被使用或排除。</p>
   </article>
   <article class="scenario-card">
     <span class="scenario-tag">研究</span>
     <h3>受控预测研究</h3>
-    <p>在同一个明确服务契约下比较洁净精度、缺失鲁棒性、请求局部性、审计属性与推理延迟。</p>
+    <p>在相同测试规则下比较完整数据精度、移除数据后的表现、输入限制、计算检查和运行速度。</p>
   </article>
   <article class="scenario-card scenario-card--boundary">
     <span class="scenario-tag">不是结论</span>
@@ -118,32 +118,32 @@ hide:
 
 <span class="section-eyebrow">为什么是 WLCR-SEA</span>
 
-## 证据约束改变了模型形态 {: .section-title }
+## WLCR-SEA 如何在数据限制下工作 {: .section-title }
 
-<p class="section-lead">当经过授权的邻区状态可用时，图预测模型可能更合适。本项目研究的是另一种情形：每一个在线值都必须来自当前请求或冻结的全局资产，并且每一个仍在使用的参考依据都应该可见。</p>
+<p class="section-lead">如果能够可靠获得邻区数据，图模型可能更合适。WLCR-SEA 解决的是更受限的情况：每次预测只能使用当前输入和训练阶段得到的固定信息。</p>
 
 <figure class="paper-figure">
   <a href="../images/paper_figure_architecture.png" target="_blank" rel="noopener">
-    <img src="../images/paper_figure_architecture.png" alt="WLCR-SEA 结构化季节专家路由架构" loading="lazy" decoding="async">
+    <img src="../images/paper_figure_architecture.png" alt="WLCR-SEA 如何生成并组合候选预测" loading="lazy" decoding="async">
   </a>
-  <figcaption>论文图 2 · 有限专家接口、可用集合路由、有界修正与拟议的语义审计记录。</figcaption>
+  <figcaption>论文图 2 · 八个历史候选经过筛选和加权，再进行幅度受限的最终修正。</figcaption>
 </figure>
 
 <div class="feature-grid">
   <article class="feature-card">
     <span class="feature-number">01 · 请求</span>
-    <h3>自包含输入</h3>
-    <p>评分器只接收一份有序历史及掩码，不能查询其他小区、拓扑表、在线特征库或跨请求流量缓存。</p>
+    <h3>一份完整输入</h3>
+    <p>模型只接收一个小区的历史数据和缺失标记，不能临时读取其他小区或外部在线服务。</p>
   </article>
   <article class="feature-card">
     <span class="feature-number">02 · 路由</span>
-    <h3>具名季节证据</h3>
-    <p>八个候选针对每个预测步与指标公开数值、可用性、可靠度和路由质量；不可用专家获得严格为零的权重。</p>
+    <h3>八个明确的候选预测</h3>
+    <p>每个候选都对应一种已知历史规律。模型会记录候选值、能否使用以及获得的权重。</p>
   </article>
   <article class="feature-card">
-    <span class="feature-number">03 · 审计</span>
-    <h3>有界且可重放的输出</h3>
-    <p>学习修正被限制在路由基线周围的有限对数空间范围内，请求和模型版本则为后续重放提供锚点。</p>
+    <span class="feature-number">03 · 记录</span>
+    <h3>幅度受限的最终修正</h3>
+    <p>模型可以修正加权平均值，但修正幅度有固定限制。保存输入和模型版本后可以再次计算。</p>
   </article>
 </div>
 
@@ -151,32 +151,32 @@ hide:
 
 <span class="section-eyebrow">研究发现</span>
 
-## 让鲁棒性、可审计性与代价同时可见 {: .section-title }
+## 实验说明了什么，又没有说明什么 {: .section-title }
 
-<p class="section-lead">论文研究了来自 736 个小区的 527,760 条小区小时记录，但没有宣称普遍精度领先：DLinear 的洁净 WAPE 最低；WLCR-SEA 的主要证据在于既定协议下的结构化缺失鲁棒性和审计特性。</p>
+<p class="section-lead">论文使用了 736 个小区的 527,760 条小时记录。历史数据完整时，DLinear 的预测更准确；当连续一段历史缺失，或需要检查计算依据时，WLCR-SEA 更有优势。</p>
 
 <figure class="paper-figure">
   <a href="../images/paper_figure_missingness.png" target="_blank" rel="noopener">
-    <img src="../images/paper_figure_missingness.png" alt="论文中不同缺失机制下的预测鲁棒性比较" loading="lazy" decoding="async">
+    <img src="../images/paper_figure_missingness.png" alt="按不同方式移除历史数据后的预测误差" loading="lazy" decoding="async">
   </a>
-  <figcaption>论文图 4。缺失结果以论文规定的固定掩码和重训练为条件，不能解释为跨区域保证。</figcaption>
+  <figcaption>论文图 4。报告的优势只适用于论文采用的固定数据移除方式和训练过程，不能视为跨区域保证。</figcaption>
 </figure>
 
 <div class="metric-strip">
-  <div class="metric"><strong>0.1955</strong><span>WLCR-SEA 洁净 WAPE</span></div>
-  <div class="metric"><strong>0.1854</strong><span>DLinear 最低洁净 WAPE</span></div>
-  <div class="metric"><strong>0</strong><span>审计中的不可用专家质量</span></div>
+  <div class="metric"><strong>0.1955</strong><span>WLCR-SEA 完整数据 WAPE</span></div>
+  <div class="metric"><strong>0.1854</strong><span>DLinear 完整数据 WAPE</span></div>
+  <div class="metric"><strong>0</strong><span>分给缺失参考的权重</span></div>
   <div class="metric"><strong>6.8 ms</strong><span>单种子 CPU 中位延迟</span></div>
 </div>
 
 <div class="demo-cta">
   <div>
-    <h2>用一份请求验证完整流程</h2>
-    <p>载入内置的 336 小时样例，移除部分遥测，检查仍然可用的专家，并下载 24 小时预测与审计记录。公开实验室运行真实的 A0 固定方法路径，而不是未发布的 A6 训练检查点。</p>
+    <h2>用一个样例体验方法</h2>
+    <p>载入内置的 336 小时数据，移除部分历史，查看哪些候选预测仍然可用，并下载 24 小时预测和计算记录。Demo 使用较简单的 A0 固定基线，不是未公开的 A6 训练检查点。</p>
   </div>
-  <a class="md-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">启动引导式审计实验室</a>
+  <a class="md-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">启动在线 Demo</a>
 </div>
 
 <div class="notice-card">
-  <strong>解释边界很重要。</strong>报告中的熵不是经过校准的不确定性；数据只覆盖一个匿名区域约一个月；请求局部处理定义的是证据边界，而不是天然的隐私保证。复用结果前请阅读<a href="research/limitations/">范围与局限</a>。
+  <strong>部署前请阅读适用边界。</strong>数据只覆盖一个匿名区域约一个月；论文中的路由熵不能作为可靠的不确定性分数；限制模型输入也不等于自动获得隐私保护。详见<a href="research/limitations/">完整局限</a>。
 </div>

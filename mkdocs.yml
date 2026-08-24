@@ -1,8 +1,8 @@
 site_name: WLCR-SEA Predictor
 site_url: https://rudykon.github.io/WLCR-SEA_Predictor/
 site_description: >-
-  Auditable request-local cellular traffic forecasting with structured
-  seasonal expert routing, reproducible experiments, and an interactive demo.
+  Forecast the next 24 hours of one cell's traffic from its recent data,
+  with clear handling of missing values and inspectable predictions.
 
 repo_name: rudykon/WLCR-SEA_Predictor
 repo_url: https://github.com/rudykon/WLCR-SEA_Predictor
@@ -68,7 +68,7 @@ plugins:
           build: true
           site_name: WLCR-SEA 蜂窝流量预测
           site_description: >-
-            具有结构化季节专家路由、可复现实验和交互演示的可审计请求局部蜂窝流量预测。
+            根据单个小区的近期数据预测未来 24 小时流量，并清楚处理数据缺失和预测依据。
           theme:
             palette:
               - media: "(prefers-color-scheme: light)"
@@ -93,13 +93,13 @@ plugins:
             Business scenarios: 业务场景
             Architecture: 架构
             Method: 方法
-            Expert routing: 专家路由
-            Data contract: 数据契约
+            How it works: 方法原理
+            CSV input format: CSV 输入格式
             Research: 研究
-            Paper evidence: 论文证据
-            Scope & limitations: 范围与局限
+            Results: 实验结果
+            Limitations: 适用边界
             Demo: 在线演示
-            Audit lab: 审计实验室
+            Live Demo: 在线 Demo
             Reference: 参考
             Code map: 代码地图
             Reproduction: 复现
@@ -150,13 +150,13 @@ nav:
   - Business scenarios: guide/problem.md
   - Architecture: guide/architecture.md
   - Method:
-      - Expert routing: guide/method.md
-      - Data contract: guide/data-contract.md
+      - How it works: guide/method.md
+      - CSV input format: guide/data-contract.md
   - Research:
-      - Paper evidence: research/evidence.md
-      - Scope & limitations: research/limitations.md
+      - Results: research/evidence.md
+      - Limitations: research/limitations.md
   - Demo:
-      - Audit lab: deployment/hugging-face.md
+      - Live Demo: deployment/hugging-face.md
   - Reference:
       - Code map: reference/code-map.md
       - Reproduction: reference/reproduction.md

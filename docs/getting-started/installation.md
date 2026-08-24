@@ -27,9 +27,9 @@ On Windows PowerShell, activate with:
 PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
 ```
 
-The focused test suite checks seasonal indexing, expert definitions, deleted
-value non-leakage, exact hard masking, Entmax normalization, bounded residuals,
-and audit-envelope containment.
+The focused tests check that historical hours are selected correctly, missing
+values cannot affect the result, candidate weights are valid, and the final
+adjustment stays within its configured limit.
 
 ## Run the public method Demo locally
 

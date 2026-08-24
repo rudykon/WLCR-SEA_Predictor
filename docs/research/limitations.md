@@ -1,52 +1,54 @@
-# Scope and limitations
+# Limitations and appropriate use
 
-The repository is strongest when its evidence boundary is kept explicit. These
-limitations are part of the result, not footnotes to remove from deployment
-materials.
+The current evidence supports research and controlled testing. It is not enough
+to claim that the model will work unchanged in every region, season, or live
+network. The main limits are listed below.
 
 ## Data and generalization
 
 - The study covers one anonymous region for roughly one month.
-- All forecast origins are at midnight, so horizon and clock hour are confounded.
-- The August holdout informed redesign decisions; the final evidence remains exploratory.
-- Cell-disjoint refits separate cell identities inside the same trace. They do
-  not establish cross-region, cross-operator, cross-season, or prospective generalization.
-- Performance under a new telemetry process, indicator definition, or load
-  regime must be measured rather than inferred from the reported intervals.
+- Every forecast starts at midnight. The study therefore cannot separate the
+  effect of “hours ahead” from the effect of “time of day.”
+- An August test set influenced some design choices, so the final findings
+  should still be treated as exploratory.
+- Tests with different training and test cells still use the same regional
+  trace. They do not prove performance across regions, operators, or seasons.
+- A new data collection system, metric definition, or traffic pattern requires
+  new evaluation.
 
 ## Accuracy interpretation
 
-- DLinear has the lowest clean WAPE in the reported comparison.
-- The clean paired interval between WLCR-SEA and the prior traffic-only method
-  includes zero; the study does not detect a difference there.
-- Moderate missingness intervals against selected augmentation-matched baselines
-  can include zero.
-- Strong structured-missingness findings are conditional on fixed masks and refits.
-- Routing entropy is not calibrated uncertainty in the reported evidence.
+- DLinear has the lowest complete-data WAPE in the reported comparison.
+- WLCR-SEA and the prior traffic-only method do not show a clear difference on
+  complete data because the confidence interval includes zero.
+- At some moderate missing rates, differences from selected baselines are also
+  unclear.
+- The strongest missing-data results apply to the fixed removal patterns and
+  retraining runs used in the paper.
+- Routing entropy is not a reliable uncertainty estimate in this study.
 
 ## Serving and privacy
 
-Request-local scoring prevents the predictor from issuing identity-conditioned
-traffic lookups during one forecast. It does not, by itself, provide:
+The model is prevented from fetching extra traffic based on the cell ID during
+one prediction. This restriction does **not** by itself provide:
 
 - access control or authorization;
 - encryption at rest or in transit;
 - anonymization or differential privacy;
-- a guarantee that logs, caches, ingress services, or downstream consumers are safe.
+- a guarantee that logs, caches, data gateways, or downstream systems are safe.
 
-The cell identifier can still exist outside the forecasting function for
-authorization, routing, and audit. Production systems need explicit retention,
-logging, key-management, and incident-response policies.
+The cell ID can still exist outside the model for access control and record
+keeping. A production system still needs clear rules for data retention, logs,
+encryption keys, and incident response.
 
 ## Public Demo boundary
 
-The repository does not publish the fitted A6 checkpoint or frozen training
-prior. The public Space therefore runs `A0_fixed`, the real parameter-free
-ablation, and substitutes a request-derived value only for the last-resort
-fallback slot. This makes the evidence mechanics executable without claiming
-that the output is the paper model.
+The repository does not include the trained A6 checkpoint or the training-set
+fallback values. The public Space therefore runs the simpler `A0_fixed`
+baseline and uses a value calculated from the current input as its final
+fallback. This is enough to demonstrate the calculation steps, but it is not
+the paper's trained model.
 
-!!! danger "Do not benchmark the paper with the Space"
-    Demo forecasts are not eligible for comparison with the manuscript tables.
-    Reproduce the fitted experiments with the documented data, splits,
-    checkpoints, and evaluation scripts instead.
+!!! danger "Do not compare Demo outputs with the paper tables"
+    To reproduce the paper, use the documented dataset, splits, training
+    process, checkpoints, and evaluation scripts.

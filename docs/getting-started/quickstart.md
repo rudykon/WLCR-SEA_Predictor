@@ -1,29 +1,32 @@
 # Quick start
 
-Choose the path that matches what you want to inspect.
+Choose what you want to do. The Live Demo is the fastest way to understand the
+project; the Python examples are for developers and researchers.
 
-## 1. Explore one request interactively
+## 1. Try the Live Demo
 
-[Open the Hugging Face Audit Lab](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Open the Hugging Face Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
 
-Select the bundled synthetic CSV, choose a telemetry-loss mechanism, and run
-the audit. You will receive:
+Select the built-in sample, choose how much history to remove, and run the
+forecast. You will receive:
 
-- all four 24-hour forecasts from the registered `A0_fixed` baseline;
-- a history/forecast plot and available-expert envelope;
-- values, availability, reliability, and fixed routing weight for eight experts;
-- a forecast CSV and a JSON audit record.
+- four 24-hour forecasts from the `A0_fixed` baseline;
+- plots of the history and forecast;
+- the range covered by currently usable candidates;
+- values and weights for all eight candidates;
+- a forecast CSV and a JSON calculation record.
 
-The trained A6 checkpoint is not in this repository. The interface states this
-at the top and in every exported record.
+The Demo uses a simple fixed baseline because the trained A6 checkpoint is not
+included in the repository. It is for understanding the method, not reproducing
+the paper's main result.
 
-## 2. Inspect the real expert builder in Python
+## 2. Build the eight candidates in Python
 
 ```python
 import numpy as np
 from experiments import wlcr_sea_model as sea
 
-# One request: log1p values, authoritative masks, and a frozen prior.
+# One input: log1p values, present/missing markers, and a training prior.
 x = np.zeros((1, 336, 4), dtype=np.float32)
 m = np.ones_like(x, dtype=bool)
 prior = np.zeros((24, 4), dtype=np.float32)
@@ -48,13 +51,13 @@ forecast = seasonal_forecast(window, BaselineConfig.default())
 assert len(forecast) == 24
 ```
 
-This utility and the Demo's fixed expert mixture are deterministic baselines.
-They are useful for contracts and method inspection, not substitutes for the
-trained WLCR-SEA results reported in the paper.
+This utility and the Demo always return the same result for the same input.
+They are useful for checking code and input format, but they do not replace the
+trained WLCR-SEA results in the paper.
 
 ## 4. Reproduce experiments
 
-Start with the [reproduction map](../reference/reproduction.md), then use the
-tracked scripts for training, matched missingness, latency, auditability, and
-evidence-integrity checks. Large data, generated checkpoints, and result
-artifacts are intentionally not stored in Git.
+Start with the [reproduction guide](../reference/reproduction.md). It points to
+the scripts for training, missing-data tests, speed tests, and calculation
+checks. Large datasets, trained checkpoints, and generated results are not
+stored in Git.

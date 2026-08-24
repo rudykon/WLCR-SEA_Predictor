@@ -1,65 +1,65 @@
-# Hugging Face Audit Lab
+# Hugging Face Live Demo
 
-[Launch WLCR-SEA Request Audit Lab](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Launch the WLCR-SEA Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
 [View Demo source](https://github.com/rudykon/WLCR-SEA_Predictor/tree/main/demo){ .md-button target="_blank" rel="noopener" }
 
-The public Gradio Space makes the repository's request-local mechanics
-interactive without inventing a trained checkpoint.
+The public Gradio app shows how WLCR-SEA uses historical patterns and what
+happens when part of the history is missing.
 
-## A five-minute scenario
+## Try it in five minutes
 
-Imagine that the latest telemetry for one cell has stopped arriving, but a
-planner still needs a next-day demand signal. The Audit Lab lets you follow that
-request from intact history to degraded evidence:
+Imagine that the latest measurements for one cell stop arriving, but a planner
+still needs tomorrow's demand estimate. The Demo lets you test this directly:
 
 1. load the bundled 336-hour synthetic request and run the **Clean** case;
 2. switch to **Recent-tail outage** and move the missingness rate upward;
-3. choose one indicator and horizon to see which seasonal references disappear;
-4. confirm that unavailable experts receive exactly zero routing mass;
-5. compare the forecast with its available-expert envelope, then download the
-   forecast CSV and versioned audit JSON.
+3. choose one indicator and future hour to see which historical candidates disappear;
+4. confirm that unavailable candidates receive exactly zero weight;
+5. compare the forecast with the range of available candidates, then download
+   the forecast CSV and JSON calculation record.
 
-This walkthrough answers a structural question—*what does the method do when
-authorized evidence disappears?* It does not estimate the business impact of a
-real outage or reproduce the undistributed trained A6 checkpoint.
+This test answers a practical question: *what does the method do when part of
+the history is missing?* It does not measure the business impact of a real
+outage, and it does not run the unavailable trained A6 model.
 
-## What it runs
+## Code used by the Demo
+
+The interface uses real repository code rather than a mocked calculation:
 
 The execution path imports and uses:
 
-- `read_traffic` and `split_physical_windows` for the physical CSV contract;
-- `global_corruption_mask` for deterministic telemetry-loss scenarios;
-- `build_expert_batch` for the eight real seasonal experts;
-- `WLCRSEA(VARIANTS["A0_fixed"])` for the registered parameter-free mixture;
-- `bounded_audit_envelope` for a structural containment check.
+- `read_traffic` and `split_physical_windows` read and validate the CSV;
+- `global_corruption_mask` removes data in repeatable patterns;
+- `build_expert_batch` builds the eight historical candidates;
+- `WLCRSEA(VARIANTS["A0_fixed"])` combines them with fixed weights;
+- `bounded_audit_envelope` checks that the forecast stays inside the allowed range.
 
-The fixed mixture starts from weekly lag 0.7, biweekly lag 0.2, and seven-day
-same-hour median 0.1. Unavailable components are removed and the remaining mass
-is renormalized. If all three are unavailable, the method uses the fallback
-slot.
+The initial weights are previous week 0.7, two weeks earlier 0.2, and 7-day
+same-hour median 0.1. If one candidate is unavailable, the remaining weights
+are scaled to add up to one. If all three are unavailable, a fallback is used.
 
 <div class="notice-card">
-  <strong>Not trained A6 inference.</strong> The repository does not distribute the fitted A6 checkpoint or frozen training prior. The Demo's last-resort slot is a request-derived fallback and is marked with an asterisk. Exported JSON records set <code>paper_model: false</code>.
+  <strong>This is not the trained A6 paper model.</strong> The repository does not include the A6 checkpoint or training-set prior. The Demo's final fallback is calculated from the current input and marked with an asterisk. Exported JSON records set <code>paper_model: false</code>.
 </div>
 
 ## Controls
 
 | Control | Purpose |
 | --- | --- |
-| Request CSV | One 336-hour, one-cell physical window |
-| Telemetry scenario | Clean, random hour, contiguous block, recent tail, or asynchronous indicator loss |
-| Missingness rate | Deterministic additional removal from 0% to 80% |
-| Indicator | Selects the detailed expert record |
-| Horizon | Selects one of the 24 future hours for expert inspection |
+| Request CSV | One cell with 336 hourly rows |
+| Missing-data pattern | Complete, random hours, one continuous block, recent hours, or different times by indicator |
+| Missing rate | Removes an additional 0% to 80% of values in a repeatable way |
+| Indicator | Chooses which traffic measure to inspect |
+| Future hour | Chooses one of the 24 predictions to inspect |
 
 ## Outputs
 
 - four history and 24-hour forecast panels;
-- the available-expert min/max envelope;
-- candidate values, availability, reliability, and routing weight;
-- exact unavailable-expert mass and envelope status;
+- the minimum and maximum of currently usable candidates;
+- candidate values, availability, support, and weights;
+- total weight given to unavailable candidates and the range-check result;
 - downloadable 24-hour forecast CSV;
-- downloadable versioned JSON audit record with the input SHA-256.
+- a downloadable versioned JSON calculation record with the input SHA-256.
 
 ## Run locally
 
@@ -73,12 +73,11 @@ python demo/app.py
 For sensitive traffic, local or private deployment is the appropriate path.
 Do not upload confidential operator data to the public Space.
 
-## Free ZeroGPU deployment
+## Deployment details for maintainers
 
-The Space is declared as a Gradio `zero-a10g` deployment. One tiny fixed-model
-pass is wrapped in `@spaces.GPU`; model imports remain inside the runtime path so
-`spaces` is imported first. GitHub Actions stages the Space README frontmatter
-separately and mirrors the repository after each main-branch update.
+The Space uses free Gradio `zero-a10g` hardware. The small model calculation is
+wrapped in `@spaces.GPU`, and GitHub Actions mirrors the repository after each
+update to `main`.
 
-The root GitHub README remains ordinary Markdown—there is no YAML metadata block
-or table at its top.
+The GitHub README remains ordinary Markdown; Space-specific metadata is added
+only during deployment.

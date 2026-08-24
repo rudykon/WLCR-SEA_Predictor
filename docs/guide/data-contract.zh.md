@@ -1,6 +1,6 @@
-# 数据契约
+# CSV 输入格式
 
-仓库中的物理窗口工具与公开 Demo 使用同一套六列 CSV 契约。公开 Demo 的一次上传只包含一个请求。
+命令行工具和公开 Demo 使用相同的六列 CSV。每次上传包含一个小区连续 336 行小时数据。
 
 ## 必需表头
 
@@ -17,7 +17,8 @@
 | 编码 | UTF-8 或带 BOM 的 UTF-8 |
 | 上传大小 | 公开 Space 最多 5 MB |
 
-预测的 24 个时间戳从最后输入行后一小时开始。缺失由观测掩码表示，数值填充不是证据。
+预测从最后一行的下一小时开始，覆盖未来 24 小时。`NIL` 或空字段表示该值缺失。
+模型内部使用布尔标记保存这一信息，因此不会把占位数值误认为真实观测。
 
 ## 最小预览
 
@@ -29,7 +30,7 @@
 
 完整内置请求见
 [`demo/examples/synthetic_traffic.csv`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/demo/examples/synthetic_traffic.csv)。
-该文件由程序确定性生成，不包含运营商或参与者数据。
+该文件由程序生成，每次内容相同，不包含真实运营商或参与者数据。
 
 ## 程序化验证
 
@@ -42,6 +43,6 @@ assert len(windows) == 1
 assert not windows[0].gaps
 ```
 
-!!! warning "公开基础设施"
-    请勿向公开 Space 上传机密运营流量。应用不会主动持久化请求，但 Hugging Face 属于共享托管环境。
-    对敏感数据，请在自有受控环境中运行 `demo/app.py`。
+!!! warning "请勿上传机密数据"
+    该应用并非为了保存请求，但 Hugging Face 是共享的公开基础设施。敏感数据请在自有受控环境中
+    运行 `demo/app.py`。

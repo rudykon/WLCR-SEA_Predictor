@@ -1,27 +1,29 @@
 # 快速开始
 
-根据想检查的内容选择路径。
+根据你的目标选择入口。在线 Demo 最适合快速理解项目；Python 示例面向开发者和研究人员。
 
-## 1. 交互检查一个请求
+## 1. 体验在线 Demo
 
-[打开 Hugging Face 审计实验室](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[打开 Hugging Face Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
 
-选择内置合成 CSV、设定遥测缺失机制并开始审计。页面将输出：
+选择内置样例、设定要移除多少历史数据，然后运行预测。页面将输出：
 
-- 仓库登记的 `A0_fixed` 基线对四个指标的 24 小时预测；
-- 历史/预测图和可用专家范围；
-- 八个专家的数值、可用性、可靠度与固定路由权重；
-- 预测 CSV 和 JSON 审计记录。
+- `A0_fixed` 基线对四个指标的 24 小时预测；
+- 历史和预测图；
+- 当前可用候选所覆盖的范围；
+- 八个候选的数值和权重；
+- 预测 CSV 和 JSON 计算记录。
 
-仓库没有训练后的 A6 检查点；界面顶部和每个导出记录都会明确说明。
+由于仓库没有提供训练后的 A6 检查点，Demo 使用简单的固定基线。它用于理解方法，
+不能复现论文主结果。
 
-## 2. 在 Python 中检查真实专家构造
+## 2. 在 Python 中生成八个候选
 
 ```python
 import numpy as np
 from experiments import wlcr_sea_model as sea
 
-# 一个请求：log1p 数值、权威掩码和冻结先验。
+# 一个输入：log1p 数值、存在/缺失标记和训练先验。
 x = np.zeros((1, 336, 4), dtype=np.float32)
 m = np.ones_like(x, dtype=bool)
 prior = np.zeros((24, 4), dtype=np.float32)
@@ -46,10 +48,10 @@ forecast = seasonal_forecast(window, BaselineConfig.default())
 assert len(forecast) == 24
 ```
 
-该工具和 Demo 中的固定专家混合都是确定性基线，适合验证契约与检查方法，
-但不能替代论文报告的训练后 WLCR-SEA 结果。
+该工具和 Demo 对相同输入总会返回相同结果，适合检查代码和输入格式，
+但不能替代论文中的训练后 WLCR-SEA 结果。
 
 ## 4. 复现实验
 
-先查看[复现地图](../reference/reproduction.md)，再使用仓库脚本完成训练、配对缺失、延迟、
-可审计性和证据完整性检查。大型数据、生成的检查点和结果产物不会存入 Git。
+先查看[复现指南](../reference/reproduction.md)。其中列出了训练、缺失数据测试、速度测试和计算检查脚本。
+大型数据集、训练检查点和生成结果不会存入 Git。

@@ -1,21 +1,22 @@
 # Code map
 
-The repository separates the public method, experiment orchestration, physical
-CSV utilities, evidence audits, paper source, and website/Demo layers.
+This page is for developers who want to find an implementation quickly. The
+repository separates model code, experiment scripts, CSV handling, result
+checks, paper files, and the website/Demo.
 
 | Path | Responsibility |
 | --- | --- |
-| `experiments/wlcr_sea_model.py` | Expert construction, Entmax, WLCR-SEA variants, losses, metrics, audit envelope |
-| `experiments/missingness_protocol.py` | Deterministic absolute cell–time corruption and rate accounting |
-| `experiments/train_wlcr_sea.py` | WLCR-SEA training orchestration |
-| `experiments/analyze_matched_missingness.py` | Matched robustness analysis |
-| `experiments/audit_expert_routing.py` | Routing mass, deletion, and influence audits |
-| `experiments/audit_request_locality.py` | Serving field allowlist and request-object invariance |
+| `experiments/wlcr_sea_model.py` | Candidate construction, Entmax, WLCR-SEA variants, losses, metrics, and saved calculation fields |
+| `experiments/missingness_protocol.py` | Removes data in fixed, repeatable patterns and records the actual rate |
+| `experiments/train_wlcr_sea.py` | Runs WLCR-SEA training |
+| `experiments/analyze_matched_missingness.py` | Compares models after removing the same data points |
+| `experiments/audit_expert_routing.py` | Checks candidate weights and measures the effect of deleting candidates |
+| `experiments/audit_request_locality.py` | Checks that the model reads only approved input fields |
 | `experiments/benchmark_wlcr_sea_latency.py` | Single-thread latency and memory benchmark |
-| `experiments/validate_evidence_integrity.py` | Cross-artifact evidence consistency |
-| `Model/traffic_window_forecasting.py` | Six-column CSV contract and deterministic seasonal baseline |
-| `tests/test_wlcr_sea_model.py` | Focused public-method invariants |
-| `demo/` | Bilingual Gradio audit lab, synthetic request, and Space metadata |
+| `experiments/validate_evidence_integrity.py` | Checks that reported results agree across generated files |
+| `Model/traffic_window_forecasting.py` | Six-column CSV input and fixed seasonal baseline |
+| `tests/test_wlcr_sea_model.py` | Core behavior tests for the public method |
+| `demo/` | Bilingual Gradio demo, synthetic sample, and Space configuration |
 | `docs/` | Existing technical guides plus this bilingual MkDocs site |
 | `paper/` | English/Chinese manuscript source, PDFs, and figure sources |
 
@@ -23,17 +24,15 @@ CSV utilities, evidence audits, paper source, and website/Demo layers.
 
 | Object | Shape | Meaning |
 | --- | --- | --- |
-| History values | `N × 336 × 4` | `log1p` traffic with arbitrary finite fills |
-| History mask | `N × 336 × 4` | Authoritative observation state |
-| Expert values | `N × 24 × 4 × 8` | Horizon–indicator candidate evidence |
-| Availability | `N × 24 × 4 × 8` | Exact routing subset |
-| Reliability | `N × 24 × 4 × 8` | Support fraction or binary support |
+| History values | `N × 336 × 4` | Traffic values after `log1p`; missing positions may contain placeholders |
+| History mask | `N × 336 × 4` | Whether each historical value is present |
+| Candidate values | `N × 24 × 4 × 8` | Eight candidate forecasts for each future hour and indicator |
+| Availability | `N × 24 × 4 × 8` | Whether each candidate can be used |
+| Reliability | `N × 24 × 4 × 8` | How much historical data supports each candidate |
 | Prediction | `N × 24 × 4` | Log forecast before inverse transform |
 
 ## Variants
 
-`VARIANTS` exposes the progression from fixed and static routers to softmax,
-Entmax, hard masking, reliability, bounded residuals, missingness augmentation,
-consistency, and cross-indicator context. The selected paper method is
-`A6_mixed_aug`; the public interactive Demo uses `A0_fixed` because it requires
-no unpublished fitted parameters.
+`VARIANTS` contains the fixed baseline and the learned model variants tested in
+the paper. The selected paper method is `A6_mixed_aug`. The public Demo uses
+`A0_fixed` because it does not require the unpublished trained parameters.

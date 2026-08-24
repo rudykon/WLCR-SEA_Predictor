@@ -1,13 +1,20 @@
-# Paper evidence
+# Experimental results
 
-The manuscript evaluates an exploratory **robustness–inspectability–cost
-profile**, not a universal leaderboard winner. Results below preserve the
-paper's estimands and qualifications.
+The main result is straightforward: **WLCR-SEA is not the most accurate model
+when all historical data are present. Its value is clearer when blocks of
+history are missing and when users need to inspect how a prediction was
+formed.**
+
+!!! info "How to read the numbers"
+    **WAPE** is a forecasting error: lower is better. A **95% confidence
+    interval** shows the range supported by the experiment. When an interval
+    for a difference includes zero, the study cannot establish a clear
+    difference between the two models.
 
 [English paper PDF](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/paper/main.pdf){ .md-button target="_blank" rel="noopener" }
 [Chinese paper PDF](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/paper/main_zh.pdf){ .md-button target="_blank" rel="noopener" }
 
-## Study frame
+## Data and evaluation setup
 
 | Item | Reported setting |
 | --- | --- |
@@ -15,47 +22,47 @@ paper's estimands and qualifications.
 | Cells | 736 |
 | Request | 336-hour history plus observation mask |
 | Target | Next 24 hours, four indicators |
-| Clean split | Fixed chronological holdout defined in the paper |
-| Missingness | Matched deterministic masks, with refits where specified |
+| Complete-data test | Fixed later time period defined in the paper |
+| Missing-data test | The same data points are removed for all compared models |
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_scenario.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_scenario.png" alt="Request-local evidence boundary used by the study" loading="lazy">
+    <img src="../../images/paper_figure_scenario.png" alt="One cell's data moving from input preparation to forecast and calculation record" loading="lazy">
   </a>
-  <figcaption>Figure 1 · The evaluated serving path is self-contained after request materialization.</figcaption>
+  <figcaption>Figure 1 · Each prediction uses one prepared cell history and cannot fetch live traffic from other cells.</figcaption>
 </figure>
 
-## Clean forecasting
+## When all historical data are present
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_clean_accuracy.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_clean_accuracy.png" alt="Clean holdout routing hierarchy" loading="lazy">
+    <img src="../../images/paper_figure_clean_accuracy.png" alt="Model comparison when historical data are complete" loading="lazy">
   </a>
-  <figcaption>Figure 3 · Routing hierarchy on the clean holdout.</figcaption>
+  <figcaption>Figure 3 · Model comparison when historical data are complete.</figcaption>
 </figure>
 
-| Result | WAPE | Interpretation |
+| Model | WAPE | What it means |
 | --- | ---: | --- |
-| DLinear | **0.1854** | Lowest clean WAPE in the comparison |
-| Prior traffic-only method | 0.1951 | Paired reference for the selected method |
-| WLCR-SEA, five-seed ensemble | 0.1955 | Difference +0.00045; 95% CI [-0.00312, 0.00366] |
+| DLinear | **0.1854** | Lowest complete-data WAPE in the comparison |
+| Prior traffic-only method | 0.1951 | Similar error to WLCR-SEA |
+| WLCR-SEA, five-model ensemble | 0.1955 | Difference from prior method: +0.00045; 95% CI [-0.00312, 0.00366] |
 
-The paired interval versus the prior method contains zero. The study therefore
-does not detect a clean-history difference between those two methods. It also
-does not obscure that DLinear is more accurate on the clean comparison.
+**Conclusion:** DLinear has the lowest error in this complete-data comparison.
+The interval for WLCR-SEA versus the prior traffic-only method includes zero,
+so the experiment does not show a clear difference between those two methods.
 
-## Structured missingness
+## When parts of the history are missing
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_missingness.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_missingness.png" alt="Matched missingness robustness results" loading="lazy">
+    <img src="../../images/paper_figure_missingness.png" alt="Model comparison after removing the same historical values" loading="lazy">
   </a>
-  <figcaption>Figure 4 · Robustness under matched missing-telemetry mechanisms.</figcaption>
+  <figcaption>Figure 4 · Forecast errors after removing the same values for all compared models.</figcaption>
 </figure>
 
-At moderate selected missingness, intervals versus DLinear-Aug and PatchTST-Aug
-include zero. Under the listed 50% structured-corruption settings, WLCR-SEA
-reports:
+The paper removes data in several realistic patterns: one continuous block,
+the most recent part of the timeline, or different times for different
+indicators. With 50% of values removed in these patterns, WLCR-SEA reports:
 
 | 50% mechanism | WLCR-SEA WAPE |
 | --- | ---: |
@@ -63,41 +70,49 @@ reports:
 | Timeline tail | 0.2460 |
 | Asynchronous indicators | 0.2172 |
 
-All nine paired differences against the matched DLinear-Aug, PatchTST-Aug, and
-GRU-D baselines are below zero under those fixed masks. This evidence is
-conditional on five fixed corruption masks; it is not a claim about every
-possible outage or retraining run.
+For these fixed tests, WLCR-SEA has lower error in all nine comparisons against
+DLinear-Aug, PatchTST-Aug, and GRU-D. At some moderate missing rates, however,
+the confidence intervals versus DLinear-Aug and PatchTST-Aug include zero.
 
-## Auditability
+**Conclusion:** the results support better performance under the tested severe
+missing-data patterns. They do not guarantee better results for every outage,
+dataset, or retraining run.
+
+## Can the calculation be checked?
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_auditability.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_auditability.png" alt="Auditability evidence including expert deletion and routing influence" loading="lazy">
+    <img src="../../images/paper_figure_auditability.png" alt="Checks of candidate weights, deletion effects, and prediction limits" loading="lazy">
   </a>
-  <figcaption>Figure 5 · Structural checks, expert deletion, and routing–influence alignment.</figcaption>
+  <figcaption>Figure 5 · Checks of candidate weights, deletion effects, and prediction limits.</figcaption>
 </figure>
 
-| Audit | Reported result |
+| Check | Reported result |
 | --- | ---: |
-| Unavailable-expert routing mass | 0 |
-| Bounded-envelope violations | 0 |
-| Bitwise serving-path differences across 256 request objects | 0 |
-| Effective expert support | 5.223 [5.101, 5.345] |
-| Top-weight expert deletion, WAPE increase | +0.00595 [0.00441, 0.00757] |
-| Matched-random deletion, WAPE increase | +0.00104 [0.00079, 0.00131] |
-| Weight–influence Spearman | 0.693 [0.678, 0.708] |
+| Weight given to unavailable candidates | 0 |
+| Predictions outside the allowed adjustment range | 0 |
+| Output changes caused only by changing the request object wrapper (256 tests) | 0 |
+| Average number of candidates receiving meaningful support | 5.223 [5.101, 5.345] |
+| Error increase after removing the highest-weight candidate | +0.00595 [0.00441, 0.00757] |
+| Error increase after removing a random matched candidate | +0.00104 [0.00079, 0.00131] |
+| Relationship between assigned weight and measured influence (Spearman) | 0.693 [0.678, 0.708] |
 
-Routing entropy has mean correlation -0.0196 with absolute percentage error,
-95% CI [-0.0407, 0.0016]. The interval includes zero, so entropy should **not**
-be used as a calibrated uncertainty score based on this study.
+Candidates with higher weights usually have a larger measured effect when
+removed. This supports the usefulness of the saved weights for inspection.
 
-## Cost and cell-disjoint audit
+One negative result is equally important: routing entropy has mean correlation
+-0.0196 with absolute percentage error, 95% CI [-0.0407, 0.0016]. Because the
+interval includes zero, entropy should **not** be treated as a reliable
+uncertainty score.
 
-With one CPU thread and batch size one, the reported single-seed median latency
-is 6.802 ms (P99 7.574 ms, 16.2 KiB). The five-seed ensemble median is 34.705 ms
-(P99 38.684 ms, 148.8 KiB).
+## Speed and a stricter cell split
 
-In the protocol-matched cell-disjoint refits, WLCR-SEA records WAPE 0.1967.
-Intervals versus DLinear-Aug and the prior method include zero; the interval
-versus PatchTST-Aug lies below zero. These fixed refits are a within-trace audit,
-not evidence of retraining or cross-region generalization.
+Using one CPU thread and predicting one request at a time, one WLCR-SEA model
+takes a median of 6.802 ms (P99 7.574 ms, 16.2 KiB). The five-model ensemble
+takes a median of 34.705 ms (P99 38.684 ms, 148.8 KiB).
+
+In a stricter split where training and test sets use different cells,
+WLCR-SEA records WAPE 0.1967. Differences from DLinear-Aug and the prior method
+are not clear because their intervals include zero; the result is better than
+PatchTST-Aug in this test. All cells still come from the same regional trace,
+so this does not prove performance in another region or season.

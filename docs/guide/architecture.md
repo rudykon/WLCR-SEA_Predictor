@@ -1,14 +1,14 @@
 # System architecture
 
-WLCR-SEA turns the request-local evidence rule into a five-part serving path.
-The architecture defines **where data may enter, how it moves, and what must be
-recorded**. The forecasting method then operates inside that boundary.
+The system has five clear steps: prepare one cell's history, pass it to the
+model, build candidate forecasts, combine the usable candidates, and return a
+forecast with a calculation record.
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_architecture.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_architecture.png" alt="WLCR-SEA system architecture from sealed request through expert construction and masked routing to forecast and audit record" loading="lazy">
+    <img src="../../images/paper_figure_architecture.png" alt="WLCR-SEA architecture from prepared input through candidate weighting to forecast and calculation record" loading="lazy">
   </a>
-  <figcaption>Manuscript Figure 2. The online path keeps request assembly, expert construction, routing, correction and audit output explicit.</figcaption>
+  <figcaption>Manuscript Figure 2. The diagram shows how one input becomes candidate forecasts, a final prediction, and an inspection record.</figcaption>
 </figure>
 
 ## Five components, five responsibilities
@@ -17,60 +17,59 @@ recorded**. The forecasting method then operates inside that boundary.
   <article class="process-step">
     <span class="step-number">01</span>
     <div>
-      <h3>Identity-aware ingress</h3>
-      <p>The serving layer authenticates the source and resolves operational identity. It assembles one 336-hour history and its observation mask, then keeps the cell ID outside the forecasting feature path.</p>
+      <h3>Data gateway</h3>
+      <p>The service verifies the cell and prepares 336 hours of data. A Boolean mask marks missing values. The cell ID is kept outside the model.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">02</span>
     <div>
-      <h3>Sealed request boundary</h3>
-      <p>The scorer receives only the ordered four-indicator tensor, the authoritative mask and frozen global assets. It cannot reach into another request, another cell or a live topology service.</p>
+      <h3>Fixed model input</h3>
+      <p>The model receives the four traffic series, their missing-value markers, and fixed information learned during training. It cannot fetch extra live traffic.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">03</span>
     <div>
-      <h3>Seasonal expert builder</h3>
-      <p>For every horizon and indicator, the builder materializes eight named candidates plus their availability and reliability. Removed evidence is recomputed rather than hidden behind a numerical fill.</p>
+      <h3>Candidate builder</h3>
+      <p>For each future hour and indicator, the model creates eight candidate forecasts from known historical patterns and records which ones can be computed.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">04</span>
     <div>
-      <h3>Available-set router and bounded predictor</h3>
-      <p>The router assigns mass only across surviving experts. Their convex combination forms the baseline; a bounded residual can refine it without leaving the finite expert envelope by more than the configured margin.</p>
+      <h3>Weighting and limited adjustment</h3>
+      <p>The model gives weights only to usable candidates. Their weighted average is the main forecast, followed by a final adjustment whose size is limited.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">05</span>
     <div>
-      <h3>Forecast and audit output</h3>
-      <p>The response returns four 24-hour forecasts. A semantic audit record can retain the request hash, model version, expert state, routing weights, baseline, residual and envelope checks for replay.</p>
+      <h3>Forecast and calculation record</h3>
+      <p>The response contains four 24-hour forecasts. It can also save the input hash, model version, candidate values, weights, adjustment, and range checks.</p>
     </div>
   </article>
 </div>
 
 ## End-to-end data flow
 
-| Boundary | Receives | Produces | Enforced property |
+| Step | Receives | Produces | Important rule |
 | --- | --- | --- | --- |
-| Ingress → request | Authorized raw telemetry | Ordered history + mask | Identity is not a model feature |
-| Request → experts | One sealed request | Eight candidates per horizon and indicator | Every candidate is rebuildable locally |
-| Experts → router | Values, availability, reliability | Sparse routing weights | Unavailable experts receive exactly zero mass |
-| Router → predictor | Routed baseline | Baseline + bounded residual | Prediction remains near available evidence |
-| Predictor → consumers | Forecast and trace fields | Planning input + replay record | Forecasting stays separate from downstream control |
+| Gateway → model input | One cell's raw data | Ordered history + missing-value mask | Cell ID is not a prediction feature |
+| Model input → candidates | One prepared input | Eight candidates per hour and indicator | Every candidate can be rebuilt from the input |
+| Candidates → weighting | Candidate values and availability | Candidate weights | Missing references receive zero weight |
+| Weighting → prediction | Weighted average | Average + limited adjustment | Adjustment cannot grow without limit |
+| Prediction → users | Forecast and calculation fields | Planning input + saved record | Forecasting remains separate from control |
 
-## Trust and deployment boundary
+## What the forecasting service does—and does not do
 
-The architecture is deliberately narrower than a complete telecom platform.
-Authentication, authorization, encryption, retention and downstream scheduling
-belong to the surrounding system. WLCR-SEA specifies the forecasting evidence
-boundary and the proposed audit semantics; it does not turn request-local
-processing into a privacy guarantee or a closed-loop controller.
+This is only the forecasting part of a telecom system. The surrounding system
+must still handle user permissions, encryption, data retention, logs, and
+resource scheduling. Restricting what the model can read does not automatically
+provide privacy, and the model does not directly control the network.
 
 <div class="notice-card">
-  <strong>Architecture is not the algorithm.</strong> This page explains components, boundaries and data flow. The Method section explains how the eight experts, available-set routing and bounded residual calculate a forecast; Research evaluates the resulting behavior and limitations.
+  <strong>This page explains the system flow.</strong> The Method page explains the exact calculation, and the Research pages report the results and limitations.
 </div>
 
 [Start with the business scenarios](problem.md){ .md-button }
