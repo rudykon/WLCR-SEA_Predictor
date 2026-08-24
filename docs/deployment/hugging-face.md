@@ -1,56 +1,50 @@
-# Hugging Face Live Demo
+# Live Demo
 
-[Launch the WLCR-SEA Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
-[View Demo source](https://github.com/rudykon/WLCR-SEA_Predictor/tree/main/demo){ .md-button target="_blank" rel="noopener" }
+[Open Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Source](https://github.com/rudykon/WLCR-SEA_Predictor/tree/main/demo){ .md-button target="_blank" rel="noopener" }
 
-The public Gradio app demonstrates how WLCR-SEA uses historical patterns and how its behavior changes when part of the history is missing.
+The Gradio app shows how missing history changes candidates, weights, and forecasts.
 
-## Try it in five minutes
+## Try it
 
-Suppose the latest measurements from one cell stop arriving, but a planner still needs an estimate of tomorrow's demand. The Demo lets you explore this situation directly:
+1. Load the 336-hour sample and run **Clean**.
+2. Select **Recent-tail outage** and raise the missing rate.
+3. Pick an indicator and future hour.
+4. Inspect candidate availability and weight.
+5. Download CSV and JSON.
 
-1. load the bundled 336-hour synthetic request and run the **Clean** case;
-2. switch to **Recent-tail outage** and gradually increase the missing-data rate;
-3. choose one indicator and future hour to see which historical candidates disappear;
-4. confirm that unavailable candidates receive exactly zero weight;
-5. compare the forecast with the range of available candidates, then download the forecast CSV and JSON calculation record.
+This tests the calculation, not outage impact. It does not run trained A6.
 
-This exercise answers a practical question: *what does the method do when part of the history is missing?* It does not measure the business impact of a real outage, and it does not run the trained A6 model, whose checkpoint is not public.
+## Code path
 
-## Code used by the Demo
+- `read_traffic` + `split_physical_windows`: parse CSV.
+- `global_corruption_mask`: remove data.
+- `build_expert_batch`: build eight candidates.
+- `WLCRSEA(VARIANTS["A0_fixed"])`: combine them.
+- `bounded_audit_envelope`: check the range.
 
-The interface performs a real calculation with repository code. Its execution path uses:
-
-- `read_traffic` and `split_physical_windows` read and validate the CSV;
-- `global_corruption_mask` removes data in repeatable patterns;
-- `build_expert_batch` builds the eight historical candidates;
-- `WLCRSEA(VARIANTS["A0_fixed"])` combines them with fixed weights;
-- `bounded_audit_envelope` checks that the forecast stays inside the allowed range.
-
-The initial weights are 0.7 for the previous week, 0.2 for two weeks earlier, and 0.1 for the 7-day same-hour median. If one candidate is unavailable, the remaining weights are rescaled to add up to one. If all three are unavailable, the method uses a fallback value.
+Initial weights are 0.7 (previous week), 0.2 (two weeks), and 0.1 (7-day median). Available weights are rescaled; all-missing cases use a fallback.
 
 <div class="notice-card">
-  <strong>This is not the trained A6 paper model.</strong> The repository does not include the A6 checkpoint or training-set prior. The Demo's final fallback is calculated from the current input and marked with an asterisk. Exported JSON records set <code>paper_model: false</code>.
+  <strong>Demo ≠ A6.</strong> The fallback comes from the current input. JSON sets <code>paper_model: false</code>.
 </div>
 
 ## Controls
 
 | Control | Purpose |
 | --- | --- |
-| Request CSV | One cell with 336 hourly rows |
-| Missing-data pattern | Complete, random hours, one continuous block, recent hours, or different times by indicator |
-| Missing rate | Removes an additional 0% to 80% of values in a repeatable way |
-| Indicator | Chooses which traffic measure to inspect |
-| Future hour | Chooses one of the 24 predictions to inspect |
+| CSV | One cell, 336 hourly rows |
+| Pattern | Complete, random, block, recent tail, or asynchronous |
+| Missing rate | 0–80%, repeatable |
+| Indicator | Traffic measure |
+| Future hour | One of 24 predictions |
 
 ## Outputs
 
-- four history and 24-hour forecast panels;
-- the minimum and maximum of currently usable candidates;
-- candidate values, availability, support, and weights;
-- total weight given to unavailable candidates and the range-check result;
-- downloadable 24-hour forecast CSV;
-- a downloadable versioned JSON calculation record with the input SHA-256.
+- four history/forecast panels;
+- candidate range, values, availability, support, and weights;
+- unavailable weight and range check;
+- forecast CSV and versioned JSON.
 
 ## Run locally
 
@@ -61,10 +55,8 @@ python -m pip install -r requirements.txt
 python demo/app.py
 ```
 
-For sensitive traffic data, use a local or private deployment. Do not upload confidential operator data to the public Space.
+For sensitive data, deploy locally or privately.
 
-## Deployment details for maintainers
+## Deployment
 
-The Space uses free Gradio `zero-a10g` hardware. The model calculation is wrapped in `@spaces.GPU`, and GitHub Actions mirrors the repository after every update to `main`.
-
-The GitHub README remains standard Markdown; Space-specific metadata is added only during deployment.
+The Space uses free `zero-a10g`. `@spaces.GPU` wraps the calculation, and GitHub Actions syncs every `main` update.

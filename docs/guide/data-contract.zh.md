@@ -1,6 +1,6 @@
 # CSV 输入格式
 
-命令行工具和公开 Demo 使用相同的六列 CSV 格式。每次上传一个小区连续 336 小时的数据，每小时一行。
+命令行和 Demo 使用同一种六列 CSV：一个小区、连续 336 小时、每小时一行。
 
 ## 必需表头
 
@@ -17,7 +17,7 @@
 | 编码 | UTF-8 或带 BOM 的 UTF-8 |
 | 上传大小 | 公开 Space 最多 5 MB |
 
-预测从最后一条记录的下一小时开始，覆盖未来 24 小时。`NIL` 或空字段表示该值缺失。模型内部使用布尔标记保留这一信息，因此不会把占位数误认为真实观测。
+预测从最后一行的下一小时开始，共 24 小时。`NIL` 或空字段表示缺失；掩码会阻止占位数参与计算。
 
 ## 最小预览
 
@@ -27,7 +27,7 @@
 2026/07/01 01:00,synthetic-cell,18.1,26.2,NIL,14.1
 ```
 
-完整的内置样例见 [`demo/examples/synthetic_traffic.csv`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/demo/examples/synthetic_traffic.csv)。该文件由程序生成，每次内容相同，不包含任何真实运营商或参与者数据。
+内置样例见 [`demo/examples/synthetic_traffic.csv`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/demo/examples/synthetic_traffic.csv)。它由程序生成，内容固定，不含真实运营商数据。
 
 ## 程序化验证
 
@@ -40,5 +40,5 @@ assert len(windows) == 1
 assert not windows[0].gaps
 ```
 
-!!! warning "请勿上传机密数据"
-    请勿将运营商的机密流量数据上传到公开 Space。该应用并非为了保存请求，但 Hugging Face 属于共享的公开基础设施。如需处理敏感数据，请在自有受控环境中运行 `demo/app.py`。
+!!! warning "公开 Space"
+    请勿上传机密流量。敏感数据请在本地运行 `demo/app.py`。

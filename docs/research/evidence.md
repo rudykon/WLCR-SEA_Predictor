@@ -1,11 +1,11 @@
 # Experimental results
 
-The main result is straightforward: **WLCR-SEA is not the most accurate model when all historical data are available. Its strengths become clearer when blocks of history are missing and when users need to inspect how a prediction was produced.**
+**DLinear leads on complete data. WLCR-SEA is stronger in the tested severe outages and keeps a traceable calculation.**
 
-!!! info "How to read the numbers"
-    **WAPE** measures forecasting error, so lower values are better. A **95% confidence interval** describes the range of differences supported by the experiment. If the interval for a difference includes zero, the experiment does not establish a clear difference between the two models.
+!!! info "Reading the tables"
+    Lower **WAPE** is better. A 95% confidence interval that includes zero does not show a clear difference.
 
-## Data and evaluation setup
+## Setup
 
 | Item | Reported setting |
 | --- | --- |
@@ -16,20 +16,13 @@ The main result is straightforward: **WLCR-SEA is not the most accurate model wh
 | Complete-data test | Fixed later time period defined in the paper |
 | Missing-data test | The same data points are removed for all compared models |
 
-<figure class="paper-figure">
-  <a href="../../images/paper_figure_scenario.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_scenario.png" alt="One cell's data moving from input preparation to forecast and calculation record" loading="lazy">
-  </a>
-  <figcaption>Figure 1 · Each prediction uses one prepared cell history and cannot fetch live traffic from other cells.</figcaption>
-</figure>
-
-## When all historical data are present
+## Complete data
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_clean_accuracy.png" target="_blank" rel="noopener">
     <img src="../../images/paper_figure_clean_accuracy.png" alt="Model comparison when historical data are complete" loading="lazy">
   </a>
-  <figcaption>Figure 3 · Model comparison when historical data are complete.</figcaption>
+  <figcaption>Complete-data comparison.</figcaption>
 </figure>
 
 | Model | WAPE | What it means |
@@ -38,18 +31,18 @@ The main result is straightforward: **WLCR-SEA is not the most accurate model wh
 | Prior traffic-only method | 0.1951 | Similar error to WLCR-SEA |
 | WLCR-SEA, five-model ensemble | 0.1955 | Difference from prior method: +0.00045; 95% CI [-0.00312, 0.00366] |
 
-**Conclusion:** DLinear has the lowest error in this complete-data comparison. The confidence interval for the difference between WLCR-SEA and the prior traffic-only method includes zero, so the experiment does not establish a clear difference between those two methods.
+**Result:** DLinear has the lowest error. WLCR-SEA and the prior method are not clearly different because their interval includes zero.
 
-## When parts of the history are missing
+## Missing data
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_missingness.png" target="_blank" rel="noopener">
     <img src="../../images/paper_figure_missingness.png" alt="Model comparison after removing the same historical values" loading="lazy">
   </a>
-  <figcaption>Figure 4 · Forecast errors after removing the same values for all compared models.</figcaption>
+  <figcaption>Matched missing-data comparison.</figcaption>
 </figure>
 
-The study removes data in several patterns that resemble practical failures: one continuous block, the most recent part of the timeline, or different periods for different indicators. When 50% of the values are removed, WLCR-SEA reports:
+The study removes one block, the recent tail, or different periods by indicator. At 50% removal:
 
 | 50% removal pattern | WLCR-SEA WAPE |
 | --- | ---: |
@@ -57,17 +50,17 @@ The study removes data in several patterns that resemble practical failures: one
 | Timeline tail | 0.2460 |
 | Asynchronous indicators | 0.2172 |
 
-Across these fixed tests, WLCR-SEA has lower error in all nine comparisons with DLinear-Aug, PatchTST-Aug, and GRU-D. At some moderate missing rates, however, the confidence intervals for the differences from DLinear-Aug and PatchTST-Aug include zero.
+WLCR-SEA has lower error in all nine fixed comparisons with DLinear-Aug, PatchTST-Aug, and GRU-D. Some moderate-rate intervals against DLinear-Aug and PatchTST-Aug still include zero.
 
-**Conclusion:** the results support better performance under the severe missing-data patterns tested in this study. They do not guarantee better results for every outage, dataset, or retraining run.
+**Result:** better performance in the tested severe outages, not a guarantee for other data or runs.
 
-## Can the basis of a prediction be checked?
+## Traceability
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_auditability.png" target="_blank" rel="noopener">
     <img src="../../images/paper_figure_auditability.png" alt="Checks of candidate weights, deletion effects, and prediction limits" loading="lazy">
   </a>
-  <figcaption>Figure 5 · Checks of candidate weights, deletion effects, and prediction limits.</figcaption>
+  <figcaption>Weight, deletion, and range checks.</figcaption>
 </figure>
 
 | Check | Reported result |
@@ -80,12 +73,12 @@ Across these fixed tests, WLCR-SEA has lower error in all nine comparisons with 
 | Error increase after removing a random matched candidate | +0.00104 [0.00079, 0.00131] |
 | Relationship between assigned weight and measured influence (Spearman) | 0.693 [0.678, 0.708] |
 
-Candidates with higher weights usually have a greater measured effect when removed. This result supports using the saved weights to inspect a prediction.
+Higher-weight candidates usually have more effect when removed. Saved weights therefore help inspect a result.
 
-One negative result is equally important: routing entropy has a mean correlation of -0.0196 with absolute percentage error, with a 95% confidence interval of [-0.0407, 0.0016]. Because this interval includes zero, entropy should **not** be treated as a reliable uncertainty score.
+Routing entropy correlates -0.0196 with error, 95% CI [-0.0407, 0.0016]. It is **not** a reliable uncertainty score.
 
-## Speed and a stricter cell split
+## Speed and cell split
 
-Using one CPU thread and processing one request at a time, a single WLCR-SEA model has a median latency of 6.802 ms and a P99 latency of 7.574 ms; its checkpoint and frozen assets total 16.2 KiB. The five-model ensemble has a median latency of 34.705 ms, a P99 latency of 38.684 ms, and 148.8 KiB of checkpoint and frozen assets.
+With one CPU thread, batch size 1, and sequential requests, a single model takes 6.802 ms median / 7.574 ms P99 and uses 16.2 KiB of model assets. The five-model ensemble takes 34.705 ms / 38.684 ms and 148.8 KiB.
 
-In a stricter split with different cells in the training and test sets, WLCR-SEA records a WAPE of 0.1967. The differences from DLinear-Aug and the prior method remain unclear because their confidence intervals include zero; WLCR-SEA performs better than PatchTST-Aug in this test. All cells still come from the same regional trace, so this result does not establish performance in another region or season.
+With disjoint train/test cells, WLCR-SEA reaches 0.1967 WAPE. Differences from DLinear-Aug and the prior method remain unclear; WLCR-SEA beats PatchTST-Aug. All cells still come from one region.

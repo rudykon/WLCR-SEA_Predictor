@@ -1,11 +1,11 @@
 # 实验结果
 
-主要结论很直接：**历史数据完整时，WLCR-SEA 不是误差最低的模型；当成段的历史数据缺失，或用户需要检查预测是如何得到的时，它的优势更加明显。**
+**完整数据下 DLinear 更准；在研究设定的严重缺失测试中，WLCR-SEA 更好，并保留可追溯的计算记录。**
 
-!!! info "怎样阅读这些数值"
-    **WAPE** 用于衡量预测误差，数值越低越好。**95% 置信区间**表示实验所支持的差异范围。如果模型差异的置信区间包含 0，就说明该实验无法确认两个模型之间存在明确差异。
+!!! info "如何读表"
+    **WAPE** 越低越好。95% 置信区间包含 0，表示差异不明确。
 
-## 数据与评估设置
+## 设置
 
 | 项目 | 报告设置 |
 | --- | --- |
@@ -16,20 +16,13 @@
 | 完整数据测试 | 论文定义的固定后续时间段 |
 | 缺失数据测试 | 所有对比模型移除相同的数据点 |
 
-<figure class="paper-figure">
-  <a href="../../../images/paper_figure_scenario.png" target="_blank" rel="noopener">
-    <img src="../../../images/paper_figure_scenario.png" alt="一个小区的数据从输入准备到预测与计算记录的流程" loading="lazy">
-  </a>
-  <figcaption>图 1｜每次预测只使用一个准备好的小区历史，不能临时查询其他小区的实时流量。</figcaption>
-</figure>
-
-## 历史数据完整时
+## 完整数据
 
 <figure class="paper-figure">
   <a href="../../../images/paper_figure_clean_accuracy.png" target="_blank" rel="noopener">
     <img src="../../../images/paper_figure_clean_accuracy.png" alt="历史数据完整时的模型对比" loading="lazy">
   </a>
-  <figcaption>图 3｜历史数据完整时的模型对比。</figcaption>
+  <figcaption>完整数据下的模型对比。</figcaption>
 </figure>
 
 | 模型 | WAPE | 含义 |
@@ -38,18 +31,18 @@
 | 先前的仅流量方法 | 0.1951 | 与 WLCR-SEA 误差接近 |
 | WLCR-SEA 五模型集成 | 0.1955 | 相对先前方法差值 +0.00045；95% CI [-0.00312, 0.00366] |
 
-**结论：**DLinear 在完整数据对比中的误差最低。WLCR-SEA 与先前仅使用流量数据的方法之间，差异的置信区间包含 0，因此实验无法确认二者存在明确差异。
+**结果：**DLinear 误差最低。WLCR-SEA 与先前方法的区间包含 0，差异不明确。
 
-## 部分历史数据缺失时
+## 缺失数据
 
 <figure class="paper-figure">
   <a href="../../../images/paper_figure_missingness.png" target="_blank" rel="noopener">
     <img src="../../../images/paper_figure_missingness.png" alt="为所有对比模型移除相同历史数值后的结果" loading="lazy">
   </a>
-  <figcaption>图 4｜为所有对比模型移除相同数值后的预测误差。</figcaption>
+  <figcaption>相同缺失数据下的模型对比。</figcaption>
 </figure>
 
-研究采用了几种接近实际故障的数据缺失方式：连续缺失一段、最近一段数据缺失，或不同指标在不同时间段缺失。当这些方式移除 50% 的数值时，WLCR-SEA 的结果如下：
+研究按连续区块、最近时段或指标异步方式移除数据。缺失 50% 时：
 
 | 数据移除 50% 的方式 | WLCR-SEA WAPE |
 | --- | ---: |
@@ -57,17 +50,17 @@
 | 时间线尾部 | 0.2460 |
 | 指标异步 | 0.2172 |
 
-在这些固定测试中，WLCR-SEA 与 DLinear-Aug、PatchTST-Aug 和 GRU-D 的九次对比均取得了更低误差。但在部分中等缺失率下，与 DLinear-Aug 和 PatchTST-Aug 的差异置信区间仍包含 0。
+九项固定对比中，WLCR-SEA 均低于 DLinear-Aug、PatchTST-Aug 和 GRU-D。部分中等缺失率下，与前两者的差异仍不明确。
 
-**结论：**结果支持 WLCR-SEA 在本研究测试的严重数据缺失场景中表现更好，但不能保证这一结论适用于所有故障、所有数据集或每一次重新训练。
+**结果：**在测试的严重缺失场景中更好，不代表其他数据或训练也会如此。
 
-## 能否核对预测依据
+## 可追溯性
 
 <figure class="paper-figure">
   <a href="../../../images/paper_figure_auditability.png" target="_blank" rel="noopener">
     <img src="../../../images/paper_figure_auditability.png" alt="候选权重、删除影响和预测限制检查" loading="lazy">
   </a>
-  <figcaption>图 5｜候选权重、删除影响和预测限制检查。</figcaption>
+  <figcaption>权重、删除和范围检查。</figcaption>
 </figure>
 
 | 检查 | 报告结果 |
@@ -80,12 +73,12 @@
 | 删除随机匹配候选后的误差增量 | +0.00104 [0.00079, 0.00131] |
 | 分配权重与实际影响的关系（Spearman） | 0.693 [0.678, 0.708] |
 
-权重更高的候选被删除后，通常会对结果产生更大的影响。这说明保存候选权重有助于复核预测依据。
+高权重候选被删除后通常影响更大，因此权重有助于复核结果。
 
-同时也有一个重要的负面结果：路由熵与绝对百分比误差的平均相关系数为 -0.0196，95% 置信区间为 [-0.0407, 0.0016]。由于该区间包含 0，不能把路由熵当作可靠的不确定性分数。
+路由熵与误差的相关系数为 -0.0196，95% CI [-0.0407, 0.0016]。它**不能**作为可靠的不确定性分数。
 
-## 运行速度与更严格的小区划分
+## 速度与小区划分
 
-使用单个 CPU 线程、每次处理一个请求时，单个 WLCR-SEA 模型的中位延迟为 6.802 ms，P99 延迟为 7.574 ms，检查点与冻结模型资源共 16.2 KiB；五模型集成的中位延迟为 34.705 ms，P99 延迟为 38.684 ms，检查点与冻结模型资源共 148.8 KiB。
+单 CPU 线程、batch=1、逐请求运行时，单模型中位/P99 延迟为 6.802/7.574 ms，模型资源 16.2 KiB；五模型集成为 34.705/38.684 ms，148.8 KiB。
 
-在训练集与测试集使用不同小区的更严格划分中，WLCR-SEA 的 WAPE 为 0.1967。它与 DLinear-Aug 及先前方法之间的差异置信区间包含 0，因此尚不能确认存在明确差异；在该测试中，WLCR-SEA 优于 PatchTST-Aug。不过，所有小区仍来自同一个区域的数据，因此该结果不能证明方法能够推广到其他地区或季节。
+训练集与测试集使用不同小区时，WLCR-SEA 的 WAPE 为 0.1967。它与 DLinear-Aug、先前方法的差异不明确，优于 PatchTST-Aug。所有小区仍来自同一地区。

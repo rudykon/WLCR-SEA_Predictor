@@ -1,22 +1,21 @@
 # Quick start
 
-Choose the entry point that matches your goal. The Live Demo is the fastest way to understand the project, while the Python examples are intended for developers and researchers.
+Start with the Demo, or jump to Python.
 
-## 1. Try the Live Demo
+## 1. Demo
 
 [Open the Hugging Face Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
 
-Select the built-in sample, choose how much history to remove, and run the forecast. The Demo returns:
+Load the sample, remove some history, and run:
 
-- four 24-hour forecasts from the `A0_fixed` baseline;
-- plots of the history and forecast;
-- the range covered by currently usable candidates;
-- values and weights for all eight candidates;
-- a forecast CSV and a JSON calculation record.
+- four 24-hour forecasts;
+- history and forecast plots;
+- candidate ranges, values, and weights;
+- forecast CSV and calculation JSON.
 
-The Demo uses a simple fixed baseline because the trained A6 checkpoint is not included in the repository. It demonstrates how the method works; it does not reproduce the paper's main results.
+The Demo uses `A0_fixed`, not the trained A6 model.
 
-## 2. Build the eight candidates in Python
+## 2. Candidates
 
 ```python
 import numpy as np
@@ -32,7 +31,7 @@ print(experts.values.shape)        # (1, 24, 4, 8)
 print(experts.availability.shape)  # (1, 24, 4, 8)
 ```
 
-## 3. Run a reproducible seasonal baseline
+## 3. Baseline
 
 ```python
 from Model.traffic_window_forecasting import (
@@ -47,8 +46,8 @@ forecast = seasonal_forecast(window, BaselineConfig.default())
 assert len(forecast) == 24
 ```
 
-This utility and the Demo return the same result whenever the input is unchanged. They are useful for checking the code and input format, but they do not replace the trained WLCR-SEA results reported in the paper.
+The same input returns the same result. This checks code and format; it does not reproduce A6.
 
-## 4. Reproduce experiments
+## 4. Experiments
 
-Start with the [reproduction guide](../reference/reproduction.md). It links to the scripts for training, missing-data evaluation, speed tests, and calculation checks. Large datasets, trained checkpoints, and generated results are not stored in Git.
+See the [reproduction map](../reference/reproduction.md) for training, outages, speed, and checks. Large data and checkpoints are not in Git.
