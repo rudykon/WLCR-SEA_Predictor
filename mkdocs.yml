@@ -91,7 +91,7 @@ plugins:
             Installation: 安装
             Quick start: 快速开始
             Method: 方法
-            Serving problem: 服务问题
+            Operational story: 业务场景
             Architecture: 架构
             Data contract: 数据契约
             Research: 研究
@@ -147,7 +147,7 @@ nav:
       - Installation: getting-started/installation.md
       - Quick start: getting-started/quickstart.md
   - Method:
-      - Serving problem: guide/problem.md
+      - Operational story: guide/problem.md
       - Architecture: guide/method.md
       - Data contract: guide/data-contract.md
   - Research:

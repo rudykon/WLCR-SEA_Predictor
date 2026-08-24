@@ -6,6 +6,23 @@
 The public Gradio Space makes the repository's request-local mechanics
 interactive without inventing a trained checkpoint.
 
+## A five-minute scenario
+
+Imagine that the latest telemetry for one cell has stopped arriving, but a
+planner still needs a next-day demand signal. The Audit Lab lets you follow that
+request from intact history to degraded evidence:
+
+1. load the bundled 336-hour synthetic request and run the **Clean** case;
+2. switch to **Recent-tail outage** and move the missingness rate upward;
+3. choose one indicator and horizon to see which seasonal references disappear;
+4. confirm that unavailable experts receive exactly zero routing mass;
+5. compare the forecast with its available-expert envelope, then download the
+   forecast CSV and versioned audit JSON.
+
+This walkthrough answers a structural question—*what does the method do when
+authorized evidence disappears?* It does not estimate the business impact of a
+real outage or reproduce the undistributed trained A6 checkpoint.
+
 ## What it runs
 
 The execution path imports and uses:
