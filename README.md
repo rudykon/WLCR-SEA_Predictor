@@ -176,8 +176,6 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 | --- | --- |
 | Project website | [rudykon.github.io/WLCR-SEA_Predictor](https://rudykon.github.io/WLCR-SEA_Predictor/) |
 | Live Demo | [Hugging Face Space](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor) |
-| English paper | [paper/main.pdf](paper/main.pdf) |
-| Chinese paper | [paper/main_zh.pdf](paper/main_zh.pdf) |
 | Data download | [Download ZIP](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip) |
 | Source code | [github.com/rudykon/WLCR-SEA_Predictor](https://github.com/rudykon/WLCR-SEA_Predictor) |
 

@@ -7,9 +7,6 @@
     **WAPE** 是预测误差，越低越好。**95% 置信区间**表示实验支持的差异范围。
     如果模型差异的区间包含 0，就说明该实验无法确认两个模型存在明确差异。
 
-[英文论文 PDF](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/paper/main.pdf){ .md-button target="_blank" rel="noopener" }
-[中文论文 PDF](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/paper/main_zh.pdf){ .md-button target="_blank" rel="noopener" }
-
 ## 数据与评估设置
 
 | 项目 | 报告设置 |

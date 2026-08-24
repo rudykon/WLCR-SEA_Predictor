@@ -8,12 +8,8 @@ and its observation mask yield a 24-hour forecast. The method makes its
 seasonal evidence, availability masks, routing weights, baseline, and bounded
 correction inspectable for each request.
 
-The canonical manuscripts are:
-
-- English: [paper/main.tex](../paper/main.tex), rendered as
-  [paper/main.pdf](../paper/main.pdf)
-- Chinese: [paper/main_zh.tex](../paper/main_zh.tex), rendered as
-  [paper/main_zh.pdf](../paper/main_zh.pdf)
+This public guide documents the code, inputs, experiments, and checks needed
+to reproduce the reported results.
 
 The source code is open at
 <https://github.com/rudykon/WLCR-SEA_Predictor>. The repository is licensed

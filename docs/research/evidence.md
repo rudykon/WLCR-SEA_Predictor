@@ -11,9 +11,6 @@ formed.**
     for a difference includes zero, the study cannot establish a clear
     difference between the two models.
 
-[English paper PDF](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/paper/main.pdf){ .md-button target="_blank" rel="noopener" }
-[Chinese paper PDF](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/paper/main_zh.pdf){ .md-button target="_blank" rel="noopener" }
-
 ## Data and evaluation setup
 
 | Item | Reported setting |
