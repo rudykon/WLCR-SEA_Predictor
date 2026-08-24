@@ -1,9 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/logo-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="docs/assets/brand/logo.svg">
-    <img src="docs/assets/brand/logo.svg" width="360" alt="WLCR-SEA Predictor 项目 Logo">
-  </picture>
+  <img src="docs/assets/brand/logo-horizontal.svg" width="720" alt="WLCR-SEA Predictor 项目 Logo">
 </p>
 
 <h1 align="center">WLCR-SEA Predictor</h1>
