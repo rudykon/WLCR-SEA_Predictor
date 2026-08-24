@@ -117,7 +117,7 @@ hide:
   <article class="feature-card">
     <span class="feature-number">01 · 输入</span>
     <h3>一个小区</h3>
-    <p>模型只接收当前历史和缺失标记。</p>
+    <p>模型读取当前历史、缺失标记和固定训练资源，不读取其他实时数据。</p>
   </article>
   <article class="feature-card">
     <span class="feature-number">02 · 路由</span>

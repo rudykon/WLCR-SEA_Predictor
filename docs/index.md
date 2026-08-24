@@ -117,7 +117,7 @@ hide:
   <article class="feature-card">
     <span class="feature-number">01 · INPUT</span>
     <h3>One cell</h3>
-    <p>Only the current history and mask enter the model.</p>
+    <p>It reads the current history, mask, and fixed trained assets—no other live data.</p>
   </article>
   <article class="feature-card">
     <span class="feature-number">02 · ROUTE</span>

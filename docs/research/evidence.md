@@ -79,6 +79,6 @@ Routing entropy correlates -0.0196 with error, 95% CI [-0.0407, 0.0016]. It is *
 
 ## Speed and cell split
 
-With one CPU thread, a single model takes 6.802 ms median / 7.574 ms P99 and uses 16.2 KiB of model assets. The five-model ensemble takes 34.705 ms / 38.684 ms and 148.8 KiB.
+With one CPU thread, batch size 1, and sequential requests, a single model takes 6.802 ms median / 7.574 ms P99 and uses 16.2 KiB of model assets. The five-model ensemble takes 34.705 ms / 38.684 ms and 148.8 KiB.
 
 With disjoint train/test cells, WLCR-SEA reaches 0.1967 WAPE. Differences from DLinear-Aug and the prior method remain unclear; WLCR-SEA beats PatchTST-Aug. All cells still come from one region.
