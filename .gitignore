@@ -42,6 +42,8 @@ archive/early_code/third_party/
 *~
 
 # LaTeX build intermediates
+/paper/main.pdf
+/paper/main_zh.pdf
 paper/*.aux
 paper/*.out
 paper/*.toc
