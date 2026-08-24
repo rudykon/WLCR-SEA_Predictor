@@ -1,16 +1,16 @@
 # Reproduction map
 
-The repository includes source code, tests, research scripts, and figures. Large datasets, trained checkpoints, and generated result folders are not stored in Git. Follow the steps below to recreate the required research artifacts locally.
+Code, tests, scripts, and figures are included. Data, checkpoints, and generated results are not.
 
 ## Start here
 
-1. Install the [research environment](../getting-started/installation.md).
-2. Read [`REPRODUCTION_GUIDE.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/docs/REPRODUCTION_GUIDE.md) for the ordered workflow.
-3. Use [`RESEARCH_REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/docs/RESEARCH_REPRODUCTION.md) for paper-oriented checks.
-4. Inspect [`CODE_STRUCTURE.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/docs/CODE_STRUCTURE.md) before changing experiment paths.
-5. Download the source data from the link recorded in the root README and verify any stated hashes.
+1. Install the [environment](../getting-started/installation.md).
+2. Follow [`REPRODUCTION_GUIDE.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/docs/REPRODUCTION_GUIDE.md).
+3. Use [`RESEARCH_REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/docs/RESEARCH_REPRODUCTION.md) for result checks.
+4. Read [`CODE_STRUCTURE.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/docs/CODE_STRUCTURE.md) before changing paths.
+5. Download and verify the source data listed in the root README.
 
-## Quick checks that work after a fresh clone
+## Quick checks
 
 ```bash
 PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
@@ -19,13 +19,13 @@ PYTHONPATH=. python -m unittest tests.test_evidence_integrity -v
 PYTHONPATH=. python -m unittest tests.test_rq4_evidence_sync -v
 ```
 
-Run the complete suite when the required local artifacts are available:
+With all local artifacts:
 
 ```bash
 PYTHONPATH=. python -m unittest discover -s tests -v
 ```
 
-## Which script answers which question
+## Script map
 
 | Question | Representative scripts |
 | --- | --- |
@@ -37,9 +37,9 @@ PYTHONPATH=. python -m unittest discover -s tests -v
 | Cell-disjoint audit | `evaluate_cell_disjoint_generalization.py` |
 | Manuscript consistency | `validate_evidence_integrity.py`, `tools/sync_rq4_evidence.py` |
 
-## Files that must be generated locally
+## Local artifacts
 
-The `.gitignore` excludes checkpoints (`*.pt`, `*.pth`), saved models, NumPy bundles, logs, and large experiment folders. Their absence after cloning is expected. The paper's A6 results require the documented A6 training and evaluation process; they do not come from the public Demo.
+Git excludes checkpoints, saved models, NumPy bundles, logs, and large result folders. A6 results require the documented training and evaluation; they do not come from the Demo.
 
 ## Website and Demo checks
 
@@ -48,4 +48,4 @@ mkdocs build --strict
 python -m unittest tests.test_hf_space_demo -v
 ```
 
-GitHub Actions repeats both checks before changes reach the main branch. The Pages workflow publishes the bilingual site, while a separate workflow adds the Space frontmatter and mirrors the repository to Hugging Face.
+GitHub Actions runs both checks. Pages publishes the site; another workflow syncs the Space.

@@ -1,6 +1,6 @@
 # 安装
 
-WLCR-SEA 是一个 Python 研究代码仓库。建议使用 Python 3.11 或更高版本；网站和托管 Demo 已在 Python 3.12 环境中通过验证。
+需要 Python 3.11+。CI 和 Demo 使用 Python 3.12。
 
 ## 克隆并创建环境
 
@@ -26,7 +26,7 @@ Windows PowerShell 使用：
 PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
 ```
 
-这些测试会检查模型是否选择了正确的历史时刻、缺失位置的占位数是否被排除、候选权重是否合法，以及最终修正是否保持在设定范围内。
+测试覆盖候选选择、缺失值遮蔽、权重和修正范围。
 
 ## 在本地运行在线 Demo
 
@@ -34,7 +34,7 @@ PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
 python demo/app.py
 ```
 
-打开 Gradio 输出的本地地址。页面的“示例”区域已经提供了一份内置合成数据。
+打开 Gradio 地址并选择内置样例。
 
 ## 构建本网站
 
@@ -44,4 +44,4 @@ mkdocs build --strict
 mkdocs serve
 ```
 
-`mkdocs build --strict` 会同时构建中英文页面，并把配置或导航警告视为错误。
+严格模式会构建中英文页面，并在出现警告时失败。

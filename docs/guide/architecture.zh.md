@@ -1,55 +1,55 @@
 # 系统架构
 
-系统按照五个步骤完成一次预测：准备单个小区的历史数据、将数据传入模型、生成候选预测、组合可用候选，最后返回预测结果和计算记录。
+五个步骤把一个小区的历史数据变成预测和计算记录。
 
 <figure class="paper-figure">
   <a href="../../../images/paper_figure_architecture.png" target="_blank" rel="noopener">
     <img src="../../../images/paper_figure_architecture.png" alt="WLCR-SEA 从准备输入、候选加权到预测与计算记录的系统架构" loading="lazy">
   </a>
-  <figcaption>论文图 2。一个输入如何变成多个候选预测、最终结果和检查记录。</figcaption>
+  <figcaption>从准备输入到候选、预测和计算记录。</figcaption>
 </figure>
 
-## 五个组件，五项职责
+## 组件
 
 <div class="process-steps">
   <article class="process-step">
     <span class="step-number">01</span>
     <div>
       <h3>数据入口</h3>
-      <p>服务验证小区并准备 336 小时数据。布尔标记说明哪些值缺失，小区 ID 保留在模型之外。</p>
+      <p>准备 336 小时数据和缺失标记，小区 ID 留在模型外。</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">02</span>
     <div>
-      <h3>固定的模型输入</h3>
-      <p>模型接收四项流量序列、缺失标记和训练阶段得到的固定信息，不能再获取额外实时流量。</p>
+      <h3>模型输入</h3>
+      <p>传入四项流量、缺失标记和固定训练信息。</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">03</span>
     <div>
-      <h3>生成候选预测</h3>
-      <p>针对每个未来小时和指标，模型根据已知历史规律生成八个候选预测，并记录哪些候选能够计算。</p>
+      <h3>候选</h3>
+      <p>为每个小时和指标生成八个候选。</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">04</span>
     <div>
-      <h3>分配权重并限制修正</h3>
-      <p>模型只给可用候选分配权重。加权平均得到主要预测，最后一次修正的幅度受到限制。</p>
+      <h3>路由</h3>
+      <p>加权可用候选，再进行受限修正。</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">05</span>
     <div>
-      <h3>预测与计算记录</h3>
-      <p>系统分别为四项指标返回未来 24 小时的预测，还可以保存输入哈希、模型版本、候选值、权重、修正和范围检查结果。</p>
+      <h3>输出</h3>
+      <p>返回四项 24 小时预测和计算字段。</p>
     </div>
   </article>
 </div>
 
-## 端到端数据流
+## 数据流
 
 | 步骤 | 接收 | 产生 | 重要规则 |
 | --- | --- | --- | --- |
@@ -59,14 +59,14 @@
 | 权重 → 预测 | 加权平均值 | 平均值 + 受限修正 | 修正幅度不能无限增大 |
 | 预测 → 用户 | 预测与计算字段 | 规划输入 + 保存记录 | 预测与控制保持分离 |
 
-## 预测服务负责什么、不负责什么
+## 边界
 
-这里展示的只是电信系统中的预测模块。模型之外的系统仍需负责权限管理、加密、数据留存、日志和资源调度。限制模型可读取的数据并不会自动带来隐私保护，模型也不会直接控制网络。
+这是预测模块，不是网络控制器。权限、加密、留存、日志和调度由外部系统负责。
 
 <div class="notice-card">
-  <strong>本页解释系统流程。</strong>“方法”页说明精确计算方式，“研究”页报告实验结果和适用边界。
+  <strong>下一步：</strong>“方法”介绍计算过程，“实验结果”给出证据。
 </div>
 
-[从业务场景开始](problem.md){ .md-button }
-[查看预测方法](method.md){ .md-button .md-button--primary }
-[阅读研究证据](../research/evidence.md){ .md-button }
+[适用场景](problem.md){ .md-button }
+[方法](method.md){ .md-button .md-button--primary }
+[实验结果](../research/evidence.md){ .md-button }

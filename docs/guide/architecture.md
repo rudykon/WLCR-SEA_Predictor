@@ -1,55 +1,55 @@
 # System architecture
 
-The system follows five steps: prepare one cell's history, pass it to the model, build candidate forecasts, combine the candidates that are available, and return the forecast with a calculation record.
+Five steps turn one cell's history into a forecast and calculation record.
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_architecture.png" target="_blank" rel="noopener">
     <img src="../../images/paper_figure_architecture.png" alt="WLCR-SEA architecture from prepared input through candidate weighting to forecast and calculation record" loading="lazy">
   </a>
-  <figcaption>Manuscript Figure 2. The diagram shows how one input becomes candidate forecasts, a final prediction, and an inspection record.</figcaption>
+  <figcaption>From prepared input to candidates, forecast, and record.</figcaption>
 </figure>
 
-## Five components, five responsibilities
+## Components
 
 <div class="process-steps">
   <article class="process-step">
     <span class="step-number">01</span>
     <div>
       <h3>Data gateway</h3>
-      <p>The service verifies the cell and prepares 336 hours of data. A Boolean mask marks missing values. The cell ID is kept outside the model.</p>
+      <p>Prepare 336 hours and a missing-value mask. Keep cell ID outside the model.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">02</span>
     <div>
-      <h3>Fixed model input</h3>
-      <p>The model receives the four traffic series, their missing-value markers, and fixed information learned during training. It cannot fetch extra live traffic.</p>
+      <h3>Model input</h3>
+      <p>Pass four traffic series, masks, and fixed training data.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">03</span>
     <div>
-      <h3>Candidate builder</h3>
-      <p>For each future hour and indicator, the model creates eight candidate forecasts from known historical patterns and records which ones can be computed.</p>
+      <h3>Candidates</h3>
+      <p>Build eight candidates for each hour and indicator.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">04</span>
     <div>
-      <h3>Weighting and limited adjustment</h3>
-      <p>The model gives weights only to usable candidates. Their weighted average is the main forecast, followed by a final adjustment whose size is limited.</p>
+      <h3>Routing</h3>
+      <p>Weight usable candidates, then apply a bounded adjustment.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">05</span>
     <div>
-      <h3>Forecast and calculation record</h3>
-      <p>The response contains a 24-hour forecast for each of the four indicators. It can also save the input hash, model version, candidate values, weights, adjustment, and range checks.</p>
+      <h3>Output</h3>
+      <p>Return four 24-hour forecasts and their calculation fields.</p>
     </div>
   </article>
 </div>
 
-## End-to-end data flow
+## Data flow
 
 | Step | Receives | Produces | Important rule |
 | --- | --- | --- | --- |
@@ -59,14 +59,14 @@ The system follows five steps: prepare one cell's history, pass it to the model,
 | Weighting → prediction | Weighted average | Average + limited adjustment | Adjustment cannot grow without limit |
 | Prediction → users | Forecast and calculation fields | Planning input + saved record | Forecasting remains separate from control |
 
-## What the forecasting service does—and does not do
+## Boundary
 
-This architecture covers only the forecasting component of a telecom system. The surrounding system must still manage user permissions, encryption, data retention, logging, and resource scheduling. Restricting what the model can read does not automatically protect privacy, and the model does not directly control the network.
+This is a forecasting module, not a network controller. Permissions, encryption, retention, logging, and scheduling belong to the surrounding system.
 
 <div class="notice-card">
-  <strong>This page explains the system flow.</strong> The Method page explains the exact calculation, and the Research pages report the results and limitations.
+  <strong>Next:</strong> see Method for the calculation and Results for the evidence.
 </div>
 
-[Start with the business scenarios](problem.md){ .md-button }
-[Inspect the forecasting method](method.md){ .md-button .md-button--primary }
-[Review the research evidence](../research/evidence.md){ .md-button }
+[Use cases](problem.md){ .md-button }
+[Method](method.md){ .md-button .md-button--primary }
+[Results](../research/evidence.md){ .md-button }
