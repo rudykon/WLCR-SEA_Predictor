@@ -29,7 +29,7 @@ from Model.traffic_window_forecasting import (
     build_training_backtests,
     read_traffic,
 )
-from Model.lightgbm_feature_baseline import build_matrix, load_parameters, load_weather
+from Model.lightgbm_feature_baseline import build_matrix
 from experiments import train_neural_baselines as neural
 from experiments import train_wlcr_sea as runner
 from experiments import wlcr_sea_model as sea
@@ -41,10 +41,16 @@ from experiments.lightgbm_experiment_helpers import (
 
 SCHEMA_VERSION = 1
 FOLDS = 5
-SEED = 42
+MODEL_SEED = 42
+BOOTSTRAP_SEED = 42
 AUGMENTATION_RATE = 0.15
+FINAL_AUGMENTATION_SEED = (
+    MODEL_SEED + neural.FINAL_AUGMENTATION_SEED_OFFSET
+)
+DEFAULT_WLCR_BATCH_SIZE = runner.DEFAULT_BATCH_SIZE
+DEFAULT_NEURAL_BATCH_SIZE = neural.DEFAULT_BATCH_SIZE
 REPRODUCTION_ROOT = Path("artifacts/reproduction")
-DEFAULT_OUTPUT = REPRODUCTION_ROOT / "cell_disjoint"
+DEFAULT_OUTPUT = REPRODUCTION_ROOT / "cell_disjoint_protocol_matched"
 DEFAULT_NEURAL_ROOT = REPRODUCTION_ROOT / "neural_baselines/mixed"
 TRAFFIC_ONLY_MANIFEST = REPRODUCTION_ROOT / "lightgbm/traffic_only_73d/cache_manifest.json"
 STANDARD_STAT_SUMMARY = REPRODUCTION_ROOT / "lightgbm/standard_stat/summary.json"
@@ -59,6 +65,86 @@ METHODS = (
 )
 
 
+def refit_training_protocol(
+    wlcr_batch_size: int, neural_batch_size: int
+) -> dict[str, object]:
+    """Return the auditable final-refit settings used in every outer fold."""
+    if wlcr_batch_size <= 0 or neural_batch_size <= 0:
+        raise ValueError("cell-disjoint batch sizes must be positive")
+    batch_size_by_model = {
+        "wlcr_sea": int(wlcr_batch_size),
+        "dlinear_aug": int(neural_batch_size),
+        "patchtst_aug": int(neural_batch_size),
+    }
+    augmentation_seed_by_model = {
+        method: FINAL_AUGMENTATION_SEED
+        for method in ("wlcr_sea", "dlinear_aug", "patchtst_aug")
+    }
+    return {
+        "single_model_seed": True,
+        "model_seed": MODEL_SEED,
+        "batch_size_by_model": batch_size_by_model,
+        "augmentation_seed_by_model": augmentation_seed_by_model,
+        "augmentation_rate": AUGMENTATION_RATE,
+        "matched_final_refit_augmentation_view": (
+            len(set(augmentation_seed_by_model.values())) == 1
+        ),
+        "matches_temporal_batch_size_defaults": (
+            wlcr_batch_size == DEFAULT_WLCR_BATCH_SIZE
+            and neural_batch_size == DEFAULT_NEURAL_BATCH_SIZE
+        ),
+        "configuration_and_epoch": (
+            "frozen from the seed-42 temporal inner-selection checkpoints; "
+            "no fold-specific retuning"
+        ),
+    }
+
+
+def validate_worker_refit_report(
+    report: Mapping[str, object], expected: Mapping[str, object]
+) -> None:
+    """Fail if declared refit settings diverge from recorded training reports."""
+    if int(report.get("model_seed", -1)) != MODEL_SEED:
+        raise ValueError("cell-disjoint worker used an unexpected model seed")
+    if report.get("refit_training_protocol") != expected:
+        raise ValueError("cell-disjoint worker protocol declaration changed")
+    batches = expected["batch_size_by_model"]
+    augmentation_seeds = expected["augmentation_seed_by_model"]
+    if not isinstance(batches, Mapping) or not isinstance(augmentation_seeds, Mapping):
+        raise TypeError("cell-disjoint refit protocol mappings are malformed")
+    training = report.get("training_reports")
+    if not isinstance(training, Mapping):
+        raise TypeError("cell-disjoint worker training reports are missing")
+    signature_fields = (
+        "mechanism",
+        "requested_rate",
+        "seed",
+        "scope",
+        "newly_removed_rate",
+        "final_total_missing_rate",
+        "unique_cell_time",
+        "window_exposure",
+    )
+    signatures: list[dict[str, object]] = []
+    for method in ("wlcr_sea", "dlinear_aug", "patchtst_aug"):
+        method_report = training.get(method)
+        if not isinstance(method_report, Mapping):
+            raise TypeError(f"missing training report for {method}")
+        if int(method_report.get("batch_size", -1)) != int(batches[method]):
+            raise ValueError(f"{method} batch size diverged from the refit protocol")
+        expected_seed = int(augmentation_seeds[method])
+        if int(method_report.get("augmentation_seed", -1)) != expected_seed:
+            raise ValueError(f"{method} augmentation seed diverged from the protocol")
+        augmentation = method_report.get("augmentation")
+        if not isinstance(augmentation, Mapping):
+            raise TypeError(f"missing augmentation report for {method}")
+        if int(augmentation.get("seed", -1)) != expected_seed:
+            raise ValueError(f"{method} recorded a different augmentation view")
+        signatures.append({field: augmentation[field] for field in signature_fields})
+    if not signatures[0] == signatures[1] == signatures[2]:
+        raise ValueError("trainable methods did not receive the same augmentation view")
+
+
 def fold_mapping(cells: Sequence[str]) -> dict[str, int]:
     ordered = sorted(set(str(cell) for cell in cells))
     return {cell: index % FOLDS for index, cell in enumerate(ordered)}
@@ -70,6 +156,15 @@ def atomic_npy(path: Path, values: np.ndarray) -> None:
     with temporary.open("wb") as handle:
         np.save(handle, values, allow_pickle=False)
     os.replace(temporary, path)
+
+
+def prepare_fresh_output(output: Path) -> None:
+    """Create an output directory without permitting stale-result reuse."""
+    if output.exists() and any(output.iterdir()):
+        raise FileExistsError(
+            f"cell-disjoint output must be new or empty: {output}"
+        )
+    output.mkdir(parents=True, exist_ok=True)
 
 
 def example_key(cell: str, target_start: datetime) -> tuple[str, str]:
@@ -181,11 +276,8 @@ def build_shared_cache(root: Path, cache: Path) -> dict[str, object]:
         tuple(float(value) for value in frozen_baseline["weights"]),
         tuple(float(value) for value in frozen_baseline["scales"]),
     )
-    parameters = load_parameters(root / "data/parameter.csv")
-    weather = load_weather(root / "data/weather.csv")
-
-    wlcr_final = build_matrix(final_examples, baseline, parameters, weather)
-    wlcr_holdout = build_matrix(holdout_examples, baseline, parameters, weather)
+    wlcr_final = build_matrix(final_examples, baseline, {}, {})
+    wlcr_holdout = build_matrix(holdout_examples, baseline, {}, {})
     if wlcr_final.features.shape[1] != 88 or wlcr_holdout.features.shape[1] != 88:
         raise ValueError("original WLCR full matrix must contain 88 features")
     wlcr_columns = np.asarray([0, *range(16, 88)], dtype=np.int64)
@@ -268,6 +360,8 @@ def build_shared_cache(root: Path, cache: Path) -> dict[str, object]:
         "standard_stat_rounds": list(standard_rounds),
         "parameter_features_selected": False,
         "weather_features_selected": False,
+        "parameter_or_weather_files_opened": False,
+        "canonical_input_file": str(train_path.relative_to(root)),
         "calendar_features_selected": False,
         "cell_id_or_coordinate_features_selected": False,
     }
@@ -278,9 +372,9 @@ def build_shared_cache(root: Path, cache: Path) -> dict[str, object]:
 def load_neural_protocol(
     root: Path, model_name: str
 ) -> tuple[dict[str, object], int, Path]:
-    path = root / "models" / f"{model_name}_seed42.pt"
+    path = root / "models" / f"{model_name}_seed{MODEL_SEED}.pt"
     payload = torch.load(path, map_location="cpu")
-    if payload.get("model") != model_name or int(payload.get("seed")) != SEED:
+    if payload.get("model") != model_name or int(payload.get("seed")) != MODEL_SEED:
         raise ValueError(f"invalid frozen neural protocol checkpoint: {path}")
     if payload.get("augmentation") != "mixed":
         raise ValueError(f"unseen {model_name} must use the fair mixed augmentation protocol")
@@ -298,6 +392,13 @@ def worker(args: argparse.Namespace) -> int:
     output = Path(args.output).resolve(strict=False)
     source = Path(args.source).resolve(strict=True)
     neural_root = Path(args.neural_root).resolve(strict=True)
+    refit_protocol = refit_training_protocol(
+        args.wlcr_batch_size, args.neural_batch_size
+    )
+    if not refit_protocol["matches_temporal_batch_size_defaults"]:
+        raise ValueError(
+            "cell-disjoint refits must retain WLCR batch 256 and neural batch 128"
+        )
     dataset = neural.load_dataset_cache(cache / "dataset")
     matrix_dir = cache / "matrices"
     final_indices = np.load(
@@ -335,7 +436,7 @@ def worker(args: argparse.Namespace) -> int:
         raise ValueError(f"cell leakage in fold {args.fold}: {sorted(overlap)[:3]}")
 
     source_payload = torch.load(
-        source / "models" / f"{runner.PRIMARY_VARIANT}_seed42.pt",
+        source / "models" / f"{runner.PRIMARY_VARIANT}_seed{MODEL_SEED}.pt",
         map_location="cpu",
     )
     variant = sea.VariantConfig(**source_payload["variant"])
@@ -349,18 +450,18 @@ def worker(args: argparse.Namespace) -> int:
         train,
         prior,
         variant,
-        seed=SEED,
+        seed=FINAL_AUGMENTATION_SEED,
     )
     expert_batch, sea_eval_tensors = runner.make_eval_tensors(dataset, evaluate, prior)
     sea_model, sea_output, sea_training = runner.train_final(
         variant=variant,
         config=sea_config,
-        seed=SEED,
+        seed=MODEL_SEED,
         epochs=sea_epochs,
         train_tensors=sea_train_tensors,
         holdout_tensors=sea_eval_tensors,
         device=device,
-        batch_size=args.batch_size,
+        batch_size=args.wlcr_batch_size,
         include_audit=True,
     )
     fixed_model = sea.WLCRSEA(
@@ -370,7 +471,7 @@ def worker(args: argparse.Namespace) -> int:
         fixed_model,
         sea_eval_tensors,
         device=torch.device("cpu"),
-        batch_size=args.batch_size,
+        batch_size=args.wlcr_batch_size,
     )["prediction"]
     same_hour_prediction = np.asarray(
         sea.prediction_from_log(expert_batch.values[..., 3]), dtype=np.float32
@@ -386,12 +487,14 @@ def worker(args: argparse.Namespace) -> int:
             "config": sea_config,
             "epochs": sea_epochs,
             "augmentation": sea_augmentation,
+            "augmentation_seed": FINAL_AUGMENTATION_SEED,
+            "batch_size": args.wlcr_batch_size,
             "training": sea_training,
             "mean_prior_mass": float(np.mean(sea_output["attention"][..., -1])),
         }
     }
 
-    for offset, model_name in enumerate(("dlinear", "patchtst")):
+    for model_name in ("dlinear", "patchtst"):
         config, epochs, protocol_checkpoint = load_neural_protocol(
             neural_root, model_name
         )
@@ -401,7 +504,7 @@ def worker(args: argparse.Namespace) -> int:
             train,
             augmentation="mixed",
             requested_rate=AUGMENTATION_RATE,
-            seed=SEED + 100 * offset,
+            seed=FINAL_AUGMENTATION_SEED,
         )
         train_tensors = neural.prepared_tensors(
             dataset,
@@ -413,13 +516,13 @@ def worker(args: argparse.Namespace) -> int:
         model, prediction, report = neural.train_final_model(
             model_name=model_name,
             config=config,
-            seed=SEED,
+            seed=MODEL_SEED,
             epochs=epochs,
             train_tensors=train_tensors,
             holdout_inputs=evaluate_inputs,
             normalization=normalization,
             device=device,
-            batch_size=args.batch_size,
+            batch_size=args.neural_batch_size,
         )
         key = f"{model_name}_aug"
         predictions[key] = prediction
@@ -427,6 +530,8 @@ def worker(args: argparse.Namespace) -> int:
             "config": config,
             "epochs": epochs,
             "augmentation": augmentation_report,
+            "augmentation_seed": FINAL_AUGMENTATION_SEED,
+            "batch_size": args.neural_batch_size,
             "normalization": normalization.__dict__,
             "training": report,
             "frozen_protocol_checkpoint": str(protocol_checkpoint),
@@ -438,11 +543,13 @@ def worker(args: argparse.Namespace) -> int:
                 "schema_version": SCHEMA_VERSION,
                 "fold": args.fold,
                 "model": model_name,
-                "seed": SEED,
+                "seed": MODEL_SEED,
+                "batch_size": args.neural_batch_size,
                 "config": config,
                 "selected_epoch": epochs,
                 "augmentation": "mixed",
                 "augmentation_rate": AUGMENTATION_RATE,
+                "augmentation_seed": FINAL_AUGMENTATION_SEED,
                 "normalization": normalization.__dict__,
                 "state_dict": {
                     name: value.detach().cpu()
@@ -552,7 +659,9 @@ def worker(args: argparse.Namespace) -> int:
         {
             "schema_version": SCHEMA_VERSION,
             "fold": args.fold,
-            "seed": SEED,
+            "seed": MODEL_SEED,
+            "batch_size": args.wlcr_batch_size,
+            "augmentation_seed": FINAL_AUGMENTATION_SEED,
             "variant": source_payload["variant"],
             "config": sea_config,
             "selected_epoch": sea_epochs,
@@ -575,13 +684,15 @@ def worker(args: argparse.Namespace) -> int:
         "cell_overlap": 0,
         "all_evaluation_cells_excluded_from_every_fit": True,
         "temporal_configuration_frozen": True,
-        "model_seed": SEED,
+        "model_seed": MODEL_SEED,
+        "refit_training_protocol": refit_protocol,
         "metrics": metrics,
         "training_reports": training_reports,
         "prediction_file": str(prediction_path.relative_to(output)),
         "sea_model_file": str(sea_model_path.relative_to(output)),
         "finals_test_opened": False,
     }
+    validate_worker_refit_report(report, refit_protocol)
     runner.atomic_json(worker_dir / f"fold{args.fold}.json", report)
     print(json.dumps({"status": "complete", "fold": args.fold}))
     return 0
@@ -613,8 +724,10 @@ def launch_worker(
         str(neural_root),
         "--output",
         str(output),
-        "--batch-size",
-        str(args.batch_size),
+        "--wlcr-batch-size",
+        str(args.wlcr_batch_size),
+        "--neural-batch-size",
+        str(args.neural_batch_size),
     ]
     if args.smoke:
         command.append("--smoke")
@@ -662,12 +775,19 @@ def aggregate(
     position = {int(index): offset for offset, index in enumerate(holdout.tolist())}
     fold_rows: list[dict[str, object]] = []
     prior_mass: list[float] = []
+    refit_protocol: dict[str, object] | None = None
     for fold in range(FOLDS):
         report = json.loads(
             (output / "worker" / f"fold{fold}.json").read_text(encoding="utf-8")
         )
         if int(report["cell_overlap"]) != 0:
             raise ValueError(f"fold {fold} reports cell overlap")
+        reported_refit_protocol = dict(report["refit_training_protocol"])
+        validate_worker_refit_report(report, reported_refit_protocol)
+        if refit_protocol is None:
+            refit_protocol = reported_refit_protocol
+        elif reported_refit_protocol != refit_protocol:
+            raise ValueError("cell-disjoint folds used inconsistent refit protocols")
         prior_mass.append(
             float(report["training_reports"]["wlcr_sea"]["mean_prior_mass"])
         )
@@ -712,7 +832,7 @@ def aggregate(
             predictions[baseline],
             cells,
             replicates=bootstrap_replicates,
-            seed=SEED,
+            seed=BOOTSTRAP_SEED,
         )
         direct = float(
             metrics["wlcr_sea"]["macro_indicator"]["wape"]
@@ -723,15 +843,34 @@ def aggregate(
         ):
             raise RuntimeError(f"unseen bootstrap point mismatch for {baseline}")
         comparisons[f"wlcr_sea_minus_{baseline}"] = result
+    if refit_protocol is None:
+        raise RuntimeError("cell-disjoint aggregation found no fold protocols")
+    cluster_counts = {
+        int(result["clusters"]) for result in comparisons.values()
+    }
+    if len(cluster_counts) != 1:
+        raise RuntimeError("cell-cluster comparisons used inconsistent cluster counts")
     payload = {
         "schema_version": SCHEMA_VERSION,
         "protocol": (
             "five deterministic cell-disjoint folds; evaluation cells excluded from "
             "all fitted priors, normalizations, neural weights, SEA weights, and boosters; "
-            "temporal configurations and training budgets frozen"
+            "temporal configurations and epochs frozen; temporal refit batch sizes "
+            "and final-refit augmentation view matched; one fixed model seed"
         ),
         "evidence_status": "exploratory_redesign_on_existing_trace",
         "methods": list(METHODS),
+        "refit_training_protocol": refit_protocol,
+        "uncertainty_scope": (
+            "descriptive paired cell-cluster bootstrap conditional on the frozen "
+            "configuration, epoch, model seed, and augmentation view; it excludes "
+            "optimization-seed, tuning, temporal, and regional uncertainty"
+        ),
+        "statistical_unit": {
+            "evaluation_cells": int(len(set(cells.tolist()))),
+            "evaluable_cell_clusters": cluster_counts.pop(),
+            "evaluation_windows": int(len(holdout)),
+        },
         "folds": fold_rows,
         "all_fold_cell_overlaps_zero": all(
             int(row["cell_overlap"]) == 0 for row in fold_rows
@@ -760,12 +899,19 @@ def run_master(args: argparse.Namespace) -> int:
     allowed = (root / REPRODUCTION_ROOT).resolve(strict=False)
     if not output.is_relative_to(allowed):
         raise ValueError("cell-disjoint output must remain under artifacts/reproduction")
-    output.mkdir(parents=True, exist_ok=True)
+    prepare_fresh_output(output)
     train_path = neural.resolve_train_path()
     before = neural.sha256_file(train_path)
     devices = [int(item) for item in args.gpu_devices.split(",") if item.strip()]
     if not devices:
         raise ValueError("at least one GPU is required")
+    refit_protocol = refit_training_protocol(
+        args.wlcr_batch_size, args.neural_batch_size
+    )
+    if not refit_protocol["matches_temporal_batch_size_defaults"]:
+        raise ValueError(
+            "cell-disjoint refits must retain WLCR batch 256 and neural batch 128"
+        )
     with tempfile.TemporaryDirectory(prefix="revision7-unseen-") as temporary:
         cache = Path(temporary)
         cache_report = build_shared_cache(root, cache)
@@ -819,13 +965,36 @@ def run_master(args: argparse.Namespace) -> int:
         "source": str(source.relative_to(root)),
         "neural_protocol_root": str(neural_root.relative_to(root)),
         "folds": FOLDS,
-        "model_seed": SEED,
+        "model_seed": MODEL_SEED,
+        "single_model_seed": True,
+        "refit_training_protocol": refit_protocol,
         "augmentation": "mixed input-history only",
         "augmentation_rate": AUGMENTATION_RATE,
         "gpu_devices": devices,
         "bootstrap_replicates": args.bootstrap_replicates,
         "smoke": args.smoke,
         "shared_cache_report": cache_report,
+        "canonical_input_files_opened": [str(train_path.relative_to(root))],
+        "parameter_or_weather_files_opened": False,
+        "frozen_configuration_and_epoch_sources": {
+            "wlcr_sea": str(
+                (
+                    source
+                    / "models"
+                    / f"{runner.PRIMARY_VARIANT}_seed{MODEL_SEED}.pt"
+                ).relative_to(root)
+            ),
+            "dlinear_aug": str(
+                (
+                    neural_root / "models" / f"dlinear_seed{MODEL_SEED}.pt"
+                ).relative_to(root)
+            ),
+            "patchtst_aug": str(
+                (
+                    neural_root / "models" / f"patchtst_seed{MODEL_SEED}.pt"
+                ).relative_to(root)
+            ),
+        },
         "registered_train_sha256_before": before,
         "registered_train_sha256_after": after,
         "finals_test_opened": False,
@@ -841,7 +1010,12 @@ def parser() -> argparse.ArgumentParser:
     value.add_argument("--neural-root", default=str(DEFAULT_NEURAL_ROOT))
     value.add_argument("--output", default=str(DEFAULT_OUTPUT))
     value.add_argument("--gpu-devices", default="0,1,2,3")
-    value.add_argument("--batch-size", type=int, default=256)
+    value.add_argument(
+        "--wlcr-batch-size", type=int, default=DEFAULT_WLCR_BATCH_SIZE
+    )
+    value.add_argument(
+        "--neural-batch-size", type=int, default=DEFAULT_NEURAL_BATCH_SIZE
+    )
     value.add_argument("--bootstrap-replicates", type=int, default=5000)
     value.add_argument("--smoke", action="store_true")
     value.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)

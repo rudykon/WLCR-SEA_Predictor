@@ -7,11 +7,12 @@ generated experiment reports.
 
 ## Inputs
 
-Place the registered training/context inputs in local paths expected by the
-programs (`data/train_data.csv`, `data/parameter.csv`, and `data/weather.csv`).
-The public repository does not redistribute these files. The dataset download
-link is listed in the root README. Do not add credentials or held-out test
-traffic to the repository.
+Place the registered training trace at `data/train_data.csv`. This is the
+canonical input for the current paper workflows. `data/parameter.csv` and
+`data/weather.csv` are needed only by a historical full-context compatibility
+path and are not opened by the current traffic-only experiments. The public
+repository does not redistribute the data. The download link is listed in the
+root README. Do not add credentials or held-out test traffic to the repository.
 
 ## Install
 
@@ -27,15 +28,19 @@ training protocol. Select the appropriate PyTorch build for the host.
 
 ## Reproduction stages
 
-1. Train WLCR-SEA A0–A6 with `experiments/train_wlcr_sea.py`.
-2. Train DLinear/PatchTST/GRU-D and LightGBM controls with the corresponding
-   `train_*.py` programs.
+1. Train WLCR-SEA A0–A6 with `experiments/train_wlcr_sea.py`, explicitly using
+   batch size 256.
+2. Train DLinear/PatchTST/GRU-D with batch size 128 and train the LightGBM
+   controls with the corresponding `train_*.py` programs.
 3. Assemble clean comparison metrics with
    `experiments/analyze_paper_clean_results.py`; the table includes A1–A6.
-4. Run missingness stress, paired robustness, cell-disjoint generalization,
-   request-locality, structural, and latency audits using the `analyze_`,
-   `evaluate_`, `audit_`, and `benchmark_` programs.
-5. Run the unit-test suite under `tests/`.
+4. Run missingness stress, paired robustness, request-locality, structural, and
+   latency audits using the `analyze_`, `evaluate_`, `audit_`, and `benchmark_`
+   programs.
+5. Run the complementary single-seed cell-disjoint audit with WLCR batch 256,
+   neural batch 128, and the matched final-refit augmentation view; then run
+   `tools/sync_rq4_evidence.py --check` against its retained manifest.
+6. Run the unit-test suite under `tests/`.
 
 All generated files should be written below `artifacts/`, which is ignored from
 the public upload manifest. Use fresh output directories for independent runs.
