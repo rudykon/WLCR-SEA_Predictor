@@ -1,4 +1,4 @@
-# Structured seasonal expert routing
+# Method: structured seasonal expert routing
 
 For every forecast horizon and indicator, WLCR-SEA builds a finite bank of
 eight candidates. The router sees their values and availability rather than a
@@ -62,3 +62,6 @@ allowlist so identity-conditioned inputs do not silently enter the scorer.
     lag 0.7, biweekly lag 0.2, and 7-day same-hour median 0.1, renormalized over
     available evidence. The trained A6 checkpoint is not distributed, so the
     demo does not claim to reproduce the paper model's predictions.
+
+[See the system architecture](architecture.md){ .md-button }
+[Start with the business scenarios](problem.md){ .md-button }

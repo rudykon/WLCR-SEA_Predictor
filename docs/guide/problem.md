@@ -133,7 +133,8 @@ finite set of named seasonal candidates that can be rebuilt from the same
 input. Availability is structural, routing is limited to surviving evidence,
 and the correction is bounded around the routed baseline.
 
-[See how the eight experts are routed](method.md){ .md-button .md-button--primary }
+[Follow the system architecture](architecture.md){ .md-button .md-button--primary }
+[See how the eight experts are routed](method.md){ .md-button }
 [Try the request audit lab](../deployment/hugging-face.md){ .md-button }
 
 !!! note "What request-local does—and does not—mean"

@@ -90,9 +90,10 @@ plugins:
             Get started: 开始使用
             Installation: 安装
             Quick start: 快速开始
-            Method: 方法
-            Operational story: 业务场景
+            Business scenarios: 业务场景
             Architecture: 架构
+            Method: 方法
+            Expert routing: 专家路由
             Data contract: 数据契约
             Research: 研究
             Paper evidence: 论文证据
@@ -146,9 +147,10 @@ nav:
   - Get started:
       - Installation: getting-started/installation.md
       - Quick start: getting-started/quickstart.md
+  - Business scenarios: guide/problem.md
+  - Architecture: guide/architecture.md
   - Method:
-      - Operational story: guide/problem.md
-      - Architecture: guide/method.md
+      - Expert routing: guide/method.md
       - Data contract: guide/data-contract.md
   - Research:
       - Paper evidence: research/evidence.md

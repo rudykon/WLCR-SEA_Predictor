@@ -147,6 +147,8 @@ hide:
   </article>
 </div>
 
+<p class="story-bridge"><a href="guide/architecture/">查看完整系统架构 →</a></p>
+
 <span class="section-eyebrow">研究发现</span>
 
 ## 让鲁棒性、可审计性与代价同时可见 {: .section-title }

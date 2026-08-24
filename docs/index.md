@@ -149,6 +149,8 @@ hide:
   </article>
 </div>
 
+<p class="story-bridge"><a href="guide/architecture/">Walk through the complete system architecture →</a></p>
+
 <span class="section-eyebrow">What the study found</span>
 
 ## Robustness and inspectability—with the trade-offs visible {: .section-title }

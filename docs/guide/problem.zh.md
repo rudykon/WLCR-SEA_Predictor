@@ -117,7 +117,8 @@ WLCR-SEA 不应被视为所有蜂窝预测任务的默认答案。
 黑箱预测器可以在不公开参考依据的情况下给出点估计。WLCR-SEA 则把当前请求压缩成有限个具名季节候选，
 使它们能够从同一输入重新构造。可用性是结构性的，路由只作用于仍然存在的证据，修正则被限制在路由基线周围。
 
-[查看八个专家如何路由](method.md){ .md-button .md-button--primary }
+[继续了解系统架构](architecture.md){ .md-button .md-button--primary }
+[查看八个专家如何路由](method.md){ .md-button }
 [体验请求审计实验室](../deployment/hugging-face.md){ .md-button }
 
 !!! note "请求局部意味着什么，又不意味着什么"
