@@ -1,8 +1,6 @@
 # Code map
 
-This page is for developers who want to find an implementation quickly. The
-repository separates model code, experiment scripts, CSV handling, result
-checks, paper files, and the website/Demo.
+This page helps developers find each implementation quickly. The repository separates model code, experiment scripts, CSV handling, result checks, manuscript sources, and the website/Demo.
 
 | Path | Responsibility |
 | --- | --- |
@@ -18,7 +16,7 @@ checks, paper files, and the website/Demo.
 | `tests/test_wlcr_sea_model.py` | Core behavior tests for the public method |
 | `demo/` | Bilingual Gradio demo, synthetic sample, and Space configuration |
 | `docs/` | Existing technical guides plus this bilingual MkDocs site |
-| `paper/` | English/Chinese manuscript source, PDFs, and figure sources |
+| `paper/` | English and Chinese manuscript sources plus figure sources |
 
 ## Core tensor shapes
 
@@ -33,6 +31,4 @@ checks, paper files, and the website/Demo.
 
 ## Variants
 
-`VARIANTS` contains the fixed baseline and the learned model variants tested in
-the paper. The selected paper method is `A6_mixed_aug`. The public Demo uses
-`A0_fixed` because it does not require the unpublished trained parameters.
+`VARIANTS` contains the fixed baseline and learned model variants evaluated in the study. The selected paper method is `A6_mixed_aug`. The public Demo uses `A0_fixed` because it does not require unpublished trained parameters.

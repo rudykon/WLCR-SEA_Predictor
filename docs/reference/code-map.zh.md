@@ -1,11 +1,10 @@
 # 代码地图
 
-本页面向需要快速定位实现的开发者。仓库把模型代码、实验脚本、CSV 处理、结果检查、论文文件和
-网站/Demo 分开组织。
+本页帮助开发者快速找到各项功能的实现位置。仓库将模型代码、实验脚本、CSV 处理、结果检查、手稿源文件以及网站/Demo 分开组织。
 
 | 路径 | 职责 |
 | --- | --- |
-| `experiments/wlcr_sea_model.py` | 专家构造、Entmax、WLCR-SEA 变体、损失、指标与审计范围 |
+| `experiments/wlcr_sea_model.py` | 候选构造、Entmax、WLCR-SEA 变体、损失函数、评估指标与计算记录字段 |
 | `experiments/missingness_protocol.py` | 按固定、可重复的方式移除数据并统计实际比例 |
 | `experiments/train_wlcr_sea.py` | 运行 WLCR-SEA 训练 |
 | `experiments/analyze_matched_missingness.py` | 在移除相同数据点后比较不同模型 |
@@ -17,7 +16,7 @@
 | `tests/test_wlcr_sea_model.py` | 公开方法的核心行为测试 |
 | `demo/` | 双语 Gradio Demo、合成示例和 Space 配置 |
 | `docs/` | 既有技术指南与本双语 MkDocs 网站 |
-| `paper/` | 中英文论文源码、PDF 和图件源文件 |
+| `paper/` | 中英文手稿与图件源文件 |
 
 ## 核心张量形状
 
@@ -32,5 +31,4 @@
 
 ## 变体
 
-`VARIANTS` 包含论文测试的固定基线和不同学习模型。论文最终选择 `A6_mixed_aug`；
-公开 Demo 使用不需要未发布训练参数的 `A0_fixed`。
+`VARIANTS` 包含研究所测试的固定基线和多种学习模型。论文最终选择 `A6_mixed_aug`，公开 Demo 则使用不依赖未发布训练参数的 `A0_fixed`。

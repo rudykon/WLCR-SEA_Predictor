@@ -1,8 +1,6 @@
 # System architecture
 
-The system has five clear steps: prepare one cell's history, pass it to the
-model, build candidate forecasts, combine the usable candidates, and return a
-forecast with a calculation record.
+The system follows five steps: prepare one cell's history, pass it to the model, build candidate forecasts, combine the candidates that are available, and return the forecast with a calculation record.
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_architecture.png" target="_blank" rel="noopener">
@@ -46,7 +44,7 @@ forecast with a calculation record.
     <span class="step-number">05</span>
     <div>
       <h3>Forecast and calculation record</h3>
-      <p>The response contains four 24-hour forecasts. It can also save the input hash, model version, candidate values, weights, adjustment, and range checks.</p>
+      <p>The response contains a 24-hour forecast for each of the four indicators. It can also save the input hash, model version, candidate values, weights, adjustment, and range checks.</p>
     </div>
   </article>
 </div>
@@ -63,10 +61,7 @@ forecast with a calculation record.
 
 ## What the forecasting service does—and does not do
 
-This is only the forecasting part of a telecom system. The surrounding system
-must still handle user permissions, encryption, data retention, logs, and
-resource scheduling. Restricting what the model can read does not automatically
-provide privacy, and the model does not directly control the network.
+This architecture covers only the forecasting component of a telecom system. The surrounding system must still manage user permissions, encryption, data retention, logging, and resource scheduling. Restricting what the model can read does not automatically protect privacy, and the model does not directly control the network.
 
 <div class="notice-card">
   <strong>This page explains the system flow.</strong> The Method page explains the exact calculation, and the Research pages report the results and limitations.

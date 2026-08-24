@@ -1,8 +1,8 @@
 site_name: WLCR-SEA Predictor
 site_url: https://rudykon.github.io/WLCR-SEA_Predictor/
 site_description: >-
-  Forecast the next 24 hours of one cell's traffic from its recent data,
-  with clear handling of missing values and inspectable predictions.
+  Forecast one cell's traffic over the next 24 hours from its recent data,
+  with explicit missing-value handling and an inspectable calculation record.
 
 repo_name: rudykon/WLCR-SEA_Predictor
 repo_url: https://github.com/rudykon/WLCR-SEA_Predictor
@@ -68,7 +68,7 @@ plugins:
           build: true
           site_name: WLCR-SEA 蜂窝流量预测
           site_description: >-
-            根据单个小区的近期数据预测未来 24 小时流量，并清楚处理数据缺失和预测依据。
+            根据单个小区的近期数据预测未来 24 小时流量，明确处理缺失值，并保留可供检查的计算记录。
           theme:
             palette:
               - media: "(prefers-color-scheme: light)"

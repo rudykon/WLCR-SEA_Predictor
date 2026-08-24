@@ -1,8 +1,6 @@
 # Reproduction map
 
-The repository includes source code, tests, both paper versions, and figures.
-Large datasets, trained checkpoints, and generated result folders are not in
-Git. Follow the steps below to recreate them.
+The repository includes source code, tests, research scripts, and figures. Large datasets, trained checkpoints, and generated result folders are not stored in Git. Follow the steps below to recreate the required research artifacts locally.
 
 ## Start here
 
@@ -41,10 +39,7 @@ PYTHONPATH=. python -m unittest discover -s tests -v
 
 ## Files that must be generated locally
 
-The `.gitignore` excludes checkpoints (`*.pt`, `*.pth`), saved models, NumPy
-bundles, logs, and large experiment folders. Their absence after cloning is
-expected. The paper's A6 results require the documented A6 training and
-evaluation process; they do not come from the public Demo.
+The `.gitignore` excludes checkpoints (`*.pt`, `*.pth`), saved models, NumPy bundles, logs, and large experiment folders. Their absence after cloning is expected. The paper's A6 results require the documented A6 training and evaluation process; they do not come from the public Demo.
 
 ## Website and Demo checks
 
@@ -53,6 +48,4 @@ mkdocs build --strict
 python -m unittest tests.test_hf_space_demo -v
 ```
 
-GitHub Actions repeats both checks before changes reach the main branch. The
-Pages workflow publishes the bilingual site; a separate workflow stages Space
-frontmatter and mirrors the repository to Hugging Face.
+GitHub Actions repeats both checks before changes reach the main branch. The Pages workflow publishes the bilingual site, while a separate workflow adds the Space frontmatter and mirrors the repository to Hugging Face.

@@ -1,14 +1,12 @@
 # Quick start
 
-Choose what you want to do. The Live Demo is the fastest way to understand the
-project; the Python examples are for developers and researchers.
+Choose the entry point that matches your goal. The Live Demo is the fastest way to understand the project, while the Python examples are intended for developers and researchers.
 
 ## 1. Try the Live Demo
 
 [Open the Hugging Face Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
 
-Select the built-in sample, choose how much history to remove, and run the
-forecast. You will receive:
+Select the built-in sample, choose how much history to remove, and run the forecast. The Demo returns:
 
 - four 24-hour forecasts from the `A0_fixed` baseline;
 - plots of the history and forecast;
@@ -16,9 +14,7 @@ forecast. You will receive:
 - values and weights for all eight candidates;
 - a forecast CSV and a JSON calculation record.
 
-The Demo uses a simple fixed baseline because the trained A6 checkpoint is not
-included in the repository. It is for understanding the method, not reproducing
-the paper's main result.
+The Demo uses a simple fixed baseline because the trained A6 checkpoint is not included in the repository. It demonstrates how the method works; it does not reproduce the paper's main results.
 
 ## 2. Build the eight candidates in Python
 
@@ -36,7 +32,7 @@ print(experts.values.shape)        # (1, 24, 4, 8)
 print(experts.availability.shape)  # (1, 24, 4, 8)
 ```
 
-## 3. Run a deterministic seasonal forecast
+## 3. Run a reproducible seasonal baseline
 
 ```python
 from Model.traffic_window_forecasting import (
@@ -51,13 +47,8 @@ forecast = seasonal_forecast(window, BaselineConfig.default())
 assert len(forecast) == 24
 ```
 
-This utility and the Demo always return the same result for the same input.
-They are useful for checking code and input format, but they do not replace the
-trained WLCR-SEA results in the paper.
+This utility and the Demo return the same result whenever the input is unchanged. They are useful for checking the code and input format, but they do not replace the trained WLCR-SEA results reported in the paper.
 
 ## 4. Reproduce experiments
 
-Start with the [reproduction guide](../reference/reproduction.md). It points to
-the scripts for training, missing-data tests, speed tests, and calculation
-checks. Large datasets, trained checkpoints, and generated results are not
-stored in Git.
+Start with the [reproduction guide](../reference/reproduction.md). It links to the scripts for training, missing-data evaluation, speed tests, and calculation checks. Large datasets, trained checkpoints, and generated results are not stored in Git.

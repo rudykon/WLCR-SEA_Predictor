@@ -122,6 +122,10 @@ pre {
 .md-content__inner { padding-bottom: 3rem; }
 .md-typeset { color: var(--wl-text); font-size: 0.83rem; line-height: 1.75; }
 
+.md-typeset p,
+.md-typeset li,
+.md-typeset figcaption { text-wrap: pretty; }
+
 .md-typeset h1,
 .md-typeset h2,
 .md-typeset h3,
@@ -129,6 +133,7 @@ pre {
   color: var(--wl-text);
   font-weight: 750;
   letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 
 .md-typeset h1 { font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800; line-height: 1.12; }

@@ -7,12 +7,7 @@ hide:
   <div class="hero-copy">
     <span class="hero-kicker">Cellular traffic forecasting · Next 24 hours · Inspectable results</span>
     <h1>Forecast tomorrow's traffic for one cell—<span class="gradient-text">without reading other cells.</span></h1>
-    <p class="hero-lead">
-      WLCR-SEA reads the previous 14 days of four traffic indicators and predicts
-      the next 24 hours. It is designed for settings where the model can use only
-      the current cell's submitted data. The result includes both the forecast
-      and a record of the historical patterns used to produce it.
-    </p>
+    <p class="hero-lead">WLCR-SEA uses four traffic indicators from the previous 14 days to forecast the next 24 hours for one cell. It is designed for cases in which the model may use only the data supplied with the current request. Along with the forecast, it returns a record of the historical patterns used in the calculation.</p>
     <div class="hero-actions">
       <a class="hero-button primary" href="guide/problem/">See when to use it</a>
       <a class="hero-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">Try the Live Demo</a>
@@ -21,14 +16,14 @@ hide:
     <div class="hero-proof">
       <span>One cell at a time</span>
       <span>14 days in, 24 hours out</span>
-      <span>Forecast plus inspection record</span>
+      <span>Forecast with a calculation record</span>
     </div>
   </div>
   <figure class="hero-visual">
     <a href="images/paper_figure_scenario.png" target="_blank" rel="noopener">
       <img src="images/paper_figure_scenario.png" alt="One cell's data moving from input preparation to forecast and calculation record" loading="eager" decoding="async">
     </a>
-    <figcaption class="hero-caption">Manuscript Figure 1 · a gateway prepares one cell's data; the model cannot fetch traffic from other cells</figcaption>
+    <figcaption class="hero-caption">Manuscript Figure 1 · the gateway prepares one cell's data, and the model cannot fetch live traffic from other cells</figcaption>
   </figure>
 </section>
 
@@ -57,21 +52,21 @@ hide:
     <span class="step-number">02</span>
     <div>
       <h3>The gateway prepares one input</h3>
-      <p>The service verifies the cell and packages 336 hourly rows. A Boolean mask records which values are truly present. The cell ID is not used as a prediction feature.</p>
+      <p>The service verifies the cell and packages 336 hourly records. A Boolean mask identifies the values that are actually present. The cell ID is not used as a prediction feature.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">03</span>
     <div>
       <h3>The model compares historical patterns</h3>
-      <p>It builds eight candidate forecasts from yesterday, last week, two weeks ago, seasonal summaries and fallback values. Candidates that depend on missing data are removed.</p>
+      <p>It builds eight candidate forecasts from recent daily and weekly patterns, seasonal summaries, and fallback values. Any candidate that depends on missing data is removed.</p>
     </div>
   </article>
   <article class="process-step">
     <span class="step-number">04</span>
     <div>
       <h3>The result includes its calculation record</h3>
-      <p>The service returns four 24-hour forecasts and records the candidate values, their weights, the limited final adjustment and range checks.</p>
+      <p>The service returns a 24-hour forecast for each of the four indicators, together with the candidate values, weights, bounded final adjustment, and range checks.</p>
     </div>
   </article>
 </div>
@@ -80,7 +75,7 @@ hide:
 
 <span class="section-eyebrow">Where it fits</span>
 
-## Situations in which this pattern is useful {: .section-title }
+## When this forecasting pattern is useful {: .section-title }
 
 <p class="section-lead">WLCR-SEA is most useful when the model has limited access to data, historical records may be incomplete, and someone may later need to check why a forecast changed.</p>
 
@@ -92,13 +87,13 @@ hide:
   </article>
   <article class="scenario-card">
     <span class="scenario-tag">CAPACITY</span>
-    <h3>Service-capacity outlook</h3>
-    <p>Give teams a simple view of how four cell-level traffic measures may change over the next day.</p>
+    <h3>Next-day capacity assessment</h3>
+    <p>Give operations teams a concise view of how four cell-level traffic measures may change over the next day.</p>
   </article>
   <article class="scenario-card">
     <span class="scenario-tag">OUTAGE</span>
     <h3>Incomplete measurements</h3>
-    <p>Ignore historical references that are no longer available and measure how different types of data loss affect the forecast.</p>
+    <p>Disable candidates that rely on missing observations and measure how different patterns of data loss affect the forecast.</p>
   </article>
   <article class="scenario-card">
     <span class="scenario-tag">REVIEW</span>
@@ -107,8 +102,8 @@ hide:
   </article>
   <article class="scenario-card">
     <span class="scenario-tag">RESEARCH</span>
-    <h3>Controlled forecasting studies</h3>
-    <p>Compare complete-data accuracy, performance after data removal, input restrictions, calculation checks, and speed under the same test rules.</p>
+    <h3>Reproducible model evaluation</h3>
+    <p>Compare complete-data accuracy, robustness to missing data, input restrictions, calculation checks, and speed under one evaluation protocol.</p>
   </article>
   <article class="scenario-card scenario-card--boundary">
     <span class="scenario-tag">NOT A CLAIM</span>
@@ -138,13 +133,13 @@ hide:
   </article>
   <article class="feature-card">
     <span class="feature-number">02 · ROUTE</span>
-    <h3>Eight clear candidate forecasts</h3>
+    <h3>Eight interpretable candidates</h3>
     <p>Each candidate is based on a known historical pattern. The model records its value, whether it can be used, and the weight it receives.</p>
   </article>
   <article class="feature-card">
     <span class="feature-number">03 · RECORD</span>
-    <h3>A limited final adjustment</h3>
-    <p>The model may adjust the weighted average, but only within a fixed limit. The saved input and model version support later re-runs.</p>
+    <h3>A bounded final adjustment</h3>
+    <p>The model may adjust the weighted average, but only within a fixed limit. Saving the input and model version makes the calculation reproducible.</p>
   </article>
 </div>
 
@@ -154,7 +149,7 @@ hide:
 
 ## What the experiments show—and what they do not {: .section-title }
 
-<p class="section-lead">The paper uses 527,760 hourly records from 736 cells. DLinear is more accurate when the history is complete. WLCR-SEA's main strength appears when blocks of historical data are missing and when the calculation needs to be inspected.</p>
+<p class="section-lead">The study uses 527,760 hourly records from 736 cells. DLinear is more accurate when the history is complete. Under the study's severe missing-data tests, WLCR-SEA performs better while preserving a calculation record that can be inspected.</p>
 
 <figure class="paper-figure">
   <a href="images/paper_figure_missingness.png" target="_blank" rel="noopener">
@@ -167,13 +162,13 @@ hide:
   <div class="metric"><strong>0.1955</strong><span>WLCR-SEA WAPE, complete data</span></div>
   <div class="metric"><strong>0.1854</strong><span>DLinear WAPE, complete data</span></div>
   <div class="metric"><strong>0</strong><span>weight given to missing references</span></div>
-  <div class="metric"><strong>6.8 ms</strong><span>single-seed median CPU latency</span></div>
+  <div class="metric"><strong>6.8 ms</strong><span>single-model median CPU latency</span></div>
 </div>
 
 <div class="demo-cta">
   <div>
     <h2>Try the method with one sample</h2>
-    <p>Load the built-in 336-hour example, remove part of the history, and see which candidate forecasts remain. You can download the 24-hour forecast and its calculation record. The Demo uses the simpler A0 fixed baseline, not the unavailable trained A6 checkpoint.</p>
+    <p>Load the built-in 336-hour example, remove part of the history, and see which candidates remain available. You can then download the 24-hour forecast and its calculation record. The Demo runs the simpler A0 fixed baseline because the trained A6 checkpoint is not public.</p>
   </div>
   <a class="md-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">Launch the Live Demo</a>
 </div>

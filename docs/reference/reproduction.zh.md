@@ -1,7 +1,6 @@
 # 复现地图
 
-仓库包含源码、测试、中英文论文和图片。大型数据集、训练检查点和生成结果目录不存入 Git，
-需要按以下步骤在本地重新生成。
+仓库包含源代码、测试、研究脚本和图片。大型数据集、训练检查点和生成结果目录均不存入 Git，需要按照以下步骤在本地生成所需的研究产物。
 
 ## 从这里开始
 
@@ -30,19 +29,17 @@ PYTHONPATH=. python -m unittest discover -s tests -v
 
 | 问题 | 代表脚本 |
 | --- | --- |
-| 洁净预测 | `train_wlcr_sea.py`、`analyze_paper_clean_results.py` |
+| 完整数据预测 | `train_wlcr_sea.py`、`analyze_paper_clean_results.py` |
 | 结构化缺失 | `missingness_protocol.py`、`analyze_matched_missingness.py` |
 | 路由语义 | `audit_expert_routing.py`、`audit_method_evidence.py` |
 | 请求局部性 | `audit_request_locality.py` |
 | 延迟与内存 | `benchmark_wlcr_sea_latency.py` |
-| 小区不相交审计 | `evaluate_cell_disjoint_generalization.py` |
-| 论文一致性 | `validate_evidence_integrity.py`、`tools/sync_rq4_evidence.py` |
+| 训练与测试小区不重叠评估 | `evaluate_cell_disjoint_generalization.py` |
+| 结果与手稿一致性 | `validate_evidence_integrity.py`、`tools/sync_rq4_evidence.py` |
 
 ## 需要在本地生成的文件
 
-`.gitignore` 会排除检查点（`*.pt`、`*.pth`）、保存的模型、NumPy 文件、日志和大型实验目录。
-克隆后缺少这些文件属于正常情况。论文中的 A6 结果需要按照文档完成 A6 训练和评估，
-并非来自公开 Demo。
+`.gitignore` 会排除检查点（`*.pt`、`*.pth`）、保存的模型、NumPy 文件、日志和大型实验目录。克隆后看不到这些文件属于正常情况。论文中的 A6 结果需要按照文档完成 A6 训练和评估，并非来自公开 Demo。
 
 ## 网站与 Demo 检查
 
@@ -51,5 +48,4 @@ mkdocs build --strict
 python -m unittest tests.test_hf_space_demo -v
 ```
 
-GitHub Actions 会在改动进入主分支前重复两项检查。Pages 工作流发布双语网站；
-另一个工作流单独生成 Space 元数据并把仓库镜像到 Hugging Face。
+GitHub Actions 会在改动进入主分支前重复这两项检查。Pages 工作流负责发布双语网站，另一个工作流会添加 Space 元数据并把仓库镜像到 Hugging Face。
