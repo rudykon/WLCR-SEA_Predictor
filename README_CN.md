@@ -15,11 +15,15 @@
 
 <p align="center">
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.11+"></a>
+  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/"><img src="https://img.shields.io/badge/项目-网站-172B4D?style=flat-square" alt="项目网站"></a>
+  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor"><img src="https://img.shields.io/badge/🤗-在线审计实验室-FEBD08?style=flat-square" alt="Hugging Face 审计实验室"></a>
   <a href="#validation"><img src="https://img.shields.io/badge/Validation-unittest-2CA02C?style=flat-square" alt="单元测试"></a>
   <a href="#scope"><img src="https://img.shields.io/badge/Release-WLCR--SEA%20only-6A5ACD?style=flat-square" alt="仅发布 WLCR-SEA"></a>
 </p>
 
 <p align="center">
+  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/">项目网站</a> ·
+  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">在线 Demo</a> ·
   <a href="#overview">概览</a> ·
   <a href="#method">方法</a> ·
   <a href="#figures">图件</a> ·
@@ -118,6 +122,16 @@ python3 -m pip install -r requirements.txt
 
 完整的训练、分析、消融、对比和审计流程见 [docs/REPRODUCTION_GUIDE.md](docs/REPRODUCTION_GUIDE.md)。
 
+## 交互审计实验室
+
+[Hugging Face Space](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor)
+直接使用仓库真实的 CSV 契约、专家构造、缺失协议、硬掩码和登记的无参数 `A0_fixed` 混合。
+上传一个 336 小时请求，或使用内置合成样例，即可检查专家值、可用性、可靠度、路由质量、
+24 小时预测和可下载的 JSON 审计记录。
+
+仓库**没有**发布训练后的 A6 检查点或冻结训练先验，因此 Space 是方法审计实验室，
+不是论文模型正式预测的复现。详见 [Demo 范围与输入契约](https://rudykon.github.io/WLCR-SEA_Predictor/zh/deployment/hugging-face/)。
+
 <a id="validation"></a>
 ## 验证
 
@@ -132,6 +146,10 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 
 | 资源 | 链接 |
 | --- | --- |
+| 项目网站 | [rudykon.github.io/WLCR-SEA_Predictor/zh](https://rudykon.github.io/WLCR-SEA_Predictor/zh/) |
+| 交互审计实验室 | [Hugging Face Space](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor) |
+| 英文论文 | [paper/main.pdf](paper/main.pdf) |
+| 中文论文 | [paper/main_zh.pdf](paper/main_zh.pdf) |
 | 数据下载 | [下载 ZIP](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip) |
 | 源码 | [github.com/rudykon/WLCR-SEA_Predictor](https://github.com/rudykon/WLCR-SEA_Predictor) |
 
@@ -147,6 +165,6 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 | <code>experiments/wlcr_sea_model.py</code> | WLCR-SEA 专家、路由、有界残差、损失与指标 |
 | <code>experiments/missingness_protocol.py</code> | WLCR-SEA 使用的确定性缺失遥测协议 |
 | <code>tests/test_wlcr_sea_model.py</code> | 公开方法的聚焦单元测试 |
+| <code>demo/</code> | Gradio 请求审计实验室与确定性合成请求 |
 | <code>docs/images/</code> | 为 README 导出的五张论文图 |
-| <code>requirements.txt</code> | 最小 Python 依赖 |
-
+| <code>requirements.txt</code> | 研究与 Gradio 运行依赖 |
