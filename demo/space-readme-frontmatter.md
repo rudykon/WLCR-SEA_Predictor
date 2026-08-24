@@ -1,5 +1,5 @@
 ---
-title: WLCR-SEA Request Audit Lab
+title: WLCR-SEA Traffic Forecast Demo
 emoji: 📡
 colorFrom: indigo
 colorTo: purple

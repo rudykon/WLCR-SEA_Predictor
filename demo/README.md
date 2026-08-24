@@ -1,13 +1,14 @@
-# WLCR-SEA Request Audit Lab
+# WLCR-SEA Traffic Forecast Demo
 
-This Gradio app exercises the repository's real request-local expert builder,
-missingness protocol, hard availability mask, and registered `A0_fixed`
-parameter-free baseline.
+This Gradio app uses the repository's real CSV parser, missing-data logic,
+eight candidate forecasts, and fixed `A0_fixed` baseline. It shows how one
+14-day input becomes a 24-hour forecast and how the result changes when data is
+removed.
 
-It is intentionally a **method demo**, not a reproduction of the paper's
-trained A6 predictions: the public repository does not contain the A6
-checkpoint or frozen training prior. The app replaces that last-resort prior
-with a request-derived fallback and labels it in every audit record.
+It is a **workflow Demo**, not a reproduction of the paper's trained A6
+predictions: the public repository does not contain the A6 checkpoint or fixed
+training prior. The app replaces the last fallback with a value calculated from
+the current input and labels this clearly in every exported record.
 
 Run locally:
 

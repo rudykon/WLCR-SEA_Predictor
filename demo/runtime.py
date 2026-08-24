@@ -1,9 +1,9 @@
-"""Runtime adapter for the public WLCR-SEA audit lab.
+"""Runtime adapter for the public WLCR-SEA forecast Demo.
 
 The repository does not distribute the trained A6 checkpoint used for the
 paper.  The demo therefore runs the registered, parameter-free ``A0_fixed``
 baseline through the real expert-construction and masking code.  Its outputs
-are useful for inspecting request-local evidence and failure behavior, but are
+are useful for inspecting reference selection and missing-data behavior, but are
 deliberately not presented as the paper model's reported forecasts.
 """
 
@@ -59,12 +59,12 @@ METRIC_LABELS = (
 EXPERT_LABELS = (
     "Last day / 前一天",
     "Last week / 前一周",
-    "Two-week lag / 两周滞后",
-    "Same-hour median 7 d / 7 日同小时中位数",
-    "Same-hour median 14 d / 14 日同小时中位数",
-    "Bounded weekly trend / 有界周趋势",
-    "Window-local median / 窗口局部中位数",
-    "Demo fallback prior* / 演示回退先验*",
+    "Two weeks ago / 两周前",
+    "Typical same hour, 7 d / 近 7 天该小时典型值",
+    "Typical same hour, 14 d / 近 14 天该小时典型值",
+    "Limited weekly trend / 限幅周趋势",
+    "Overall 14-day median / 14 天整体中位数",
+    "Demo fallback* / Demo 回退值*",
 )
 SHORT_EXPERT_LABELS = (
     "1 d",
@@ -79,7 +79,7 @@ SHORT_EXPERT_LABELS = (
 
 
 class DemoInputError(ValueError):
-    """Raised when a public demo request violates the input contract."""
+    """Raised when a public demo input does not match the required CSV format."""
 
 
 @dataclass(frozen=True)
@@ -262,9 +262,9 @@ def run_audit_demo(
     lower = np.asarray(sea.prediction_from_log(lower_log), dtype=np.float32)
     upper = np.asarray(sea.prediction_from_log(upper_log), dtype=np.float32)
     if np.any(attention[~experts.availability[0]] != 0.0):
-        raise RuntimeError("Unavailable expert received non-zero routing mass.")
+        raise RuntimeError("A missing reference received a non-zero weight.")
     if np.any(prediction < lower - 1e-5) or np.any(prediction > upper + 1e-5):
-        raise RuntimeError("Fixed-mixture forecast escaped the expert envelope.")
+        raise RuntimeError("The fixed-baseline forecast fell outside the allowed reference range.")
 
     start = window.target_start
     return AuditResult(
@@ -316,13 +316,13 @@ def expert_dataframe(result: AuditResult) -> pd.DataFrame:
         available = bool(result.availability[h, q, expert])
         rows.append(
             {
-                "Expert / 专家": label,
+                "Reference / 参考项": label,
                 "Available / 可用": "Yes / 是" if available else "No / 否",
-                "Reliability / 可靠度": round(float(result.reliability[h, q, expert]), 4),
+                "Support / 支持程度": round(float(result.reliability[h, q, expert]), 4),
                 "Candidate value / 候选值": (
                     round(float(result.expert_values[h, q, expert]), 4) if available else None
                 ),
-                "Routing weight / 路由权重": round(float(result.attention[h, q, expert]), 6),
+                "Weight / 权重": round(float(result.attention[h, q, expert]), 6),
             }
         )
     return pd.DataFrame(rows)
@@ -362,7 +362,7 @@ def make_forecast_figure(result: AuditResult):
             result.upper_envelope[:, metric],
             color=colors[metric],
             alpha=0.10,
-            label="Available-expert envelope",
+            label="Available-reference range",
         )
         axis.axvline(result.forecast_times[0], color="#64748b", linestyle="--", linewidth=1)
         axis.set_ylabel(METRIC_LABELS[metric])
@@ -396,10 +396,10 @@ def make_expert_figure(result: AuditResult):
     axis.grid(axis="y", alpha=0.18)
     weight_axis = axis.twinx()
     weight_axis.plot(positions, weights * 100.0, color="#f97316", marker="o", linewidth=2.3)
-    weight_axis.set_ylabel("Routing weight (%)", color="#c2410c")
+    weight_axis.set_ylabel("Weight (%)", color="#c2410c")
     weight_axis.set_ylim(0.0, max(105.0, float(np.max(weights) * 115.0)))
     axis.set_title(
-        f"Expert audit · {METRIC_LABELS[q]} · horizon +{result.selected_horizon} h",
+        f"Reference forecasts · {METRIC_LABELS[q]} · future hour {result.selected_horizon}",
         fontweight="bold",
     )
     return figure
@@ -413,13 +413,13 @@ def status_markdown(result: AuditResult) -> str:
         and np.all(result.prediction <= result.upper_envelope + 1e-5)
     )
     return (
-        "### Audit complete / 审计完成\n"
-        f"- **Engine:** registered `A0_fixed` parameter-free baseline on `{result.device}`; "
-        "this is **not** the unpublished trained A6 checkpoint.\n"
-        f"- **Request:** `{result.cell}`, 336 history hours → 24 forecast hours; "
+        "### Forecast ready / 预测完成\n"
+        f"- **Method:** fixed `A0_fixed` baseline on `{result.device}`; "
+        "this is **not** the trained A6 paper model. / 固定 `A0_fixed` 基线，不是论文训练后的 A6 模型。\n"
+        f"- **Input:** `{result.cell}`, 336 history hours → 24 forecast hours; "
         f"final missing rate **{removed:.1%}**.\n"
-        f"- **Hard mask:** unavailable-expert mass `{unavailable_mass:.1f}`; "
-        f"expert envelope `{'PASS' if envelope_ok else 'FAIL'}`.\n"
+        f"- **Checks:** total weight on missing references `{unavailable_mass:.1f}`; "
+        f"allowed range `{'PASS' if envelope_ok else 'FAIL'}`.\n"
         f"- **Input SHA-256:** `{result.input_sha256[:16]}…`"
     )
 

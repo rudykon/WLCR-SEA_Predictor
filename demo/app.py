@@ -1,4 +1,4 @@
-"""Bilingual Gradio interface for the WLCR-SEA request audit lab."""
+"""Bilingual Gradio interface for the WLCR-SEA traffic forecast Demo."""
 
 from __future__ import annotations
 
@@ -79,29 +79,29 @@ def run_request(upload, scenario, missing_rate, metric, horizon):
     except Exception as exc:
         LOGGER.exception("WLCR-SEA public demo failed")
         raise gr.Error(
-            "The audit run failed. Check the 336-row input contract and try again."
+            "The Demo could not finish. Check that the input has 336 valid hourly rows and try again."
         ) from exc
 
 
 def build_app() -> gr.Blocks:
-    with gr.Blocks(title="WLCR-SEA Request Audit Lab") as app:
+    with gr.Blocks(title="WLCR-SEA Traffic Forecast Demo") as app:
         gr.HTML(
             """
             <section class="wlcr-hero">
-              <span class="wlcr-pill">ZeroGPU · Real expert code · 真实专家构造</span>
-              <h1>WLCR-SEA Request Audit Lab</h1>
-              <p>Inspect how one sealed 336-hour cellular request becomes eight seasonal experts,
-              how missing evidence is removed, and how the registered fixed mixture produces a
-              24-hour forecast.</p>
-              <p>检查单个 336 小时请求如何形成八个季节专家、缺失证据如何被精确排除，
-              以及仓库中的固定混合基线如何生成未来 24 小时预测。</p>
+              <span class="wlcr-pill">ZeroGPU · Real project code · 真实项目代码</span>
+              <h1>WLCR-SEA Traffic Forecast Demo</h1>
+              <p>Use one cell's previous 14 days to forecast the next 24 hours. Remove part of
+              the history to see which reference forecasts remain available and how their
+              weights change.</p>
+              <p>使用一个小区过去 14 天的数据预测未来 24 小时。你可以移除部分历史数据，
+              查看哪些参考预测仍然可用，以及它们的权重怎样变化。</p>
             </section>
             """
         )
         gr.Markdown(
-            "**Scope / 范围：** the repository does not publish the trained A6 checkpoint. "
-            "This lab runs the real parameter-free `A0_fixed` path and labels paper evidence separately. "
-            "仓库未发布论文 A6 训练权重；本实验室运行真实的无参数 `A0_fixed` 路径，不冒充论文模型。",
+            "**Important / 重要：** the repository does not include the trained A6 paper checkpoint. "
+            "This Demo uses the simpler fixed `A0_fixed` baseline to show the workflow; its forecast is not a paper result. "
+            "仓库未包含论文训练后的 A6 检查点；本 Demo 使用更简单的固定 `A0_fixed` 基线展示流程，输出不是论文结果。",
             elem_classes=["scope-note"],
         )
 
@@ -117,7 +117,7 @@ def build_app() -> gr.Blocks:
                     "Use `NIL` or a blank field for an unavailable measurement."
                 )
                 run_button = gr.Button(
-                    "Run audit / 开始审计", variant="primary", elem_classes=["primary-action"]
+                    "Generate forecast / 生成预测", variant="primary", elem_classes=["primary-action"]
                 )
             with gr.Column(scale=4):
                 scenario = gr.Dropdown(
@@ -135,14 +135,14 @@ def build_app() -> gr.Blocks:
                 metric = gr.Dropdown(
                     choices=list(METRIC_CHOICES),
                     value="DL PRB / 下行 PRB",
-                    label="Expert audit indicator / 专家审计指标",
+                    label="Indicator to inspect / 查看哪个指标",
                 )
                 horizon = gr.Slider(
                     1,
                     24,
                     value=1,
                     step=1,
-                    label="Expert audit horizon (h) / 专家审计步长（小时）",
+                    label="Future hour to inspect / 查看未来第几小时",
                 )
 
         gr.Examples(
@@ -155,31 +155,31 @@ def build_app() -> gr.Blocks:
             cache_examples=False,
         )
 
-        status = gr.Markdown("### Ready / 就绪\nUpload a request or select a synthetic example.")
+        status = gr.Markdown("### Ready / 就绪\nUpload a CSV or choose a built-in sample, then generate the forecast. / 上传 CSV 或选择内置样例，然后生成预测。")
         with gr.Tabs():
             with gr.Tab("Forecast / 预测"):
-                forecast_plot = gr.Plot(label="History, forecast, and audit envelope")
+                forecast_plot = gr.Plot(label="History, forecast, and available-reference range")
                 forecast_table = gr.Dataframe(interactive=False, label="24-hour forecast / 24 小时预测")
                 forecast_download = gr.File(label="Download forecast CSV / 下载预测 CSV", interactive=False)
-            with gr.Tab("Expert audit / 专家审计"):
-                expert_plot = gr.Plot(label="Expert values and fixed routing mass")
-                expert_table = gr.Dataframe(interactive=False, label="Eight-expert record / 八专家记录")
-                audit_download = gr.File(label="Download audit JSON / 下载审计 JSON", interactive=False)
+            with gr.Tab("Reference details / 参考项明细"):
+                expert_plot = gr.Plot(label="Reference values and fixed weights")
+                expert_table = gr.Dataframe(interactive=False, label="Eight reference forecasts / 八种参考预测")
+                audit_download = gr.File(label="Download calculation JSON / 下载计算记录 JSON", interactive=False)
 
-        with gr.Accordion("Input, privacy, and interpretation / 输入、隐私与解释", open=False):
+        with gr.Accordion("Input rules and limitations / 输入规则与局限", open=False):
             gr.Markdown(
                 """
                 - Exactly 336 contiguous hourly rows for one cell are accepted; uploads are limited to 5 MB.
                 - Do not upload confidential operational traffic to a public Space. The app does not
                   intentionally persist files, but the host is shared public infrastructure.
                 - The bundled example is deterministic synthetic traffic and contains no operator data.
-                - Router weights shown here belong to the registered fixed baseline. They are not learned
+                - Candidate weights shown here belong to the fixed baseline. They are not learned
                   A6 weights, uncertainty estimates, or the paper's reported predictions.
 
                 - 仅接收同一小区连续 336 个小时的数据，上传文件上限为 5 MB。
                 - 请勿向公开 Space 上传机密运营数据；应用不会主动持久化文件，但托管平台属于共享基础设施。
                 - 内置样例是确定性合成流量，不包含运营商数据。
-                - 页面中的路由权重属于固定基线，不是 A6 学习权重、置信度或论文正式预测。
+                - 页面中的候选权重属于固定基线，不是 A6 学习权重、置信度或论文正式预测。
                 """
             )
 
