@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/brand-mark.svg" width="520" alt="WLCR-SEA 品牌标识">
+</p>
+
 <h1 align="center">WLCR-SEA Predictor</h1>
 
 <p align="center">
@@ -145,3 +149,4 @@ PYTHONPATH=. python3 -m unittest tests.test_wlcr_sea_model -v
 | <code>tests/test_wlcr_sea_model.py</code> | 公开方法的聚焦单元测试 |
 | <code>docs/images/</code> | 为 README 导出的五张论文图 |
 | <code>requirements.txt</code> | 最小 Python 依赖 |
+
