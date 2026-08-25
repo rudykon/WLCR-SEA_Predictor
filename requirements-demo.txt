@@ -5,5 +5,4 @@ httpx[socks]>=0.28,<1
 matplotlib==3.9.2
 numpy==1.26.4
 pandas==2.2.3
-torch==2.8.0+cpu; sys_platform == "linux"
-torch==2.8.0; sys_platform != "linux"
+torch==2.8.0
