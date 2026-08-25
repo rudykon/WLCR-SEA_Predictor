@@ -2,7 +2,7 @@
 title: WLCR-SEA A6 Forecast Demo
 emoji: 📡
 colorFrom: blue
-colorTo: teal
+colorTo: green
 sdk: gradio
 sdk_version: 6.25.0
 python_version: "3.12"

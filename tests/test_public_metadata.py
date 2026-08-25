@@ -73,6 +73,33 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertNotIn("paper/main.tex", text)
         self.assertNotIn("paper/main_zh.tex", text)
 
+    def test_space_frontmatter_uses_supported_cpu_metadata(self) -> None:
+        text = (ROOT / "demo" / "space-readme-frontmatter.md").read_text(
+            encoding="utf-8"
+        )
+        frontmatter = text.split("---", 2)[1]
+        metadata = {
+            key.strip(): value.strip().strip('"')
+            for line in frontmatter.splitlines()
+            if ":" in line
+            for key, value in (line.split(":", 1),)
+        }
+        valid_colors = {
+            "red",
+            "yellow",
+            "green",
+            "blue",
+            "indigo",
+            "purple",
+            "pink",
+            "gray",
+        }
+        self.assertIn(metadata["colorFrom"], valid_colors)
+        self.assertIn(metadata["colorTo"], valid_colors)
+        self.assertEqual(metadata["sdk"], "gradio")
+        self.assertEqual(metadata["app_file"], "demo/app.py")
+        self.assertEqual(metadata["suggested_hardware"], "cpu-basic")
+
 
 if __name__ == "__main__":
     unittest.main()
