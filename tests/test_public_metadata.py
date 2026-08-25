@@ -104,6 +104,11 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertIn("torch==2.8.0", requirements.splitlines())
         self.assertNotIn("torch==2.8.0+cpu", requirements)
 
+        app = (ROOT / "demo" / "app.py").read_text(encoding="utf-8")
+        self.assertEqual(app.count("@spaces.GPU"), 1)
+        self.assertIn("def _host_hardware_compatibility_marker", app)
+        self.assertNotIn("@spaces.GPU\ndef _run_request", app)
+
 
 if __name__ == "__main__":
     unittest.main()
