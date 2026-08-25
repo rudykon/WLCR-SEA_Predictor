@@ -100,6 +100,10 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertEqual(metadata["app_file"], "demo/app.py")
         self.assertEqual(metadata["suggested_hardware"], "cpu-basic")
 
+        requirements = (ROOT / "requirements-demo.txt").read_text(encoding="utf-8")
+        self.assertIn("torch==2.8.0", requirements.splitlines())
+        self.assertNotIn("torch==2.8.0+cpu", requirements)
+
 
 if __name__ == "__main__":
     unittest.main()
