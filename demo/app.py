@@ -10,6 +10,29 @@ from functools import partial
 from pathlib import Path
 
 os.environ.setdefault("GRADIO_ANALYTICS_ENABLED", "False")
+
+# The existing hosted repository is assigned ZeroGPU hardware and Hugging Face
+# currently rejects an in-place downgrade for its free owner account. Startup
+# therefore requires one detectable decorator even though inference is CPU-only.
+# This marker is never connected to Gradio and is never called.
+try:
+    import spaces
+except ImportError:
+
+    class _LocalSpaces:
+        @staticmethod
+        def GPU(*, duration: int):
+            del duration
+            return lambda function: function
+
+    spaces = _LocalSpaces()
+
+
+@spaces.GPU(duration=1)
+def _host_hardware_compatibility_marker():
+    return None
+
+
 import gradio as gr
 
 ROOT = Path(__file__).resolve().parents[1]
