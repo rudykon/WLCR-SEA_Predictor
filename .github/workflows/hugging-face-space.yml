@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   sync:
-    name: Synchronize public CPU Space
+    name: Synchronize public CPU-only Space
     runs-on: ubuntu-latest
     env:
       HF_SPACE_ID: config-h/WLCR-SEA_Predictor
@@ -40,7 +40,10 @@ jobs:
           --public
           --exist-ok
 
-      - name: Select CPU Basic hardware
+      # A free account can return HTTP 402 when an existing ZeroGPU Space is
+      # downgraded. The app never requests a GPU, so publishing must continue.
+      - name: Request CPU Basic hardware when available
+        continue-on-error: true
         run: >-
           uv run --with huggingface-hub python -c
           'import os; from huggingface_hub import HfApi, SpaceHardware;
