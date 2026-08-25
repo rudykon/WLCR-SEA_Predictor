@@ -1,14 +1,12 @@
-# Documentation
+# Website source
 
-This directory contains the stable documentation shipped with the public
-WLCR-SEA source release.
+The maintained website contains four bilingual content pages:
 
-- [Reproduction guide](REPRODUCTION_GUIDE.md) covers training, paper-related
-  analysis/ablation/comparison workflows, audits, and tests.
-- [Code structure and naming](CODE_STRUCTURE.md) defines module responsibilities
-  and naming rules.
-- `images/` contains only the five manuscript figures used as README previews;
-  manuscript source files and figure-generation code are excluded.
+- `index.md`: Overview;
+- `guide/method.md`: Method;
+- `research/evidence.md`: Results and limitations;
+- `reference/reproduction.md`: installation, input, verification, and code map.
 
-Generated models, predictions, reports, datasets, credentials, and experiment
-outputs are intentionally not part of the public repository.
+The fifth navigation item links directly to the A6 Hugging Face Demo. Former
+page paths contain redirects only. The single authoritative experiment guide is
+the repository-root `REPRODUCTION.md`.
