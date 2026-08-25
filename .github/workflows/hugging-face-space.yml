@@ -15,13 +15,13 @@ concurrency:
 
 jobs:
   sync:
-    name: Create and synchronize public ZeroGPU Space
+    name: Synchronize public CPU Space
     runs-on: ubuntu-latest
     env:
       HF_SPACE_ID: config-h/WLCR-SEA_Predictor
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
     steps:
-      - name: Check out the complete repository
+      - name: Check out repository
         uses: actions/checkout@v4
 
       - name: Require the repository-scoped Hugging Face token
@@ -32,34 +32,38 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
-      - name: Create the free ZeroGPU Gradio Space
+      - name: Create the public Gradio Space
         run: >-
           uvx hf repos create "${HF_SPACE_ID}"
           --type space
           --sdk gradio
-          --flavor zero-a10g
           --public
           --exist-ok
 
-      - name: Prepare the Hugging Face repository
+      - name: Select CPU Basic hardware
+        run: >-
+          uv run --with huggingface-hub python -c
+          'import os; from huggingface_hub import HfApi, SpaceHardware;
+          HfApi(token=os.environ["HF_TOKEN"]).request_space_hardware(
+          repo_id=os.environ["HF_SPACE_ID"], hardware=SpaceHardware.CPU_BASIC)'
+
+      - name: Prepare the minimal inference repository
         run: |
           HF_SPACE_STAGE="$(mktemp -d "${RUNNER_TEMP}/hugging-face-space.XXXXXX")"
           printf 'HF_SPACE_STAGE=%s\n' "${HF_SPACE_STAGE}" >> "${GITHUB_ENV}"
-          rsync -a \
-            --exclude ".git/" \
-            --exclude ".github/" \
-            --exclude "site/" \
-            --exclude "paper/" \
-            --exclude "demo/space-readme-frontmatter.md" \
-            ./ "${HF_SPACE_STAGE}/"
-          sed -n '1,$p' demo/space-readme-frontmatter.md > "${HF_SPACE_STAGE}/README.md"
-          printf '\n' >> "${HF_SPACE_STAGE}/README.md"
-          sed -n '1,$p' README.md >> "${HF_SPACE_STAGE}/README.md"
+          mkdir -p "${HF_SPACE_STAGE}/demo/examples" "${HF_SPACE_STAGE}/experiments" "${HF_SPACE_STAGE}/Model"
+          cp demo/__init__.py demo/app.py demo/model_loader.py demo/runtime.py "${HF_SPACE_STAGE}/demo/"
+          cp demo/examples/synthetic_traffic.csv "${HF_SPACE_STAGE}/demo/examples/"
+          cp experiments/__init__.py experiments/wlcr_sea_model.py experiments/missingness_protocol.py "${HF_SPACE_STAGE}/experiments/"
+          cp Model/traffic_window_forecasting.py "${HF_SPACE_STAGE}/Model/"
+          cp LICENSE "${HF_SPACE_STAGE}/LICENSE"
+          cp requirements-demo.txt "${HF_SPACE_STAGE}/requirements.txt"
+          cp demo/space-readme-frontmatter.md "${HF_SPACE_STAGE}/README.md"
 
-      - name: Mirror GitHub main to Hugging Face
+      - name: Mirror the minimal runtime to Hugging Face
         run: >-
           uvx hf upload "${HF_SPACE_ID}" "${HF_SPACE_STAGE}" .
           --type space
           --delete "*"
-          --commit-message "Sync from ${GITHUB_REPOSITORY}"
+          --commit-message "Sync inference runtime from ${GITHUB_REPOSITORY}"
           --commit-description "GitHub commit ${GITHUB_SHA}"

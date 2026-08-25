@@ -1,29 +1,19 @@
-# WLCR-SEA Traffic Forecast Demo
+# WLCR-SEA A6 Demo
 
-This Gradio app uses the repository's real CSV parser, missing-data logic,
-eight candidate forecasts, and fixed `A0_fixed` baseline. It shows how one
-14-day input becomes a 24-hour forecast and how the result changes when data is
-removed.
-
-It is a **workflow Demo**, not a reproduction of the paper's trained A6
-predictions: the public repository does not contain the A6 checkpoint or fixed
-training prior. The app replaces the last fallback with a value calculated from
-the current input and labels this clearly in every exported record.
-
-Run locally:
+The Demo runs the public `A6_mixed_aug` five-checkpoint ensemble on CPU. At
+startup it downloads the pinned Hugging Face revision, verifies every SHA-256,
+loads each frozen training prior and model once, and averages member forecasts
+in linear traffic space.
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-demo.txt
 python demo/app.py
 ```
 
-Generate the bundled deterministic request again:
+The built-in synthetic request runs automatically. Uploads must contain one
+cell, 336 contiguous hourly rows, and the four documented traffic indicators.
+Do not upload confidential operator traffic to the public Space.
 
-```bash
-python demo/generate_sample.py
-```
-
-The Space deployment frontmatter lives in
-`demo/space-readme-frontmatter.md`. The GitHub workflow prepends it only in the
-deployment staging directory, so the root GitHub README retains its normal
-project presentation.
+The forecast CSV contains the full `24 × 4` output. The audit JSON records the
+model-repository revision, checkpoint hashes, seeds, configurations, per-member
+forecasts, expert values, routing weights, residuals, and bound checks.

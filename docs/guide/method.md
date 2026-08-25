@@ -1,62 +1,104 @@
 # Method
 
-WLCR-SEA has three steps:
+WLCR-SEA maps a one-cell request $x \in \mathbb{R}^{336 \times 4}$ and its
+observation mask to a forecast $\hat{y} \in \mathbb{R}^{24 \times 4}$. Inference may read the request
+and frozen model assets, but it does not fetch live traffic from another cell.
 
-1. build eight historical candidates;
-2. drop unavailable candidates and weight the rest;
-3. apply a bounded adjustment.
+## Terms
 
-The saved candidates and weights show what shaped each forecast.
+| Term | Meaning in this project |
+| --- | --- |
+| **Seasonal expert** | A candidate forecast derived from one historical pattern |
+| **Availability mask** | Whether the evidence needed by an expert is present |
+| **Routing weight** | That expert's contribution to the routed baseline |
+| **Bounded residual** | A learned final correction with a fixed log-space limit |
+| **Audit record** | Model identity, expert values, masks, weights, residuals, prediction, and checks |
 
-!!! tip "Terms"
-    **Expert:** candidate. **Mask:** present/missing flag. **Router:** weighting step. **Residual:** final adjustment.
+These terms are used consistently across the website, Demo, exports, and code.
 
 <figure class="paper-figure">
   <a href="../../images/paper_figure_architecture.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_architecture.png" alt="WLCR-SEA candidate generation, missing-data filtering, weighting, limited adjustment, and calculation record" loading="lazy">
+    <img src="../../images/paper_figure_architecture.png" alt="WLCR-SEA candidate construction, availability masking, reliability-aware Entmax routing, bounded residual, forecast, and audit record">
   </a>
-  <figcaption>Eight candidates are filtered, weighted, and adjusted.</figcaption>
+  <figcaption>Eight seasonal experts are filtered, routed, and corrected within a fixed bound.</figcaption>
 </figure>
 
-## 1. Candidates
+## 1. Eight seasonal experts
 
-| Candidate | Plain meaning | Available when |
+For every future hour and indicator, the model constructs the following
+candidate values in `log1p` space.
+
+| Seasonal expert | Evidence | Available when |
 | --- | --- | --- |
-| Previous day | Value at the same hour one day earlier | That value exists |
-| Previous week | Value at the same hour one week earlier | That value exists |
-| Two weeks earlier | Value at the same hour two weeks earlier | That value exists |
-| 7-day same-hour median | Median of up to seven matching hours | At least one matching value exists |
-| 14-day same-hour median | Median of up to fourteen matching hours | At least one matching value exists |
-| Weekly trend | Previous-week value plus a limited weekly change | One- and two-week values exist |
-| Input median | Median of the current 336-hour input | At least one value exists for the indicator |
-| Training prior | Typical value learned from the training set | The model has been fitted |
+| Previous day | Same hour one day earlier | That value is observed |
+| Previous week | Same hour one week earlier | That value is observed |
+| Two weeks earlier | Same hour two weeks earlier | That value is observed |
+| 7-day same-hour median | Up to seven matching hours | At least one matching value is observed |
+| 14-day same-hour median | Up to fourteen matching hours | At least one matching value is observed |
+| Limited weekly trend | Previous-week value plus clipped week-to-week change | One- and two-week values are observed |
+| Request median | Median of the current 336-hour request | The indicator has at least one observation |
+| Frozen training prior | Typical target value estimated during training | Always available in a fitted checkpoint |
 
-Missing positions may contain placeholders, but the mask decides availability. Summary candidates are rebuilt after deletion, so removed values cannot leak into the forecast.
+The observation mask is authoritative. When the missingness protocol removes a
+value, every summary expert is rebuilt after removal; placeholder values cannot
+leak into medians, trends, or context features.
 
-## 2. Routing
+Each of the five public A6 checkpoints contains its own frozen `(24, 4)`
+training prior. The Demo never derives this prior from the uploaded request.
 
-For each hour and indicator, usable weights sum to one. Unavailable candidates receive zero.
+## 2. Hard-masked sparse routing
 
-The selected model applies horizon-conditioned **Entmax** only to the compact list of usable candidates, then restores the eight-position layout. No approximate masking value is needed.
+The A6 router embeds the forecast horizon, indicator, expert type, expert value,
+distance, reliability, and request-local context. It applies
+reliability-aware **Entmax 1.5** only to the compact set of available experts,
+then restores the eight-position layout.
 
-Reliability, such as a median's sample count, may change weight. It cannot restore an unavailable candidate.
+For each horizon and indicator:
 
-## 3. Bounded adjustment
+- unavailable experts receive exactly zero weight;
+- available weights sum to one;
+- reliability may change a weight but cannot restore an unavailable expert;
+- sparse support makes the internal allocation inspectable.
 
-The weighted average is the main log-space prediction. A learned adjustment passes through `tanh` and a fixed limit. The result stays inside:
+Routing weight is an internal allocation, not a causal effect. The deletion
+audit measures whether high-weight experts tend to have more influence when
+removed; it does not turn attention into a causal explanation.
+
+## 3. Bounded residual
+
+The routed expert average is the baseline in log space. A small network produces
+a correction passed through `tanh` and the selected checkpoint's bound $b$:
 
 \[
-\left[\min_{j \in A} e_j - b,\; \max_{j \in A} e_j + b\right]
+\hat{y}_{h,q}^{\log} = \sum_{j \in A_{h,q}} w_{h,q,j} e_{h,q,j}
++ b\,\tanh(r_{h,q}).
 \]
 
-where \(A\) is the usable candidate set and \(b\) is the limit. The output cannot move far beyond the available candidates.
+Therefore the member prediction remains inside:
 
-## Record
+\[
+\left[\min_{j \in A_{h,q}} e_{h,q,j} - b,\;
+      \max_{j \in A_{h,q}} e_{h,q,j} + b\right].
+\]
 
-The record can store the input hash, model version, candidates, availability, reliability, weights, average, adjustment, prediction, and range checks. Tests also reject unapproved input fields.
+The public checkpoints use the residual bound recorded in each selected
+configuration. The exported audit performs the check per member and on the
+linear-space ensemble.
 
-!!! info "Demo model"
-    The Space runs `A0_fixed`: previous week 0.7, two weeks earlier 0.2, and 7-day median 0.1. Available weights are rescaled when needed. It is not the trained A6 model.
+## 4. Five-member A6 ensemble
 
-[Architecture](architecture.md){ .md-button }
-[Use cases](problem.md){ .md-button }
+The primary predictor contains seeds 42–46. Each member builds experts with its
+own frozen prior and produces a complete `24 × 4` forecast. The final output is
+the arithmetic mean of the five arrays **after inverse transformation to linear
+traffic space**.
+
+[Open the A6 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Inspect the checkpoints](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button target="_blank" rel="noopener" }
+
+## 5. Audit record
+
+The versioned JSON export records the input hash, model-repository revision,
+checkpoint SHA-256 values, seeds, selected configurations, per-member
+predictions, expert values, availability, reliability, routing weights,
+baselines, residuals, the ensemble output, and mask/bound checks. It enables
+replay and review without claiming calibrated uncertainty or privacy.

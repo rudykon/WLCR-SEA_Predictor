@@ -5,10 +5,11 @@ on:
     paths:
       - "demo/**"
       - "tests/test_hf_space_demo.py"
+      - "tests/test_public_metadata.py"
       - "experiments/wlcr_sea_model.py"
       - "experiments/missingness_protocol.py"
       - "Model/traffic_window_forecasting.py"
-      - "requirements.txt"
+      - "requirements-demo.txt"
       - ".github/workflows/demo.yml"
       - ".github/workflows/hugging-face-space.yml"
   push:
@@ -17,10 +18,11 @@ on:
     paths:
       - "demo/**"
       - "tests/test_hf_space_demo.py"
+      - "tests/test_public_metadata.py"
       - "experiments/wlcr_sea_model.py"
       - "experiments/missingness_protocol.py"
       - "Model/traffic_window_forecasting.py"
-      - "requirements.txt"
+      - "requirements-demo.txt"
       - ".github/workflows/demo.yml"
       - ".github/workflows/hugging-face-space.yml"
   workflow_dispatch:
@@ -44,29 +46,27 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: requirements-demo.txt
 
-      - name: Install CPU demo dependencies
-        run: >-
-          python -m pip install
-          --extra-index-url https://download.pytorch.org/whl/cpu
-          numpy==1.26.4
-          pandas==2.2.3
-          matplotlib==3.9.2
-          gradio==6.25.0
-          spaces
-          torch==2.8.0+cpu
+      - name: Install CPU Demo dependencies
+        run: python -m pip install -r requirements-demo.txt
 
-      - name: Run method-demo tests
+      - name: Run A6 consistency and public-metadata tests
         env:
           MPLBACKEND: Agg
           MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
           TORCH_NUM_THREADS: "2"
-        run: python -m unittest tests.test_hf_space_demo -v
+        run: >-
+          python -m unittest
+          tests.test_hf_space_demo
+          tests.test_public_metadata
+          -v
 
       - name: Build the Gradio interface
         env:
           MPLBACKEND: Agg
           MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
+          TORCH_NUM_THREADS: "2"
         run: python -c "from demo.app import demo; assert demo is not None"
 
       - name: Start the Gradio entrypoint
@@ -74,16 +74,17 @@ jobs:
           GRADIO_ANALYTICS_ENABLED: "False"
           MPLBACKEND: Agg
           MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
+          TORCH_NUM_THREADS: "2"
         run: |
           python demo/app.py > "${RUNNER_TEMP}/gradio.log" 2>&1 &
           server_pid=$!
           trap 'kill "${server_pid}" 2>/dev/null || true' EXIT
-          for attempt in $(seq 1 30); do
+          for attempt in $(seq 1 45); do
             if curl --fail --silent --show-error \
               http://127.0.0.1:7860/config > "${RUNNER_TEMP}/gradio-config.json"; then
               exit 0
             fi
             sleep 1
           done
-          sed -n '1,160p' "${RUNNER_TEMP}/gradio.log"
+          sed -n '1,200p' "${RUNNER_TEMP}/gradio.log"
           exit 1

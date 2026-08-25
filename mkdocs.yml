@@ -1,7 +1,7 @@
 site_name: WLCR-SEA Predictor
 site_url: https://rudykon.github.io/WLCR-SEA_Predictor/
 site_description: >-
-  Forecast one cell's next 24 hours with missing-data handling and traceable output.
+  Request-local cellular traffic forecasting under missing telemetry with public A6 checkpoints and auditable expert routing.
 
 repo_name: rudykon/WLCR-SEA_Predictor
 repo_url: https://github.com/rudykon/WLCR-SEA_Predictor
@@ -24,14 +24,11 @@ theme:
   features:
     - navigation.tabs
     - navigation.tabs.sticky
-    - navigation.sections
-    - navigation.indexes
     - navigation.top
     - navigation.footer
     - search.suggest
     - search.highlight
     - content.code.copy
-    - content.tabs.link
     - toc.follow
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -67,7 +64,7 @@ plugins:
           build: true
           site_name: WLCR-SEA 蜂窝流量预测
           site_description: >-
-            预测单个小区未来 24 小时流量，处理缺失值并保留计算记录。
+            面向缺失遥测的单小区请求内流量预测，提供公开 A6 权重与可审计专家路由。
           theme:
             palette:
               - media: "(prefers-color-scheme: light)"
@@ -85,77 +82,48 @@ plugins:
                   icon: material/weather-sunny
                   name: 切换至浅色模式
           nav_translations:
-            Home: 首页
-            Get started: 开始使用
-            Installation: 安装
-            Quick start: 快速开始
-            Business scenarios: 业务场景
-            Architecture: 架构
+            Overview: 概览
             Method: 方法
-            How it works: 方法原理
-            CSV input format: CSV 输入格式
-            Research: 研究
             Results: 实验结果
-            Limitations: 适用边界
-            Demo: 在线演示
-            Live Demo: 在线 Demo
-            Reference: 参考
-            Code map: 代码地图
-            Reproduction: 复现
+            Reproduce: 复现
+            Demo ↗: Demo ↗
 
 markdown_extensions:
-  - abbr
   - admonition
   - attr_list
-  - def_list
-  - footnotes
   - md_in_html
   - tables
   - toc:
       permalink: true
   - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.highlight:
       anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
   - pymdownx.superfences
-  - pymdownx.tabbed:
-      alternate_style: true
 
 extra_css:
-  - "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
   - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/rudykon
-      name: rudykon on GitHub
-    - icon: fontawesome/solid/face-smile
-      link: https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor
-      name: WLCR-SEA method demo on Hugging Face
+      link: https://github.com/rudykon/WLCR-SEA_Predictor
+      name: Source on GitHub
+    - icon: fontawesome/solid/cube
+      link: https://huggingface.co/config-h/WLCR-SEA-Predictor
+      name: A6 model weights on Hugging Face
   generator: false
 
 copyright: Copyright &copy; 2026 WLCR-SEA contributors · Apache-2.0
 
 nav:
-  - Home: index.md
-  - Get started:
-      - Installation: getting-started/installation.md
-      - Quick start: getting-started/quickstart.md
-  - Business scenarios: guide/problem.md
-  - Architecture: guide/architecture.md
-  - Method:
-      - How it works: guide/method.md
-      - CSV input format: guide/data-contract.md
-  - Research:
-      - Results: research/evidence.md
-      - Limitations: research/limitations.md
-  - Demo:
-      - Live Demo: deployment/hugging-face.md
-  - Reference:
-      - Code map: reference/code-map.md
-      - Reproduction: reference/reproduction.md
+  - Overview: index.md
+  - Method: guide/method.md
+  - Results: research/evidence.md
+  - Reproduce: reference/reproduction.md
+  - Demo ↗: https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor

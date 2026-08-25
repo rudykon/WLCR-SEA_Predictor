@@ -975,7 +975,10 @@ def rank_correlation(x: np.ndarray, y: np.ndarray) -> float:
 
 
 def load_checkpoint(path: Path, device: torch.device) -> tuple[sea.WLCRSEA, dict[str, object]]:
-    payload = torch.load(path, map_location="cpu")
+    # Registered project checkpoints contain configuration dictionaries and a
+    # NumPy frozen prior in addition to tensor weights. Callers must verify the
+    # trusted checkpoint hash before opting into the complete payload format.
+    payload = torch.load(path, map_location="cpu", weights_only=False)
     variant = sea.VariantConfig(**payload["variant"])
     model = model_from_config(variant, payload["selected_config"])
     model.load_state_dict(payload["state_dict"])

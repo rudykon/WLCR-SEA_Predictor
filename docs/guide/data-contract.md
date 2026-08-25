@@ -1,44 +1,5 @@
-# CSV input format
+<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/reference/reproduction/#input-format">
 
-CLI and Demo use the same six-column CSV: 336 hourly rows for one cell.
+# Input format moved
 
-## Required header
-
-```text
-时间,小区名称,小区上行平均激活用户数,小区下行平均激活用户数,下行平均使用的PRB个数,上行平均使用的PRB个数
-```
-
-| Field | Rule |
-| --- | --- |
-| `时间` | `YYYY/MM/DD HH:MM`, strictly hourly and increasing |
-| `小区名称` | One non-empty value shared by all 336 rows |
-| Four indicators | Finite, non-negative number, `NIL`, or blank |
-| Row count | Exactly 336 data rows for the public Demo |
-| Encoding | UTF-8 or UTF-8 with BOM |
-| Upload size | At most 5 MB on the public Space |
-
-The forecast starts one hour after the last row and covers 24 hours. `NIL` or blank means missing; the mask keeps placeholders out of the calculation.
-
-## Minimal preview
-
-```csv
-时间,小区名称,小区上行平均激活用户数,小区下行平均激活用户数,下行平均使用的PRB个数,上行平均使用的PRB个数
-2026/07/01 00:00,synthetic-cell,18.0,26.0,32.0,14.0
-2026/07/01 01:00,synthetic-cell,18.1,26.2,NIL,14.1
-```
-
-See [`demo/examples/synthetic_traffic.csv`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/demo/examples/synthetic_traffic.csv). It is deterministic, synthetic, and contains no operator data.
-
-## Programmatic validation
-
-```python
-from Model.traffic_window_forecasting import read_traffic, split_physical_windows
-
-rows = read_traffic("request.csv")
-windows = split_physical_windows(rows)
-assert len(windows) == 1
-assert not windows[0].gaps
-```
-
-!!! warning "Public Space"
-    Do not upload confidential traffic. Run `demo/app.py` locally for sensitive data.
+The CSV contract is now part of [Reproduce](../reference/reproduction.md#input-format).
