@@ -565,8 +565,13 @@ def member_dataframe(result: AuditResult, lang: str = "en") -> pd.DataFrame:
 def make_forecast_figure(
     result: AuditResult, metric_key: str = "dl_prb", lang: str = "en"
 ):
+    """Build a forecast plot with portable, English-only figure text."""
+
+    # The surrounding Gradio panel remains localized. Figure text stays in English
+    # because the lightweight Space image does not ship a dependable CJK font.
+    del lang
     q = METRIC_INDEX[metric_key]
-    metric_label = METRIC_LABELS[lang][q]
+    metric_label = METRIC_LABELS["en"][q]
     shown = np.where(
         result.effective_mask[:, q], result.history_values[:, q], np.nan
     )
@@ -577,7 +582,7 @@ def make_forecast_figure(
         shown,
         color="#3d6fb6",
         linewidth=1.25,
-        label="Observed history" if lang == "en" else "已观测历史",
+        label="Observed history",
     )
     available_values = shown[np.isfinite(shown)]
     marker_y = float(np.min(available_values)) if available_values.size else 0.0
@@ -590,7 +595,7 @@ def make_forecast_figure(
             s=30,
             color="#b55a52",
             alpha=0.75,
-            label="Missing position" if lang == "en" else "缺失位置",
+            label="Missing position",
         )
     axis.plot(
         result.forecast_times,
@@ -599,7 +604,7 @@ def make_forecast_figure(
         linewidth=2.4,
         marker="o",
         markersize=3,
-        label="Five-model ensemble" if lang == "en" else "五模型集成",
+        label="Five-model ensemble",
     )
     axis.fill_between(
         result.forecast_times,
@@ -607,16 +612,14 @@ def make_forecast_figure(
         result.upper_envelope[:, q],
         color="#0f766e",
         alpha=0.14,
-        label="Audited envelope" if lang == "en" else "审计边界",
+        label="Audited envelope",
     )
     axis.axvline(
         result.forecast_times[0], color="#5b6573", linestyle="--", linewidth=1
     )
     axis.set_ylabel(metric_label)
     axis.set_title(
-        f"{metric_label}: 336-hour history → 24-hour forecast"
-        if lang == "en"
-        else f"{metric_label}：336 小时历史 → 24 小时预测",
+        f"{metric_label}: 336-hour history → 24-hour forecast",
         loc="left",
         fontweight="bold",
     )
@@ -631,6 +634,9 @@ def make_expert_figure(
     horizon: int = 1,
     lang: str = "en",
 ):
+    """Build an expert-routing plot with portable, English-only figure text."""
+
+    del lang
     h = int(horizon) - 1
     q = METRIC_INDEX[metric_key]
     available = result.availability[h, q]
@@ -645,21 +651,17 @@ def make_expert_figure(
         if not available[index]:
             bar.set_hatch("///")
     axis.set_xticks(positions, SHORT_EXPERT_LABELS)
-    axis.set_ylabel("Expert value" if lang == "en" else "专家值")
+    axis.set_ylabel("Expert value")
     axis.grid(axis="y", alpha=0.18)
     weight_axis = axis.twinx()
     weight_axis.plot(
         positions, weights * 100.0, color="#d9822b", marker="o", linewidth=2.1
     )
-    weight_axis.set_ylabel(
-        "Mean weight (%)" if lang == "en" else "平均权重（%）", color="#a85f1e"
-    )
+    weight_axis.set_ylabel("Mean weight (%)", color="#a85f1e")
     weight_axis.set_ylim(0.0, max(105.0, float(np.max(weights) * 115.0)))
-    label = METRIC_LABELS[lang][q]
+    label = METRIC_LABELS["en"][q]
     axis.set_title(
-        f"Ensemble routing summary — {label}, future hour {horizon}"
-        if lang == "en"
-        else f"集成路由摘要 — {label}，未来第 {horizon} 小时",
+        f"Ensemble routing summary — {label}, future hour {horizon}",
         loc="left",
         fontweight="bold",
     )
