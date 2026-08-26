@@ -9,7 +9,8 @@
 <p align="center">
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/">项目网站</a> ·
   <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">在线 Demo</a> ·
-  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">模型权重</a> ·
+  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">模型卡</a> ·
+  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd">固定权重</a> ·
   <a href="#研究数据集">数据集</a> ·
   <a href="README.md">English</a>
 </p>
@@ -66,8 +67,9 @@ python -m pip install -r requirements-demo.txt
 python demo/app.py
 ```
 
-应用会校验并缓存五个公开模型检查点，自动运行一个 336 小时合成样例，并导出预测
-CSV 与带版本的审计 JSON。公开 Space 上传上限为 5 MB；敏感运营数据请在本地运行。
+应用会校验并缓存五个公开模型检查点，并自动预览一个 336 小时合成样例。点击
+**运行预测**后才会生成可下载的预测 CSV 与带版本的审计 JSON。公开 Space 上传上限为
+5 MB；敏感运营数据请在本地运行。
 
 ## 研究数据集
 

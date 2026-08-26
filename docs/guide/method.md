@@ -100,6 +100,8 @@ traffic space**.
 The versioned JSON export records the source commit and environment, input
 hash, missingness seed and effective mask, model revision, checkpoint hashes,
 and per-member predictions, routing components, envelopes, and violation
-counts. It supports review and, when paired with the original request and
+counts. Audit schema v4 distinguishes the configured removal rate, positions
+selected for corruption, observations actually removed, and the final observed
+fraction. It supports review and, when paired with the original request and
 pinned source revision, replay. It does not claim calibrated uncertainty or
 privacy.

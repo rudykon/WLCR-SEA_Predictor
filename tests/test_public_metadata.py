@@ -193,7 +193,7 @@ class PublicMetadataTest(unittest.TestCase):
     def test_audit_export_carries_replay_inputs_and_member_checks(self) -> None:
         runtime = (ROOT / "demo" / "runtime.py").read_text(encoding="utf-8")
         for value in (
-            'AUDIT_SCHEMA = "wlcr-sea-audit/v3"',
+            'AUDIT_SCHEMA = "wlcr-sea-audit/v4"',
             '"repository": SOURCE_REPOSITORY',
             '"commit": _source_commit()',
             '"runtime_version": RUNTIME_VERSION',
@@ -202,6 +202,9 @@ class PublicMetadataTest(unittest.TestCase):
             '"seed": DEMO_SEED',
             'removed_positions = _removed_positions(result)',
             '"removed_fraction_of_original_observations"',
+            '"actually_removed_fraction_of_original_observations"',
+            '"selected_for_corruption_rate"',
+            '"final_observed_fraction"',
             '"effective_mask": result.effective_mask.astype(int).tolist()',
             '"checks": _member_checks(member, result.availability)',
         ):
@@ -241,6 +244,25 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertIn("interactive=False", app)
         self.assertIn("Reset to sample", app)
         self.assertIn("恢复内置样例", app)
+        self.assertIn("Run the forecast to enable CSV", app)
+        self.assertIn("点击“运行预测”后可下载", app)
+        self.assertIn("exc.localized(lang)", app)
+
+    def test_public_copy_separates_model_card_from_pinned_weights(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        readme_zh = (ROOT / "README_CN.md").read_text(encoding="utf-8")
+        reproduction = (ROOT / "docs" / "reference" / "reproduction.md").read_text(
+            encoding="utf-8"
+        )
+        reproduction_zh = (
+            ROOT / "docs" / "reference" / "reproduction.zh.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(">Model Card</a>", readme)
+        self.assertIn(">Pinned Weights</a>", readme)
+        self.assertIn(">模型卡</a>", readme_zh)
+        self.assertIn(">固定权重</a>", readme_zh)
+        self.assertNotIn("registered ensemble rule", reproduction.lower())
+        self.assertNotIn("登记的集成规则", reproduction_zh)
 
     def test_space_sync_records_source_and_runs_post_deploy_sample(self) -> None:
         workflow = (
