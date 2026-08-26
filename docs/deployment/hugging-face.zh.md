@@ -2,4 +2,4 @@
 
 # Demo 页面已跳转
 
-[在 Hugging Face 打开 A6 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor)。
+[在 Hugging Face 打开在线 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor)。

@@ -43,12 +43,12 @@ The observation mask is authoritative. When the missingness protocol removes a
 value, every summary expert is rebuilt after removal; placeholder values cannot
 leak into medians, trends, or context features.
 
-Each of the five public A6 checkpoints contains its own frozen `(24, 4)`
+Each of the five public model checkpoints contains its own frozen `(24, 4)`
 training prior. The Demo never derives this prior from the uploaded request.
 
 ## 2. Hard-masked sparse routing
 
-The A6 router embeds the forecast horizon, indicator, expert type, expert value,
+The router embeds the forecast horizon, indicator, expert type, expert value,
 distance, reliability, and request-local context. It applies
 reliability-aware **Entmax 1.5** only to the compact set of available experts,
 then restores the eight-position layout.
@@ -85,14 +85,14 @@ The public checkpoints use the residual bound recorded in each selected
 configuration. The exported audit performs the check per member and on the
 linear-space ensemble.
 
-## 4. Five-member A6 ensemble
+## 4. Five-model ensemble
 
 The primary predictor contains seeds 42–46. Each member builds experts with its
 own frozen prior and produces a complete `24 × 4` forecast. The final output is
 the arithmetic mean of the five arrays **after inverse transformation to linear
 traffic space**.
 
-[Open the A6 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Open the live Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
 [Inspect the checkpoints](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button target="_blank" rel="noopener" }
 
 ## 5. Audit record

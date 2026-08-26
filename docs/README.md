@@ -7,6 +7,6 @@ The maintained website contains four bilingual content pages:
 - `research/evidence.md`: Results and limitations;
 - `reference/reproduction.md`: installation, input, verification, and code map.
 
-The fifth navigation item links directly to the A6 Hugging Face Demo. Former
+The fifth navigation item links directly to the Hugging Face Demo. Former
 page paths contain redirects only. The single authoritative experiment guide is
 the repository-root `REPRODUCTION.md`.

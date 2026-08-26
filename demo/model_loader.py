@@ -1,4 +1,4 @@
-"""Download, verify, and load the public WLCR-SEA A6 ensemble once."""
+"""Download, verify, and load the public WLCR-SEA five-model ensemble once."""
 
 from __future__ import annotations
 
@@ -191,7 +191,7 @@ def load_a6_ensemble() -> A6Ensemble:
         _load_member(spec, _resolve_checkpoint(spec), device) for spec in CHECKPOINT_SPECS
     )
     if tuple(member.seed for member in members) != (42, 43, 44, 45, 46):
-        raise RuntimeError("The A6 ensemble member registry is incomplete or out of order")
+        raise RuntimeError("The ensemble member registry is incomplete or out of order")
     return A6Ensemble(
         repo_id=MODEL_REPO_ID,
         revision=MODEL_REVISION,

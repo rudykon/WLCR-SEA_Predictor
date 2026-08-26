@@ -1,4 +1,4 @@
-"""Inference and audit adapter for the public WLCR-SEA A6 Demo."""
+"""Inference and audit adapter for the public WLCR-SEA Forecast Demo."""
 
 from __future__ import annotations
 
@@ -118,7 +118,7 @@ class MemberAudit:
 
 @dataclass(frozen=True)
 class AuditResult:
-    """Inspectable outputs from one five-member A6 request."""
+    """Inspectable outputs from one five-model forecast request."""
 
     source_path: Path
     input_sha256: str
@@ -218,7 +218,7 @@ def run_a6_forecast(
     missing_rate: float = 0.2,
     ensemble: A6Ensemble | None = None,
 ) -> AuditResult:
-    """Run the public five-member A6 ensemble with its frozen per-seed priors."""
+    """Run the public five-model ensemble with its frozen per-seed priors."""
 
     if scenario not in SCENARIOS:
         raise DemoInputError(f"Unknown missingness scenario: {scenario}")
@@ -300,7 +300,7 @@ def run_a6_forecast(
                 common_availability = experts.availability[0].copy()
                 common_reliability = experts.reliability[0].copy()
             elif not np.array_equal(common_availability, experts.availability[0]):
-                raise RuntimeError("A6 members disagree on expert availability")
+                raise RuntimeError("Ensemble members disagree on expert availability")
 
             member_audits.append(
                 MemberAudit(
@@ -321,7 +321,7 @@ def run_a6_forecast(
             )
 
     if common_availability is None or common_reliability is None:
-        raise RuntimeError("The A6 ensemble contains no members")
+        raise RuntimeError("The model ensemble contains no members")
     prediction = np.mean([member.prediction for member in member_audits], axis=0)
     lower = np.mean([member.lower_envelope for member in member_audits], axis=0)
     upper = np.mean([member.upper_envelope for member in member_audits], axis=0)
@@ -481,7 +481,7 @@ def make_forecast_figure(
         linewidth=2.4,
         marker="o",
         markersize=3,
-        label="A6 ensemble" if lang == "en" else "A6 五模型集成",
+        label="Five-model ensemble" if lang == "en" else "五模型集成",
     )
     axis.fill_between(
         result.forecast_times,
@@ -570,7 +570,7 @@ def status_markdown(result: AuditResult, lang: str = "en") -> str:
         return (
             "| Model | Input | Observed | Audit |\n"
             "| --- | --- | ---: | --- |\n"
-            f"| A6 ensemble · {len(result.members)} seeds | 336 h → 24 h | "
+            f"| Five-model ensemble · {len(result.members)} seeds | 336 h → 24 h | "
             f"{observed:.1%} | {audit} |"
         )
     audit_zh = (
@@ -580,7 +580,7 @@ def status_markdown(result: AuditResult, lang: str = "en") -> str:
     return (
         "| 模型 | 输入输出 | 有效观测 | 审计 |\n"
         "| --- | --- | ---: | --- |\n"
-        f"| A6 集成 · {len(result.members)} 个种子 | 336 小时 → 24 小时 | "
+        f"| 五模型集成 · {len(result.members)} 个种子 | 336 小时 → 24 小时 | "
         f"{observed:.1%} | {audit_zh} |"
     )
 
@@ -590,9 +590,9 @@ def _array(values: np.ndarray) -> list:
 
 
 def export_outputs(result: AuditResult) -> tuple[str, str]:
-    output_dir = Path(tempfile.mkdtemp(prefix="wlcr-sea-a6-"))
-    forecast_path = output_dir / "wlcr_sea_a6_ensemble_forecast.csv"
-    audit_path = output_dir / "wlcr_sea_a6_audit_record.json"
+    output_dir = Path(tempfile.mkdtemp(prefix="wlcr-sea-forecast-"))
+    forecast_path = output_dir / "wlcr_sea_ensemble_forecast.csv"
+    audit_path = output_dir / "wlcr_sea_audit_record.json"
     forecast_dataframe(result, "en").to_csv(
         forecast_path, index=False, encoding="utf-8-sig"
     )

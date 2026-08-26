@@ -3,35 +3,35 @@
 </p>
 
 <p align="center">
-  <strong>Request-local cellular traffic forecasting under missing telemetry, with hard-masked expert routing and auditable outputs.</strong>
+  <strong>Forecast one cell's next 24 hours from its own recent history, even when some telemetry is missing.</strong>
 </p>
 
 <p align="center">
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/">Website</a> ·
-  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">A6 Demo</a> ·
+  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">Live Demo</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">Model Weights</a> ·
   <a href="README_CN.md">中文</a>
 </p>
 
 WLCR-SEA reads one cell's previous **336 hours × 4 traffic indicators** and
 forecasts its next **24 hours × 4 indicators**. Inference uses only the current
-request and frozen model assets; it does not fetch live traffic from other
-cells. The public Demo runs the same five-checkpoint `A6_mixed_aug` ensemble
-reported by the project.
+cell's data and the published model weights; it does not fetch live traffic
+from other cells. The public Demo runs a five-model ensemble built from the
+same released checkpoints used for the reported results.
 
 ## Why WLCR-SEA
 
-- **Request-local.** Each prediction is a sealed one-cell computation. Cell
+- **Uses one cell's data.** Each prediction is a sealed one-cell computation. Cell
   identity is retained for validation and replay, but it is not used to query
   another live data source.
-- **Missingness-aware.** Eight seasonal experts represent daily, weekly,
+- **Handles missing readings.** Eight seasonal experts represent daily, weekly,
   robust-median, trend, request-level, and frozen-prior patterns. If an expert
   depends on unavailable history, hard masking gives it exactly zero routing
   weight.
-- **Auditable.** A request can export expert values, availability, reliability,
-  routing weights, bounded residuals, checkpoint identities, and range checks.
-  These records explain the model's internal allocation; they are not causal
-  explanations or uncertainty estimates.
+- **Shows how the forecast was built.** A request can export expert values,
+  availability, routing weights, bounded residuals, checkpoint identities, and
+  range checks. These records explain the model's internal allocation; they
+  are not causal explanations or uncertainty estimates.
 
 This is a research implementation for constrained data access and missing
 telemetry. It is not presented as a universally best forecaster or as a privacy
@@ -49,7 +49,7 @@ First, WLCR-SEA constructs eight seasonal experts from the 336-hour request and
 each checkpoint's frozen training prior. Second, reliability-aware Entmax
 routing operates only on the available expert set, so unusable experts remain
 at zero weight. Finally, a bounded residual produces the 24-hour forecast while
-preserving a checkable envelope. The five A6 members are combined by averaging
+preserving a checkable envelope. The five trained models are combined by averaging
 their predictions in linear traffic space.
 
 The full expert definitions, availability rules, and equations are on the
@@ -84,7 +84,7 @@ python -m pip install -r requirements-demo.txt
 python demo/app.py
 ```
 
-The app verifies and caches the five public A6 checkpoints, automatically runs
+The app verifies and caches the five public model checkpoints, automatically runs
 a synthetic 336-hour sample, and exports both a forecast CSV and a versioned
 audit JSON. Public uploads are limited to 5 MB; use a local deployment for
 sensitive operator data.

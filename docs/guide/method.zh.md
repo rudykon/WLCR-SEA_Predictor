@@ -41,12 +41,12 @@ $\hat{y} \in \mathbb{R}^{24 \times 4}$ 的预测。推理阶段可以读取当�
 观测掩码具有最终决定权。缺失协议移除数值后，所有汇总专家都会重新计算；占位值不能
 进入中位数、趋势或上下文特征。
 
-五个公开 A6 检查点分别保存自己的 `(24, 4)` 冻结训练先验。Demo 不会从上传请求
+五个公开模型检查点分别保存自己的 `(24, 4)` 冻结训练先验。Demo 不会从上传请求
 动态生成该先验。
 
 ## 2. 严格掩码稀疏路由
 
-A6 路由器使用预测步长、指标、专家类型、专家值、时间距离、可靠度和请求内上下文。
+路由器使用预测步长、指标、专家类型、专家值、时间距离、可靠度和请求内上下文。
 它只在压缩后的可用专家集合上执行带可靠度的 **Entmax 1.5**，随后恢复八个位置。
 
 对每个预测步长和指标：
@@ -79,12 +79,12 @@ A6 路由器使用预测步长、指标、专家类型、专家值、时间距�
 公开检查点使用各自所选配置中记录的残差上限。导出的审计记录会分别检查每个成员和
 原始流量空间中的集成结果。
 
-## 4. A6 五模型集成
+## 4. 五模型集成
 
 主预测器包含种子 42–46。每个成员使用自己的冻结先验构造专家，并产生完整的
 `24 × 4` 预测。五个数组在**逆变换回原始流量空间后**执行算术平均。
 
-[打开 A6 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[打开在线 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
 [查看检查点](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button target="_blank" rel="noopener" }
 
 ## 5. 审计记录

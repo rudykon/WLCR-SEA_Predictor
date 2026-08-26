@@ -1,10 +1,10 @@
 # Reproduce
 
 This page is the practical entry point for installation, input validation,
-public A6 inference, tests, and the research code map. The complete authoritative
+public ensemble inference, tests, and the research code map. The complete authoritative
 workflow lives in [`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md).
 
-## Run the A6 Demo locally
+## Run the Demo locally
 
 ```bash
 git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
@@ -47,10 +47,12 @@ placeholders from entering expert summaries.
 
 ## Model assets
 
-The public model repository contains seeds 42–46 of `A6_mixed_aug`. Each file
-stores the selected configuration and epoch, a frozen `(24, 4)` training prior,
-and the CPU `state_dict`. The registered ensemble rule is an arithmetic mean of
-the five predictions in linear traffic space.
+The public model repository contains five checkpoints for seeds 42–46. Each
+file stores the selected configuration and epoch, a frozen `(24, 4)` training
+prior, and the CPU `state_dict`. The registered ensemble rule is an arithmetic
+mean of the five predictions in linear traffic space. Their filenames retain
+the paper's internal identifier `A6_mixed_aug` for exact provenance; elsewhere
+the website calls them the **WLCR-SEA five-model ensemble**.
 
 [Inspect model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button }
 [Open the live Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary }
@@ -63,7 +65,7 @@ PYTHONPATH=. python -m unittest tests.test_hf_space_demo -v
 PYTHONPATH=. python -m unittest tests.test_request_locality_audit -v
 ```
 
-The A6 test independently evaluates the fixed sample through the core model
+The Space consistency test independently evaluates the fixed sample through the core model
 path and compares the five-member linear-space mean with the Demo runtime.
 
 Build both website languages:
@@ -96,7 +98,7 @@ missingness, request-locality, cell-disjoint, auditability, and latency stages.
 | `Model/traffic_window_forecasting.py` | Six-column CSV parsing and request-window validation |
 | `demo/model_loader.py` | Pinned model download, integrity checks, one-time CPU load |
 | `demo/runtime.py` | Five-member inference, figures, tables, CSV and JSON exports |
-| `tests/test_hf_space_demo.py` | Public A6 and local/Space consistency checks |
+| `tests/test_hf_space_demo.py` | Public checkpoint and local/Space consistency checks |
 
 Generated models, NumPy bundles, logs, and result folders remain outside the
 versioned source. The public workflow does not contain or build unpublished

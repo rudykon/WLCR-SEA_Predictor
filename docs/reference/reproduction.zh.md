@@ -1,9 +1,9 @@
 # 复现
 
-本页统一提供环境安装、输入校验、公开 A6 推理、测试和代码地图。完整且唯一的权威流程见
+本页统一提供环境安装、输入校验、公开模型集成推理、测试和代码地图。完整且唯一的权威流程见
 [`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md)。
 
-## 在本地运行 A6 Demo
+## 在本地运行 Demo
 
 ```bash
 git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
@@ -42,9 +42,10 @@ Demo 只接收同一个小区连续 336 小时的数据。必须使用以下表�
 
 ## 模型资源
 
-公开模型仓库包含 `A6_mixed_aug` 的种子 42–46。每个文件保存所选配置和轮次、冻结的
+公开模型仓库包含种子 42–46 的五个检查点。每个文件保存所选配置和轮次、冻结的
 `(24, 4)` 训练先验以及 CPU `state_dict`。登记的集成规则是在原始流量空间对五个
-预测执行算术平均。
+预测执行算术平均。检查点文件名保留论文内部编号 `A6_mixed_aug`，用于精确追溯；网站
+其他位置统一称为 **WLCR-SEA 五模型集成**。
 
 [查看模型权重](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button }
 [打开在线 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary }
@@ -57,7 +58,7 @@ PYTHONPATH=. python -m unittest tests.test_hf_space_demo -v
 PYTHONPATH=. python -m unittest tests.test_request_locality_audit -v
 ```
 
-A6 测试会通过核心模型路径独立计算固定样例，再将五成员的原始流量空间平均值与 Demo
+Space 一致性测试会通过核心模型路径独立计算固定样例，再将五成员的原始流量空间平均值与 Demo
 运行时输出进行比较。
 
 严格构建中英文网站：
@@ -89,7 +90,7 @@ GPU。权威指南列出了主模型训练、基线、缺失、请求内计算�
 | `Model/traffic_window_forecasting.py` | 六列 CSV 解析和请求窗口校验 |
 | `demo/model_loader.py` | 固定版本下载、完整性检查和一次性 CPU 加载 |
 | `demo/runtime.py` | 五成员推理、图片、表格、CSV 与 JSON 导出 |
-| `tests/test_hf_space_demo.py` | 公开 A6 和本地/Space 一致性检查 |
+| `tests/test_hf_space_demo.py` | 公开检查点和本地/Space 一致性检查 |
 
 生成模型、NumPy 文件、日志和结果目录均不进入版本化源码。公开流程不包含也不构建未发表
 论文正文。

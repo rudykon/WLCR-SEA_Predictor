@@ -1,9 +1,9 @@
-# WLCR-SEA A6 Demo
+# WLCR-SEA Forecast Demo
 
-The Demo runs the public `A6_mixed_aug` five-checkpoint ensemble on CPU. At
-startup it downloads the pinned Hugging Face revision, verifies every SHA-256,
-loads each frozen training prior and model once, and averages member forecasts
-in linear traffic space.
+The Demo runs a five-model ensemble from the public WLCR-SEA checkpoints on
+CPU. At startup it downloads the pinned Hugging Face revision, verifies every
+SHA-256, loads each frozen training prior and model once, and averages member
+forecasts in linear traffic space.
 
 ```bash
 python -m pip install -r requirements-demo.txt

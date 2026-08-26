@@ -1,6 +1,6 @@
 # WLCR-SEA reproduction guide
 
-This is the single authoritative guide for running the public A6 predictor,
+This is the single authoritative guide for running the public five-model predictor,
 checking the implementation, and regenerating the research evidence. Commands
 assume a clean clone at the repository root. The repository does not include
 training data or generated experiment artifacts.
@@ -9,7 +9,7 @@ training data or generated experiment artifacts.
 
 Use Python 3.11 or newer; CI and the public Demo use Python 3.12.
 
-For A6 inference and the Gradio Demo:
+For public ensemble inference and the Gradio Demo:
 
 ```bash
 python3 -m venv .venv
@@ -28,14 +28,18 @@ python -m pip install -r requirements.txt
 Select a PyTorch build that matches the training host. Full five-seed training
 uses GPUs; unit tests and public inference run on CPU.
 
-## 2. Public A6 model assets
+## 2. Public model assets
 
-The Demo downloads the five `A6_mixed_aug` checkpoints from
+The Demo downloads five checkpoints from
 [`config-h/WLCR-SEA-Predictor`](https://huggingface.co/config-h/WLCR-SEA-Predictor)
 at pinned revision `eb4447f4ebab8f9caa003d92c838ed8e750963bd`. Startup verifies
 the registered SHA-256 for every file before loading it. Each checkpoint
 contains its seed, selected architecture, selected epoch, frozen `(24, 4)`
 training prior, and `state_dict`.
+
+The checkpoint filenames retain the paper's internal experiment identifier
+`A6_mixed_aug` so that hashes and result manifests remain reproducible. The
+reader-facing name is **WLCR-SEA five-model ensemble**.
 
 To use previously downloaded files, place them under a local `checkpoints/`
 directory and set:
@@ -79,7 +83,7 @@ artifacts.
 
 ## 4. Verification
 
-Run the focused implementation and public-A6 checks:
+Run the focused implementation and public-ensemble checks:
 
 ```bash
 PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
@@ -95,14 +99,14 @@ python -m pip install -r requirements-docs.txt
 mkdocs build --strict
 ```
 
-The A6 Demo test independently reconstructs the fixed sample through the core
+The Space consistency test independently reconstructs the fixed sample through the core
 evaluation path and compares its five-member linear-space mean with the Space
 runtime output.
 
 ## 5. Refit the research models
 
 Write every independent run to a fresh child of `artifacts/reproduction/`.
-For the primary A0–A6 study:
+For the paper's internal A0–A6 experiment sweep:
 
 ```bash
 python experiments/train_wlcr_sea.py \
@@ -167,7 +171,7 @@ build the unpublished manuscript source.
 | `experiments/train_neural_baselines.py` | DLinear, PatchTST, and GRU-D controls |
 | `experiments/audit_method_evidence.py` | Request-locality, masking, deletion, and envelope audits |
 | `experiments/benchmark_end_to_end_latency.py` | Matched CPU latency and asset-size measurement |
-| `demo/model_loader.py` | Pinned download, SHA-256 verification, and one-time A6 loading |
+| `demo/model_loader.py` | Pinned download, SHA-256 verification, and one-time ensemble loading |
 | `demo/runtime.py` | CSV-to-ensemble inference, plots, tables, and audit exports |
 | `tests/test_hf_space_demo.py` | Public checkpoint and local/Space consistency checks |
 

@@ -1,7 +1,7 @@
 site_name: WLCR-SEA Predictor
 site_url: https://rudykon.github.io/WLCR-SEA_Predictor/
 site_description: >-
-  Request-local cellular traffic forecasting under missing telemetry with public A6 checkpoints and auditable expert routing.
+  Forecast one cell's next 24 hours from its own recent history, with missing-data handling and transparent expert routing.
 
 repo_name: rudykon/WLCR-SEA_Predictor
 repo_url: https://github.com/rudykon/WLCR-SEA_Predictor
@@ -64,7 +64,7 @@ plugins:
           build: true
           site_name: WLCR-SEA 蜂窝流量预测
           site_description: >-
-            面向缺失遥测的单小区请求内流量预测，提供公开 A6 权重与可审计专家路由。
+            只用单个小区的近期历史预测未来 24 小时，并提供缺失数据处理和透明专家路由。
           theme:
             palette:
               - media: "(prefers-color-scheme: light)"
@@ -116,7 +116,7 @@ extra:
       name: Source on GitHub
     - icon: fontawesome/solid/cube
       link: https://huggingface.co/config-h/WLCR-SEA-Predictor
-      name: A6 model weights on Hugging Face
+      name: WLCR-SEA model weights on Hugging Face
   generator: false
 
 copyright: Copyright &copy; 2026 WLCR-SEA contributors · Apache-2.0
