@@ -204,6 +204,60 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         forecast_figure.clear()
         expert_figure.clear()
 
+    def test_chinese_panel_figures_use_portable_english_text(self) -> None:
+        forecast_figure = runtime.make_forecast_figure(
+            self.clean, "dl_prb", "zh"
+        )
+        expert_figure = runtime.make_expert_figure(
+            self.clean, "dl_prb", 1, "zh"
+        )
+
+        forecast_axis = forecast_figure.axes[0]
+        self.assertEqual(forecast_axis.get_ylabel(), "Average used DL PRBs")
+        self.assertEqual(
+            forecast_axis.get_title(loc="left"),
+            "Average used DL PRBs: 336-hour history → 24-hour forecast",
+        )
+        self.assertEqual(
+            [text.get_text() for text in forecast_axis.get_legend().get_texts()],
+            ["Observed history", "Five-model ensemble", "Audited envelope"],
+        )
+
+        expert_axis, weight_axis = expert_figure.axes
+        self.assertEqual(expert_axis.get_ylabel(), "Expert value")
+        self.assertEqual(weight_axis.get_ylabel(), "Mean weight (%)")
+        self.assertEqual(
+            expert_axis.get_title(loc="left"),
+            "Ensemble routing summary — Average used DL PRBs, future hour 1",
+        )
+
+        figure_text = " ".join(
+            text
+            for figure in (forecast_figure, expert_figure)
+            for axis in figure.axes
+            for text in (
+                axis.get_title(loc="left"),
+                axis.get_title(),
+                axis.get_title(loc="right"),
+                axis.get_xlabel(),
+                axis.get_ylabel(),
+                *(item.get_text() for item in axis.get_xticklabels()),
+                *(item.get_text() for item in axis.get_yticklabels()),
+                *(item.get_text() for item in axis.texts),
+                *(
+                    item.get_text()
+                    for item in (
+                        axis.get_legend().get_texts()
+                        if axis.get_legend()
+                        else []
+                    )
+                ),
+            )
+        )
+        self.assertNotRegex(figure_text, r"[\u3400-\u9fff]")
+        forecast_figure.clear()
+        expert_figure.clear()
+
     def test_reader_friendly_runtime_alias_matches_the_legacy_api(self) -> None:
         result = runtime.run_forecast(SAMPLE, ensemble=self.ensemble)
         self.assertTrue(
