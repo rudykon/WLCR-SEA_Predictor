@@ -109,6 +109,26 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertNotIn("## Figures", readme)
         self.assertEqual(readme.count("paper_figure_"), 2)
 
+    def test_readmes_have_a_compact_shields_badge_row(self) -> None:
+        for relative in ("README.md", "README_CN.md"):
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertEqual(text.count("https://img.shields.io/"), 4)
+            for endpoint in (
+                "github/v/release/rudykon/WLCR-SEA_Predictor",
+                "github/actions/workflow/status/rudykon/WLCR-SEA_Predictor/demo.yml",
+                "badge/Hugging%20Face-Live%20Demo-FFD21E",
+                "github/license/rudykon/WLCR-SEA_Predictor",
+            ):
+                self.assertIn(f"https://img.shields.io/{endpoint}", text)
+            self.assertIn(
+                "https://github.com/rudykon/WLCR-SEA_Predictor/releases/latest",
+                text,
+            )
+            self.assertIn(
+                "https://github.com/rudykon/WLCR-SEA_Predictor/actions/workflows/demo.yml",
+                text,
+            )
+
     def test_reproduction_guide_has_no_removed_runtime_or_manuscript_paths(self) -> None:
         text = (ROOT / "REPRODUCTION.md").read_text(encoding="utf-8")
         self.assertNotIn(".runtime/", text)

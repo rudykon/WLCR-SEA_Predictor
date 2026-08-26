@@ -7,6 +7,13 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/rudykon/WLCR-SEA_Predictor/releases/latest"><img src="https://img.shields.io/github/v/release/rudykon/WLCR-SEA_Predictor?display_name=tag&amp;sort=semver&amp;label=release&amp;color=0f766e" alt="Latest release"></a>
+  <a href="https://github.com/rudykon/WLCR-SEA_Predictor/actions/workflows/demo.yml"><img src="https://img.shields.io/github/actions/workflow/status/rudykon/WLCR-SEA_Predictor/demo.yml?branch=main&amp;label=demo%20CI&amp;logo=githubactions&amp;logoColor=white" alt="Demo CI status"></a>
+  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor"><img src="https://img.shields.io/badge/Hugging%20Face-Live%20Demo-FFD21E?logo=huggingface&amp;logoColor=000" alt="Live Demo"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/rudykon/WLCR-SEA_Predictor?label=license&amp;color=3d6fb6" alt="Apache-2.0 license"></a>
+</p>
+
+<p align="center">
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/">Website</a> ·
   <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">Live Demo</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">Model Card</a> ·
