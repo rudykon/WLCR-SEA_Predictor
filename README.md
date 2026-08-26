@@ -9,7 +9,8 @@
 <p align="center">
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/">Website</a> ·
   <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">Live Demo</a> ·
-  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">Model Weights</a> ·
+  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">Model Card</a> ·
+  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd">Pinned Weights</a> ·
   <a href="#research-dataset">Dataset</a> ·
   <a href="README_CN.md">中文</a>
 </p>
@@ -86,10 +87,10 @@ python -m pip install -r requirements-demo.txt
 python demo/app.py
 ```
 
-The app verifies and caches the five public model checkpoints, automatically runs
-a synthetic 336-hour sample, and exports both a forecast CSV and a versioned
-audit JSON. Public uploads are limited to 5 MB; use a local deployment for
-sensitive operator data.
+The app verifies and caches the five public model checkpoints and automatically
+previews a synthetic 336-hour sample. Click **Run forecast** to create the
+downloadable forecast CSV and versioned audit JSON. Public uploads are limited
+to 5 MB; use a local deployment for sensitive operator data.
 
 ## Research dataset
 

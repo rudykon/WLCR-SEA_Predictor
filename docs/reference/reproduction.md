@@ -67,7 +67,7 @@ verification, and extraction commands are in
 
 The public model repository contains five checkpoints for seeds 42–46. Each
 file stores the selected configuration and epoch, a frozen `(24, 4)` training
-prior, and the CPU `state_dict`. The registered ensemble rule is an arithmetic
+prior, and the CPU `state_dict`. The ensemble rule is an arithmetic
 mean of the five predictions in linear traffic space. Their filenames retain
 the paper's internal identifier `A6_mixed_aug` for exact provenance; elsewhere
 the website calls them the **WLCR-SEA five-model ensemble**.

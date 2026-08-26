@@ -134,6 +134,10 @@ TEXT = {
         "member_table": "Ensemble members",
         "forecast_download": "Download forecast CSV",
         "audit_download": "Download audit JSON",
+        "download_hint": (
+            "Run the forecast to enable CSV and audit JSON downloads. "
+            "The automatic preview does not create temporary download files."
+        ),
         "ready": "The built-in sample will run automatically.",
         "routing_title": "## Ensemble routing summary",
         "routing_note": (
@@ -164,6 +168,9 @@ TEXT = {
         "member_table": "集成成员",
         "forecast_download": "下载预测 CSV",
         "audit_download": "下载审计 JSON",
+        "download_hint": (
+            "点击“运行预测”后可下载 CSV 与审计 JSON；自动预览不会创建临时下载文件。"
+        ),
         "ready": "页面将自动运行内置样例。",
         "routing_title": "## 集成路由摘要",
         "routing_note": (
@@ -213,7 +220,7 @@ def _run_request(upload, scenario, missing_rate, metric, horizon, *, lang: str):
         )
         return _render_result(result, str(metric), int(horizon), lang)
     except DemoInputError as exc:
-        raise gr.Error(str(exc)) from exc
+        raise gr.Error(exc.localized(lang)) from exc
     except Exception as exc:
         LOGGER.exception("WLCR-SEA Forecast Demo failed")
         message = (
@@ -315,6 +322,7 @@ def _build_panel(lang: str) -> Panel:
         )
         expert_table = gr.Dataframe(interactive=False, label=text["expert_table"])
         member_table = gr.Dataframe(interactive=False, label=text["member_table"])
+        gr.Markdown(text["download_hint"], elem_classes=["privacy-note"])
         with gr.Row():
             forecast_download = gr.File(
                 label=text["forecast_download"], interactive=False

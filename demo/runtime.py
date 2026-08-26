@@ -37,8 +37,8 @@ if str(ROOT) not in sys.path:
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 DEMO_SEED = 2026
-AUDIT_SCHEMA = "wlcr-sea-audit/v3"
-RUNTIME_VERSION = "wlcr-sea-demo/3"
+AUDIT_SCHEMA = "wlcr-sea-audit/v4"
+RUNTIME_VERSION = "wlcr-sea-demo/4"
 SOURCE_REPOSITORY = "https://github.com/rudykon/WLCR-SEA_Predictor"
 EXPORT_ROOT = Path(tempfile.gettempdir()) / "wlcr-sea-exports"
 EXPORT_TTL_SECONDS = 6 * 60 * 60
@@ -116,9 +116,67 @@ SHORT_EXPERT_LABELS = (
     "Prior",
 )
 
+DEMO_ERROR_MESSAGES = {
+    "en": {
+        "missing_upload": "Choose the built-in sample or upload a CSV request.",
+        "missing_file": "The selected CSV is no longer available. Choose it again.",
+        "invalid_extension": "Upload a CSV file using the documented six-column schema.",
+        "file_too_large": "The upload exceeds the 5 MB public-Demo limit.",
+        "invalid_encoding": "Save the request as a UTF-8 CSV file and upload it again.",
+        "empty_csv": "The uploaded CSV is empty.",
+        "invalid_header": "The CSV header does not match the documented six-column schema.",
+        "invalid_columns": "Every data row must contain all six documented CSV columns.",
+        "empty_cell": "Every row must include a non-empty cell identifier.",
+        "invalid_timestamp": "Timestamps must use YYYY/MM/DD HH:MM format.",
+        "invalid_metric": "Traffic values must be non-negative finite numbers or NIL.",
+        "wrong_row_count": "The public Demo accepts exactly one 336-row request window.",
+        "mixed_cells": "All 336 rows must belong to the same cell.",
+        "invalid_csv": "The CSV does not satisfy the documented request format.",
+        "non_contiguous_timestamps": (
+            "Timestamps must be strictly hourly and contiguous for all 336 rows."
+        ),
+        "indicator_unobserved": "Every indicator needs at least one observed value in the request.",
+        "unknown_scenario": "Choose one of the listed missingness patterns.",
+        "invalid_missing_rate": "Missingness rate must be between 0 and 80%.",
+        "indicator_removed": (
+            "This corruption removes every observed value for an indicator; choose a lower rate."
+        ),
+    },
+    "zh": {
+        "missing_upload": "请选择内置样例或上传一个 CSV 请求文件。",
+        "missing_file": "所选 CSV 已不可用，请重新选择。",
+        "invalid_extension": "请上传符合六列输入规范的 CSV 文件。",
+        "file_too_large": "上传文件超过公开 Demo 的 5 MB 限制。",
+        "invalid_encoding": "请将请求保存为 UTF-8 编码的 CSV 后重新上传。",
+        "empty_csv": "上传的 CSV 文件为空。",
+        "invalid_header": "CSV 表头与文档规定的六列格式不一致。",
+        "invalid_columns": "每行必须包含输入规范规定的全部六列。",
+        "empty_cell": "每行都必须包含非空的小区标识。",
+        "invalid_timestamp": "时间必须使用 YYYY/MM/DD HH:MM 格式。",
+        "invalid_metric": "流量值必须是非负有限数值或 NIL。",
+        "wrong_row_count": "公开 Demo 只接受一个恰好包含 336 行的请求窗口。",
+        "mixed_cells": "336 行数据必须全部属于同一个小区。",
+        "invalid_csv": "CSV 不符合文档规定的请求格式。",
+        "non_contiguous_timestamps": "336 行时间必须严格按小时连续排列。",
+        "indicator_unobserved": "每项流量指标都必须至少包含一个观测值。",
+        "unknown_scenario": "请选择列表中的缺失模式。",
+        "invalid_missing_rate": "缺失率必须在 0% 到 80% 之间。",
+        "indicator_removed": "该缺失设置会移除某项指标的全部观测值，请降低缺失率。",
+    },
+}
+
 
 class DemoInputError(ValueError):
-    """Raised when a public Demo request violates the CSV contract."""
+    """A stable input-error code with localized reader-facing messages."""
+
+    def __init__(self, code: str, *, detail: str | None = None) -> None:
+        self.code = code if code in DEMO_ERROR_MESSAGES["en"] else "invalid_csv"
+        self.detail = detail
+        super().__init__(self.localized("en"))
+
+    def localized(self, lang: str) -> str:
+        messages = DEMO_ERROR_MESSAGES.get(lang, DEMO_ERROR_MESSAGES["en"])
+        return messages.get(self.code, DEMO_ERROR_MESSAGES["en"]["invalid_csv"])
 
 
 @dataclass(frozen=True)
@@ -149,6 +207,7 @@ class AuditResult:
     history_values: np.ndarray
     original_mask: np.ndarray
     effective_mask: np.ndarray
+    corruption_mask: np.ndarray
     forecast_times: tuple[datetime, ...]
     prediction: np.ndarray
     lower_envelope: np.ndarray
@@ -170,7 +229,7 @@ class AuditResult:
 
 def _upload_path(upload: str | Path | Any) -> Path:
     if upload is None:
-        raise DemoInputError("Choose the built-in sample or upload a CSV request.")
+        raise DemoInputError("missing_upload")
     candidate = (
         upload
         if isinstance(upload, (str, os.PathLike))
@@ -178,11 +237,11 @@ def _upload_path(upload: str | Path | Any) -> Path:
     )
     path = Path(str(candidate)).expanduser()
     if not path.is_file():
-        raise DemoInputError("The selected CSV is no longer available. Choose it again.")
+        raise DemoInputError("missing_file")
     if path.suffix.lower() != ".csv":
-        raise DemoInputError("Use a UTF-8 CSV file with the documented six-column header.")
+        raise DemoInputError("invalid_extension")
     if path.stat().st_size > MAX_UPLOAD_BYTES:
-        raise DemoInputError("The upload exceeds the 5 MB public-Demo limit.")
+        raise DemoInputError("file_too_large")
     return path
 
 
@@ -192,6 +251,28 @@ def _sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _contract_error_code(message: str) -> str:
+    """Map parser details to stable public error codes without leaking file paths."""
+
+    patterns = (
+        ("traffic file is empty", "empty_csv"),
+        ("traffic header mismatch", "invalid_header"),
+        (" has empty cell", "empty_cell"),
+        (" has ", "invalid_columns"),
+        ("invalid timestamp", "invalid_timestamp"),
+        ("invalid metric", "invalid_metric"),
+        ("metric must be finite and non-negative", "invalid_metric"),
+        ("traffic row count", "wrong_row_count"),
+        ("short window", "wrong_row_count"),
+        ("mixed cells", "mixed_cells"),
+    )
+    lowered = message.lower()
+    for pattern, code in patterns:
+        if pattern in lowered:
+            return code
+    return "invalid_csv"
 
 
 def load_request(upload: str | Path | Any):
@@ -207,13 +288,17 @@ def load_request(upload: str | Path | Any):
     try:
         rows = read_traffic(path)
         windows = split_physical_windows(rows)
-    except (ContractError, UnicodeDecodeError) as exc:
-        raise DemoInputError(str(exc)) from exc
+    except UnicodeDecodeError as exc:
+        raise DemoInputError("invalid_encoding", detail=str(exc)) from exc
+    except ContractError as exc:
+        raise DemoInputError(
+            _contract_error_code(str(exc)), detail=str(exc)
+        ) from exc
     if len(windows) != 1:
-        raise DemoInputError("The public Demo accepts exactly one 336-row request window.")
+        raise DemoInputError("wrong_row_count")
     window = windows[0]
     if window.gaps:
-        raise DemoInputError("Timestamps must be strictly hourly and contiguous for all 336 rows.")
+        raise DemoInputError("non_contiguous_timestamps")
     return path, window
 
 
@@ -226,7 +311,7 @@ def _request_arrays(window) -> tuple[np.ndarray, np.ndarray]:
                 values[0, hour, metric] = float(item)
                 mask[0, hour, metric] = True
     if np.any(np.sum(mask, axis=1) == 0):
-        raise DemoInputError("Every indicator needs at least one observed value in the request.")
+        raise DemoInputError("indicator_unobserved")
     return values, mask
 
 
@@ -238,15 +323,15 @@ def run_a6_forecast(
     upload: str | Path | Any,
     *,
     scenario: str = "none",
-    missing_rate: float = 0.2,
+    missing_rate: float = 0.0,
     ensemble: A6Ensemble | None = None,
 ) -> AuditResult:
     """Run the public five-model ensemble with its frozen per-seed priors."""
 
     if scenario not in SCENARIOS:
-        raise DemoInputError(f"Unknown missingness scenario: {scenario}")
+        raise DemoInputError("unknown_scenario", detail=str(scenario))
     if not 0.0 <= float(missing_rate) <= 0.8:
-        raise DemoInputError("Missingness rate must be between 0 and 80%.")
+        raise DemoInputError("invalid_missing_rate")
 
     path, window = load_request(upload)
     raw_values, original_mask = _request_arrays(window)
@@ -264,9 +349,16 @@ def run_a6_forecast(
     )
     effective_mask = original_mask & ~additional_missing
     if np.any(np.sum(effective_mask, axis=1) == 0):
-        raise DemoInputError(
-            "This corruption removes every observed value for an indicator; choose a lower rate."
-        )
+        raise DemoInputError("indicator_removed")
+    original_observation_count = int(np.count_nonzero(original_mask))
+    actually_removed_count = int(
+        np.count_nonzero(original_mask & ~effective_mask)
+    )
+    actually_removed_rate = (
+        actually_removed_count / original_observation_count
+        if original_observation_count
+        else 0.0
+    )
 
     from experiments import wlcr_sea_model as sea
     import torch
@@ -360,6 +452,7 @@ def run_a6_forecast(
         history_values=raw_values[0],
         original_mask=original_mask[0],
         effective_mask=effective_mask[0],
+        corruption_mask=additional_missing[0],
         forecast_times=tuple(start + timedelta(hours=index) for index in range(24)),
         prediction=np.asarray(prediction, dtype=np.float32),
         lower_envelope=np.asarray(lower, dtype=np.float32),
@@ -371,8 +464,8 @@ def run_a6_forecast(
         reliability=common_reliability,
         attention=np.mean([member.attention for member in member_audits], axis=0),
         scenario=scenario,
-        requested_rate=float(missing_rate),
-        applied_rate=effective_rate,
+        requested_rate=effective_rate,
+        applied_rate=actually_removed_rate,
         model_repo_id=bundle.repo_id,
         model_revision=bundle.revision,
         variant=bundle.variant,
@@ -595,7 +688,7 @@ def status_markdown(result: AuditResult, lang: str = "en") -> str:
     if lang == "en":
         scenario = SCENARIO_LABELS[lang][result.scenario]
         return (
-            "| Scenario | Requested removal | Applied removal | Effective observed | Audit |\n"
+            "| Scenario | Configured removal | Actually removed | Final observed | Audit |\n"
             "| --- | ---: | ---: | ---: | --- |\n"
             f"| {scenario} | {result.requested_rate:.1%} | {result.applied_rate:.1%} | "
             f"{observed:.1%} | {audit} |"
@@ -606,7 +699,7 @@ def status_markdown(result: AuditResult, lang: str = "en") -> str:
     )
     scenario = SCENARIO_LABELS[lang][result.scenario]
     return (
-        "| 场景 | 请求移除 | 实际应用 | 有效观测 | 审计 |\n"
+        "| 场景 | 配置移除率 | 实际移除率 | 最终观测比例 | 审计 |\n"
         "| --- | ---: | ---: | ---: | --- |\n"
         f"| {scenario} | {result.requested_rate:.1%} | {result.applied_rate:.1%} | "
         f"{observed:.1%} | {audit_zh} |"
@@ -736,6 +829,13 @@ def _export_outputs_locked(result: AuditResult) -> tuple[str, str]:
     mask_ok, bound_ok = _audit_checks(result)
     removed_positions = _removed_positions(result)
     original_observation_count = int(np.count_nonzero(result.original_mask))
+    final_observed_fraction = float(np.mean(result.effective_mask))
+    selected_for_corruption_rate = float(np.mean(result.corruption_mask))
+    actually_removed_fraction = (
+        len(removed_positions) / original_observation_count
+        if original_observation_count
+        else 0.0
+    )
     payload = {
         "schema": AUDIT_SCHEMA,
         "paper_model": True,
@@ -779,18 +879,25 @@ def _export_outputs_locked(result: AuditResult) -> tuple[str, str]:
             "cell": result.cell,
             "history_hours": 336,
             "forecast_hours": 24,
-            "observed_fraction": float(np.mean(result.effective_mask)),
+            "original_observed_fraction": float(np.mean(result.original_mask)),
+            "final_observed_fraction": final_observed_fraction,
+            "observed_fraction": final_observed_fraction,
         },
         "missingness": {
             "scenario": result.scenario,
             "mechanism": SCENARIOS[result.scenario],
+            "configured_removal_rate": result.requested_rate,
             "requested_rate": result.requested_rate,
             "applied_rate": result.applied_rate,
+            "selected_for_corruption_rate": selected_for_corruption_rate,
+            "actually_removed_fraction_of_original_observations": (
+                actually_removed_fraction
+            ),
+            "final_observed_fraction": final_observed_fraction,
+            "final_total_missing_rate": 1.0 - final_observed_fraction,
             "seed": DEMO_SEED,
             "removed_observation_count": len(removed_positions),
-            "removed_fraction_of_original_observations": (
-                len(removed_positions) / original_observation_count
-            ),
+            "removed_fraction_of_original_observations": actually_removed_fraction,
             "removed_positions": removed_positions,
             "effective_mask": result.effective_mask.astype(int).tolist(),
         },

@@ -21,6 +21,9 @@ verifies their SHA-256 hashes, uses their frozen training priors, and averages
 forecasts in linear traffic space. Use the built-in synthetic sample or upload
 a compatible CSV. Do not upload confidential operator traffic.
 
+The automatic preview does not create download files. Click **Run forecast**
+to enable the forecast CSV and audit JSON downloads.
+
 The routing chart is an ensemble summary: it averages expert values and
 routing weights separately and does not exactly decompose the final forecast.
 

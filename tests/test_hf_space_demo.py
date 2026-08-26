@@ -101,10 +101,16 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         result = runtime.run_a6_forecast(
             SAMPLE,
             scenario="recent_tail",
-            missing_rate=0.5,
+            missing_rate=0.2,
             ensemble=self.ensemble,
         )
-        self.assertGreater(float(np.mean(~result.effective_mask)), 0.45)
+        self.assertGreater(float(np.mean(~result.effective_mask)), 0.15)
+        expected_removed = float(
+            np.count_nonzero(result.original_mask & ~result.effective_mask)
+            / np.count_nonzero(result.original_mask)
+        )
+        self.assertAlmostEqual(result.applied_rate, expected_removed)
+        self.assertNotAlmostEqual(result.applied_rate, 0.2)
         self.assertTrue(np.any(~result.availability))
         for member in result.members:
             self.assertEqual(
@@ -120,6 +126,15 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         self.assertGreater(
             audit["missingness"]["removed_fraction_of_original_observations"], 0
         )
+        self.assertAlmostEqual(
+            audit["missingness"]["actually_removed_fraction_of_original_observations"],
+            expected_removed,
+        )
+        self.assertAlmostEqual(audit["missingness"]["applied_rate"], expected_removed)
+        self.assertAlmostEqual(
+            audit["missingness"]["final_observed_fraction"],
+            float(np.mean(result.effective_mask)),
+        )
         self.assertEqual(len(audit["missingness"]["effective_mask"]), 336)
 
     def test_exports_record_real_a6_identity_and_per_seed_outputs(self) -> None:
@@ -127,7 +142,7 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         self.assertTrue(Path(forecast_path).is_file())
         self.assertTrue(Path(audit_path).is_file())
         audit = json.loads(Path(audit_path).read_text(encoding="utf-8"))
-        self.assertEqual(audit["schema"], "wlcr-sea-audit/v3")
+        self.assertEqual(audit["schema"], "wlcr-sea-audit/v4")
         self.assertTrue(audit["paper_model"])
         self.assertEqual(audit["variant"], "A6_mixed_aug")
         self.assertEqual(audit["ensemble"]["revision"], MODEL_REVISION)
@@ -195,6 +210,24 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
             np.array_equal(result.prediction, self.clean.prediction)
         )
         self.assertEqual(result.requested_rate, 0.0)
+        self.assertEqual(runtime.run_a6_forecast.__kwdefaults__["missing_rate"], 0.0)
+
+    def test_status_uses_distinct_configured_and_actual_rate_labels(self) -> None:
+        status_en = runtime.status_markdown(self.clean, "en")
+        status_zh = runtime.status_markdown(self.clean, "zh")
+        self.assertIn("Configured removal", status_en)
+        self.assertIn("Actually removed", status_en)
+        self.assertIn("Final observed", status_en)
+        self.assertIn("配置移除率", status_zh)
+        self.assertIn("实际移除率", status_zh)
+        self.assertIn("最终观测比例", status_zh)
+
+    def test_demo_input_errors_have_stable_localized_messages(self) -> None:
+        error = runtime.DemoInputError("wrong_row_count")
+        self.assertEqual(error.code, "wrong_row_count")
+        self.assertIn("336-row", error.localized("en"))
+        self.assertIn("336 行", error.localized("zh"))
+        self.assertNotEqual(error.localized("en"), error.localized("zh"))
 
 
 if __name__ == "__main__":
