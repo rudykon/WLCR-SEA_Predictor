@@ -15,6 +15,7 @@ hide:
     <a class="md-button md-button--primary" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">Try the Demo</a>
     <a class="md-button" href="guide/method/">Method</a>
     <a class="md-button" href="research/evidence/">Results</a>
+    <a class="md-button" href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd" target="_blank" rel="noopener">Model weights</a>
   </div>
 </section>
 
@@ -41,7 +42,7 @@ hide:
 
 ## Main findings
 
-| Question | Registered result |
+| Question | Reported result |
 | --- | --- |
 | Complete history | DLinear has lower **macro-indicator WAPE**: 0.1854 versus 0.1955 for the WLCR-SEA five-model ensemble. |
 | Severe missingness | WLCR-SEA has lower macro-indicator WAPE in all 9 prespecified comparisons against DLinear-Aug, PatchTST-Aug, and GRU-D in the study's severe settings. |

@@ -2,7 +2,7 @@
   --md-primary-fg-color: #172b4d;
   --md-primary-fg-color--light: #24456f;
   --md-primary-fg-color--dark: #0f2039;
-  --md-accent-fg-color: #168c7e;
+  --md-accent-fg-color: #0f766e;
   --wl-bg: #ffffff;
   --wl-soft: #f5f7fa;
   --wl-surface: #ffffff;
@@ -10,7 +10,7 @@
   --wl-muted: #5b6573;
   --wl-border: #d9e1e8;
   --wl-blue: #3d6fb6;
-  --wl-teal: #168c7e;
+  --wl-teal: #0f766e;
 }
 
 [data-md-color-scheme="default"] {

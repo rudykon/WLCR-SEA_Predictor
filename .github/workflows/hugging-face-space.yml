@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HF_SPACE_ID: config-h/WLCR-SEA_Predictor
+      HF_MODEL_ID: config-h/WLCR-SEA-Predictor
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
     steps:
       - name: Check out repository
@@ -62,6 +63,7 @@ jobs:
           cp LICENSE "${HF_SPACE_STAGE}/LICENSE"
           cp requirements-demo.txt "${HF_SPACE_STAGE}/requirements.txt"
           cp demo/space-readme-frontmatter.md "${HF_SPACE_STAGE}/README.md"
+          printf '%s\n' "${GITHUB_SHA}" > "${HF_SPACE_STAGE}/SOURCE_REVISION"
 
       - name: Mirror the minimal runtime to Hugging Face
         run: >-
@@ -70,3 +72,18 @@ jobs:
           --delete "*"
           --commit-message "Sync inference runtime from ${GITHUB_REPOSITORY}"
           --commit-description "GitHub commit ${GITHUB_SHA}"
+
+      - name: Synchronize the public model card
+        run: >-
+          uvx hf upload "${HF_MODEL_ID}" MODEL_CARD.md README.md
+          --type model
+          --commit-message "Clarify model inputs and ensemble loading"
+          --commit-description "Source: ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+
+      - name: Verify the deployed sample and source revision
+        run: >-
+          uv run --with gradio-client
+          python tools/check_space_deployment.py
+          --space-url https://config-h-wlcr-sea-predictor.hf.space
+          --expected-commit "${GITHUB_SHA}"
+          --timeout-seconds 900

@@ -2,7 +2,8 @@
 
 WLCR-SEA is not uniformly the most accurate model. DLinear leads when history
 is complete; WLCR-SEA is stronger in the study's severe missing-telemetry
-comparisons and preserves a replayable routing record.
+comparisons and exports a routing record for review. Replay additionally
+requires the original request and pinned source and model revisions.
 
 !!! info "Metric labels"
     Lower WAPE is better. Every WAPE below is explicitly labeled by aggregation.
@@ -11,7 +12,7 @@ comparisons and preserves a replayable routing record.
 
 ## Evaluation setting
 
-| Item | Registered setting |
+| Item | Evaluation setting |
 | --- | --- |
 | Data | 527,760 cell-hours from 736 cells in one anonymous region |
 | Request | One cell, 336-hour history, four indicators, observation mask |
@@ -20,10 +21,10 @@ comparisons and preserves a replayable routing record.
 | Complete-history test | Fixed later time period defined by the study |
 | Missingness test | Identical historical positions removed for every compared model |
 
-The [public model release](https://huggingface.co/config-h/WLCR-SEA-Predictor)
+The [pinned public model release](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)
 reports the ensemble's complete-history **macro-cell WAPE 0.177612**, **pooled
 WAPE 0.184915**, and **macro-indicator WAPE 0.195511**. These values describe
-different aggregations of the same registered workflow and are not
+different aggregations of the same evaluation workflow and are not
 interchangeable.
 
 ## Complete history
@@ -32,7 +33,7 @@ interchangeable.
   <a href="../../images/paper_figure_clean_accuracy.png" target="_blank" rel="noopener">
     <img src="../../images/paper_figure_clean_accuracy.png" alt="Complete-history model comparison with explicitly labeled macro-indicator WAPE">
   </a>
-  <figcaption>Complete-history comparison on the registered holdout workflow.</figcaption>
+  <figcaption>Complete-history comparison on the reported holdout workflow.</figcaption>
 </figure>
 
 | Model | Macro-indicator WAPE | Interpretation |
@@ -54,7 +55,7 @@ zero.
   <figcaption>Every model receives the same removed historical positions.</figcaption>
 </figure>
 
-The registered stress test removes a contiguous block, the recent tail, or
+The evaluation stress test removes a contiguous block, the recent tail, or
 different periods by indicator. At 50% requested removal:
 
 | Pattern | WLCR-SEA macro-indicator WAPE |
@@ -68,7 +69,7 @@ comparisons** against DLinear-Aug, PatchTST-Aug, and GRU-D. Some moderate-rate
 paired intervals against DLinear-Aug and PatchTST-Aug still include zero.
 
 **Finding:** the advantage is specific to the tested missingness patterns,
-rates, data, and registered runs. It is not a guarantee for arbitrary outages.
+rates, data, and reported runs. It is not a guarantee for arbitrary outages.
 
 ## Auditability
 
@@ -79,10 +80,10 @@ rates, data, and registered runs. It is not a guarantee for arbitrary outages.
   <figcaption>Structural checks and measured influence after expert deletion.</figcaption>
 </figure>
 
-| Check | Registered result |
+| Check | Reported result |
 | --- | ---: |
 | Weight assigned to unavailable experts | 0 |
-| Predictions outside the registered bounded envelope | 0 |
+| Predictions outside the configured bounded envelope | 0 |
 | Output changes after changing only the request wrapper (256 tests) | 0 |
 | Mean experts with meaningful support | 5.223 [5.101, 5.345] |
 | Macro-indicator WAPE increase after removing the highest-weight expert | +0.00595 [0.00441, 0.00757] |

@@ -5,8 +5,13 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import platform
+import shutil
+import subprocess
 import sys
 import tempfile
+import threading
+import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -19,7 +24,7 @@ os.environ.setdefault(
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import numpy as np
 import pandas as pd
 
@@ -32,6 +37,13 @@ if str(ROOT) not in sys.path:
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 DEMO_SEED = 2026
+AUDIT_SCHEMA = "wlcr-sea-audit/v3"
+RUNTIME_VERSION = "wlcr-sea-demo/3"
+SOURCE_REPOSITORY = "https://github.com/rudykon/WLCR-SEA_Predictor"
+EXPORT_ROOT = Path(tempfile.gettempdir()) / "wlcr-sea-exports"
+EXPORT_TTL_SECONDS = 6 * 60 * 60
+EXPORT_DIRECTORY_LIMIT = 128
+EXPORT_LOCK = threading.Lock()
 SCENARIOS = {
     "none": "none",
     "mcar": "mcar",
@@ -58,8 +70,18 @@ SCENARIO_LABELS = {
 METRIC_KEYS = ("ul_users", "dl_users", "dl_prb", "ul_prb")
 METRIC_INDEX = {key: index for index, key in enumerate(METRIC_KEYS)}
 METRIC_LABELS = {
-    "en": ("UL active users", "DL active users", "DL PRB", "UL PRB"),
-    "zh": ("上行激活用户", "下行激活用户", "下行 PRB", "上行 PRB"),
+    "en": (
+        "UL active users",
+        "DL active users",
+        "Average used DL PRBs",
+        "Average used UL PRBs",
+    ),
+    "zh": (
+        "上行平均激活用户数",
+        "下行平均激活用户数",
+        "下行平均使用 PRB 数",
+        "上行平均使用 PRB 数",
+    ),
 }
 EXPERT_LABELS = {
     "en": (
@@ -137,6 +159,7 @@ class AuditResult:
     attention: np.ndarray
     scenario: str
     requested_rate: float
+    applied_rate: float
     model_repo_id: str
     model_revision: str
     variant: str
@@ -348,7 +371,8 @@ def run_a6_forecast(
         reliability=common_reliability,
         attention=np.mean([member.attention for member in member_audits], axis=0),
         scenario=scenario,
-        requested_rate=effective_rate,
+        requested_rate=float(missing_rate),
+        applied_rate=effective_rate,
         model_repo_id=bundle.repo_id,
         model_revision=bundle.revision,
         variant=bundle.variant,
@@ -453,7 +477,8 @@ def make_forecast_figure(
     shown = np.where(
         result.effective_mask[:, q], result.history_values[:, q], np.nan
     )
-    figure, axis = plt.subplots(figsize=(10.5, 4.6), constrained_layout=True)
+    figure = Figure(figsize=(10.5, 4.6), constrained_layout=True)
+    axis = figure.subplots()
     axis.plot(
         result.history_times,
         shown,
@@ -487,7 +512,7 @@ def make_forecast_figure(
         result.forecast_times,
         result.lower_envelope[:, q],
         result.upper_envelope[:, q],
-        color="#168c7e",
+        color="#0f766e",
         alpha=0.14,
         label="Audited envelope" if lang == "en" else "审计边界",
     )
@@ -519,7 +544,8 @@ def make_expert_figure(
     values = np.where(available, result.expert_values[h, q], np.nan)
     weights = result.attention[h, q]
     colors = np.where(available, "#3d6fb6", "#d9e1e8")
-    figure, axis = plt.subplots(figsize=(10.5, 4.1), constrained_layout=True)
+    figure = Figure(figsize=(10.5, 4.1), constrained_layout=True)
+    axis = figure.subplots()
     positions = np.arange(len(SHORT_EXPERT_LABELS))
     bars = axis.bar(positions, np.nan_to_num(values), color=colors, alpha=0.9)
     for index, bar in enumerate(bars):
@@ -538,9 +564,9 @@ def make_expert_figure(
     weight_axis.set_ylim(0.0, max(105.0, float(np.max(weights) * 115.0)))
     label = METRIC_LABELS[lang][q]
     axis.set_title(
-        f"Why this forecast? {label}, future hour {horizon}"
+        f"Ensemble routing summary — {label}, future hour {horizon}"
         if lang == "en"
-        else f"为什么得到这个预测？{label}，未来第 {horizon} 小时",
+        else f"集成路由摘要 — {label}，未来第 {horizon} 小时",
         loc="left",
         fontweight="bold",
     )
@@ -567,20 +593,22 @@ def status_markdown(result: AuditResult, lang: str = "en") -> str:
         f"Bound {'PASS' if bound_ok else 'FAIL'}"
     )
     if lang == "en":
+        scenario = SCENARIO_LABELS[lang][result.scenario]
         return (
-            "| Model | Input | Observed | Audit |\n"
-            "| --- | --- | ---: | --- |\n"
-            f"| Five-model ensemble · {len(result.members)} seeds | 336 h → 24 h | "
+            "| Scenario | Requested removal | Applied removal | Effective observed | Audit |\n"
+            "| --- | ---: | ---: | ---: | --- |\n"
+            f"| {scenario} | {result.requested_rate:.1%} | {result.applied_rate:.1%} | "
             f"{observed:.1%} | {audit} |"
         )
     audit_zh = (
         f"掩码{'通过' if mask_ok else '失败'} · "
         f"边界{'通过' if bound_ok else '失败'}"
     )
+    scenario = SCENARIO_LABELS[lang][result.scenario]
     return (
-        "| 模型 | 输入输出 | 有效观测 | 审计 |\n"
-        "| --- | --- | ---: | --- |\n"
-        f"| 五模型集成 · {len(result.members)} 个种子 | 336 小时 → 24 小时 | "
+        "| 场景 | 请求移除 | 实际应用 | 有效观测 | 审计 |\n"
+        "| --- | ---: | ---: | ---: | --- |\n"
+        f"| {scenario} | {result.requested_rate:.1%} | {result.applied_rate:.1%} | "
         f"{observed:.1%} | {audit_zh} |"
     )
 
@@ -589,18 +617,139 @@ def _array(values: np.ndarray) -> list:
     return np.round(np.asarray(values, dtype=np.float64), 7).tolist()
 
 
-def export_outputs(result: AuditResult) -> tuple[str, str]:
-    output_dir = Path(tempfile.mkdtemp(prefix="wlcr-sea-forecast-"))
+def _source_commit() -> str:
+    configured = os.getenv("WLCR_SEA_SOURCE_COMMIT", "").strip()
+    if configured:
+        return configured
+    revision_file = ROOT / "SOURCE_REVISION"
+    if revision_file.is_file():
+        return revision_file.read_text(encoding="utf-8").strip()
+    try:
+        revision = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=2,
+        ).stdout.strip()
+        dirty = subprocess.run(
+            ["git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=no"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=2,
+        ).stdout.strip()
+        return f"{revision}-dirty" if dirty else revision
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
+
+
+def _package_version(name: str) -> str:
+    try:
+        from importlib.metadata import version
+
+        return version(name)
+    except Exception:
+        return "unknown"
+
+
+def _member_checks(member: MemberAudit, availability: np.ndarray) -> dict[str, object]:
+    unavailable_violations = int(
+        np.count_nonzero(member.attention[~availability] != 0.0)
+    )
+    normalization_violations = int(
+        np.count_nonzero(
+            ~np.isclose(member.attention.sum(axis=-1), 1.0, atol=1e-7)
+        )
+    )
+    lower_violations = int(
+        np.count_nonzero(member.prediction < member.lower_envelope - 1e-5)
+    )
+    upper_violations = int(
+        np.count_nonzero(member.prediction > member.upper_envelope + 1e-5)
+    )
+    return {
+        "unavailable_weight_violation_count": unavailable_violations,
+        "weight_normalization_violation_count": normalization_violations,
+        "lower_bound_violation_count": lower_violations,
+        "upper_bound_violation_count": upper_violations,
+        "passed": not any(
+            (
+                unavailable_violations,
+                normalization_violations,
+                lower_violations,
+                upper_violations,
+            )
+        ),
+    }
+
+
+def _removed_positions(result: AuditResult) -> list[dict[str, object]]:
+    removed = np.argwhere(result.original_mask & ~result.effective_mask)
+    return [
+        {
+            "history_index": int(hour),
+            "timestamp": result.history_times[int(hour)].isoformat(),
+            "metric": METRIC_KEYS[int(metric)],
+        }
+        for hour, metric in removed
+    ]
+
+
+def _cleanup_exports(now: float) -> None:
+    if not EXPORT_ROOT.is_dir():
+        return
+    directories = sorted(
+        (path for path in EXPORT_ROOT.iterdir() if path.is_dir()),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    for index, directory in enumerate(directories):
+        expired = now - directory.stat().st_mtime > EXPORT_TTL_SECONDS
+        over_limit = index >= EXPORT_DIRECTORY_LIMIT
+        if expired or over_limit:
+            shutil.rmtree(directory, ignore_errors=True)
+
+
+def _export_outputs_locked(result: AuditResult) -> tuple[str, str]:
+    now = time.time()
+    EXPORT_ROOT.mkdir(parents=True, exist_ok=True)
+    _cleanup_exports(now)
+    export_key = hashlib.sha256(
+        "\0".join(
+            (
+                result.input_sha256,
+                result.scenario,
+                f"{result.requested_rate:.12g}",
+                result.model_revision,
+            )
+        ).encode("utf-8")
+    ).hexdigest()[:24]
+    output_dir = EXPORT_ROOT / export_key
+    output_dir.mkdir(parents=True, exist_ok=True)
+    os.utime(output_dir, (now, now))
     forecast_path = output_dir / "wlcr_sea_ensemble_forecast.csv"
     audit_path = output_dir / "wlcr_sea_audit_record.json"
     forecast_dataframe(result, "en").to_csv(
         forecast_path, index=False, encoding="utf-8-sig"
     )
     mask_ok, bound_ok = _audit_checks(result)
+    removed_positions = _removed_positions(result)
+    original_observation_count = int(np.count_nonzero(result.original_mask))
     payload = {
-        "schema": "wlcr-sea-audit/v2",
+        "schema": AUDIT_SCHEMA,
         "paper_model": True,
         "variant": result.variant,
+        "source": {
+            "repository": SOURCE_REPOSITORY,
+            "commit": _source_commit(),
+            "runtime_version": RUNTIME_VERSION,
+            "python_version": platform.python_version(),
+            "torch_version": _package_version("torch"),
+            "numpy_version": np.__version__,
+            "pandas_version": pd.__version__,
+            "gradio_version": _package_version("gradio"),
+        },
         "ensemble": {
             "model_repo": result.model_repo_id,
             "revision": result.model_revision,
@@ -618,6 +767,9 @@ def export_outputs(result: AuditResult) -> tuple[str, str]:
                     "routing_weights": _array(member.attention),
                     "baseline_log": _array(member.baseline_log),
                     "residual_log": _array(member.residual_log),
+                    "lower_envelope": _array(member.lower_envelope),
+                    "upper_envelope": _array(member.upper_envelope),
+                    "checks": _member_checks(member, result.availability),
                 }
                 for member in result.members
             ],
@@ -627,9 +779,20 @@ def export_outputs(result: AuditResult) -> tuple[str, str]:
             "cell": result.cell,
             "history_hours": 336,
             "forecast_hours": 24,
-            "scenario": result.scenario,
-            "requested_missing_rate": result.requested_rate,
             "observed_fraction": float(np.mean(result.effective_mask)),
+        },
+        "missingness": {
+            "scenario": result.scenario,
+            "mechanism": SCENARIOS[result.scenario],
+            "requested_rate": result.requested_rate,
+            "applied_rate": result.applied_rate,
+            "seed": DEMO_SEED,
+            "removed_observation_count": len(removed_positions),
+            "removed_fraction_of_original_observations": (
+                len(removed_positions) / original_observation_count
+            ),
+            "removed_positions": removed_positions,
+            "effective_mask": result.effective_mask.astype(int).tolist(),
         },
         "ensemble_output": {
             "prediction": _array(result.prediction),
@@ -639,6 +802,10 @@ def export_outputs(result: AuditResult) -> tuple[str, str]:
             "routing_weights_mean": _array(result.attention),
             "lower_envelope": _array(result.lower_envelope),
             "upper_envelope": _array(result.upper_envelope),
+            "routing_summary_note": (
+                "Mean expert values and mean routing weights summarize the five members "
+                "and do not exactly decompose the ensemble prediction."
+            ),
         },
         "checks": {
             "unavailable_expert_weight_is_zero": mask_ok,
@@ -653,3 +820,33 @@ def export_outputs(result: AuditResult) -> tuple[str, str]:
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     return str(forecast_path), str(audit_path)
+
+
+def export_outputs(result: AuditResult) -> tuple[str, str]:
+    """Write reusable downloads while serializing cleanup and file replacement."""
+
+    with EXPORT_LOCK:
+        return _export_outputs_locked(result)
+
+
+def run_forecast(
+    upload: str | Path | Any,
+    *,
+    scenario: str = "none",
+    missing_rate: float = 0.0,
+    ensemble: A6Ensemble | None = None,
+) -> AuditResult:
+    """Public, reader-friendly alias for the verified five-model predictor."""
+
+    return run_a6_forecast(
+        upload,
+        scenario=scenario,
+        missing_rate=missing_rate,
+        ensemble=ensemble,
+    )
+
+
+def source_commit() -> str:
+    """Return the exact deployed source revision, or a truthful local fallback."""
+
+    return _source_commit()

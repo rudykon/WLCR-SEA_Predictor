@@ -93,12 +93,13 @@ the arithmetic mean of the five arrays **after inverse transformation to linear
 traffic space**.
 
 [Open the live Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
-[Inspect the checkpoints](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button target="_blank" rel="noopener" }
+[Inspect the pinned checkpoints](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button target="_blank" rel="noopener" }
 
 ## 5. Audit record
 
-The versioned JSON export records the input hash, model-repository revision,
-checkpoint SHA-256 values, seeds, selected configurations, per-member
-predictions, expert values, availability, reliability, routing weights,
-baselines, residuals, the ensemble output, and mask/bound checks. It enables
-replay and review without claiming calibrated uncertainty or privacy.
+The versioned JSON export records the source commit and environment, input
+hash, missingness seed and effective mask, model revision, checkpoint hashes,
+and per-member predictions, routing components, envelopes, and violation
+counts. It supports review and, when paired with the original request and
+pinned source revision, replay. It does not claim calibrated uncertainty or
+privacy.

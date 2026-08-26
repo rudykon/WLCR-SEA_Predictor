@@ -21,6 +21,13 @@ verifies their SHA-256 hashes, uses their frozen training priors, and averages
 forecasts in linear traffic space. Use the built-in synthetic sample or upload
 a compatible CSV. Do not upload confidential operator traffic.
 
+The routing chart is an ensemble summary: it averages expert values and
+routing weights separately and does not exactly decompose the final forecast.
+
+Inference is CPU-only. The repository remains assigned to a legacy ZeroGPU
+host configuration; the GPU decorator in the source is an unused startup
+compatibility marker.
+
 [Project website](https://rudykon.github.io/WLCR-SEA_Predictor/) ·
-[Model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor) ·
+[Pinned model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd) ·
 [Source](https://github.com/rudykon/WLCR-SEA_Predictor)

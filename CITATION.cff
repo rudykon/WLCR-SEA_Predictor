@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: >-
+  If you use WLCR-SEA, cite the exact GitHub commit and the pinned Hugging Face
+  model revision recorded below.
+title: WLCR-SEA Predictor
+type: software
+authors:
+  - family-names: Kong
+    given-names: Minghao
+version: 1.0.0
+date-released: 2026-08-26
+license: Apache-2.0
+repository-code: https://github.com/rudykon/WLCR-SEA_Predictor
+url: https://rudykon.github.io/WLCR-SEA_Predictor/
+identifiers:
+  - type: url
+    value: >-
+      https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd
+    description: Pinned public model revision used by the predictor
+keywords:
+  - cellular traffic forecasting
+  - time series
+  - missing telemetry
+  - mixture of experts
+  - auditable machine learning

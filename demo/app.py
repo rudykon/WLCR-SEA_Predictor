@@ -39,7 +39,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from demo.model_loader import load_a6_ensemble
+from demo.model_loader import load_ensemble
 from demo.runtime import (
     DemoInputError,
     METRIC_INDEX,
@@ -53,7 +53,8 @@ from demo.runtime import (
     make_expert_figure,
     make_forecast_figure,
     member_dataframe,
-    run_a6_forecast,
+    run_forecast,
+    source_commit,
     status_markdown,
 )
 
@@ -61,10 +62,10 @@ from demo.runtime import (
 LOGGER = logging.getLogger(__name__)
 EXAMPLE_PATH = ROOT / "demo" / "examples" / "synthetic_traffic.csv"
 # Space startup resolves, verifies, and loads all five public checkpoints once.
-ENSEMBLE = load_a6_ensemble()
+ENSEMBLE = load_ensemble()
 
 CSS = """
-:root { --wlcr-navy: #172b4d; --wlcr-blue: #3d6fb6; --wlcr-teal: #168c7e; }
+:root { --wlcr-navy: #172b4d; --wlcr-blue: #3d6fb6; --wlcr-teal: #0f766e; }
 .gradio-container { max-width: 1180px !important; }
 .wlcr-header { padding: .35rem 0 1rem; border-bottom: 1px solid #d9e1e8; margin-bottom: 1rem; }
 .wlcr-header h1 { color: var(--wlcr-navy); font-size: 2rem; margin: 0 0 .25rem; }
@@ -119,7 +120,7 @@ TEXT = {
           <p>One cell · 336 hours of history → 24 hours of forecast</p>
         </section>
         """,
-        "sample": "Use built-in sample",
+        "sample": "Reset to sample",
         "upload": "Upload a 336-hour CSV",
         "privacy": "Public Demo. Do not upload confidential operator traffic.",
         "scenario": "Missingness pattern",
@@ -134,6 +135,12 @@ TEXT = {
         "forecast_download": "Download forecast CSV",
         "audit_download": "Download audit JSON",
         "ready": "The built-in sample will run automatically.",
+        "routing_title": "## Ensemble routing summary",
+        "routing_note": (
+            "Mean expert values and routing weights across five members. "
+            "This view summarizes internal routing and does not exactly "
+            "decompose the ensemble prediction."
+        ),
     },
     "zh": {
         "header": """
@@ -143,7 +150,7 @@ TEXT = {
           <p>单个小区 · 336 小时历史 → 未来 24 小时预测</p>
         </section>
         """,
-        "sample": "使用内置样例",
+        "sample": "恢复内置样例",
         "upload": "上传 336 小时 CSV",
         "privacy": "这是公开 Demo，请勿上传运营商机密流量数据。",
         "scenario": "缺失模式",
@@ -158,6 +165,11 @@ TEXT = {
         "forecast_download": "下载预测 CSV",
         "audit_download": "下载审计 JSON",
         "ready": "页面将自动运行内置样例。",
+        "routing_title": "## 集成路由摘要",
+        "routing_note": (
+            "展示五个成员的平均专家值与平均路由权重，用于观察内部路由倾向，"
+            "不能直接重构最终集成预测。"
+        ),
     },
 }
 
@@ -167,9 +179,17 @@ def _render_result(
     metric_key: str,
     horizon: int,
     lang: str,
-    exported: tuple[str, str] | None = None,
+    exported: tuple[str | None, str | None] | None = None,
+    *,
+    create_exports: bool = True,
 ):
-    forecast_path, audit_path = exported or export_outputs(result)
+    forecast_path, audit_path = (
+        exported
+        if exported is not None
+        else export_outputs(result)
+        if create_exports
+        else (None, None)
+    )
     return (
         result,
         status_markdown(result, lang),
@@ -185,7 +205,7 @@ def _render_result(
 
 def _run_request(upload, scenario, missing_rate, metric, horizon, *, lang: str):
     try:
-        result = run_a6_forecast(
+        result = run_forecast(
             upload,
             scenario=str(scenario),
             missing_rate=float(missing_rate),
@@ -221,6 +241,22 @@ def _update_view(result, metric, horizon, *, lang: str):
     )
 
 
+def _sync_missing_rate(scenario, current_rate, *, label: str):
+    if str(scenario) == "none":
+        return gr.Slider(
+            0, 0.8, value=0.0, step=0.05, label=label, interactive=False
+        )
+    rate = float(current_rate)
+    return gr.Slider(
+        0,
+        0.8,
+        value=0.2 if rate <= 0.0 else rate,
+        step=0.05,
+        label=label,
+        interactive=True,
+    )
+
+
 def _build_panel(lang: str) -> Panel:
     text = TEXT[lang]
     gr.HTML(text["header"])
@@ -243,7 +279,12 @@ def _build_panel(lang: str) -> Panel:
                 label=text["scenario"],
             )
             missing_rate = gr.Slider(
-                0, 0.8, value=0.2, step=0.05, label=text["rate"]
+                0,
+                0.8,
+                value=0.0,
+                step=0.05,
+                label=text["rate"],
+                interactive=False,
             )
             run_button = gr.Button(
                 text["run"], variant="primary", elem_classes=["primary-action"]
@@ -252,9 +293,8 @@ def _build_panel(lang: str) -> Panel:
             forecast_plot = gr.Plot(show_label=False)
             status = gr.Markdown(text["ready"], elem_classes=["status-table"])
 
-    gr.Markdown(
-        "## Why this forecast?" if lang == "en" else "## 为什么得到这个预测？"
-    )
+    gr.Markdown(text["routing_title"])
+    gr.Markdown(text["routing_note"], elem_classes=["privacy-note"])
     with gr.Row():
         metric = gr.Dropdown(
             choices=[
@@ -284,10 +324,10 @@ def _build_panel(lang: str) -> Panel:
             )
         gr.Markdown(
             "[Input schema](https://rudykon.github.io/WLCR-SEA_Predictor/reference/reproduction/#input-format) · "
-            "[Model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor)"
+            "[Pinned model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)"
             if lang == "en"
             else "[输入格式](https://rudykon.github.io/WLCR-SEA_Predictor/zh/reference/reproduction/#input-format) · "
-            "[模型权重](https://huggingface.co/config-h/WLCR-SEA-Predictor)"
+            "[固定版本模型权重](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)"
         )
 
     panel = Panel(
@@ -321,6 +361,14 @@ def _build_panel(lang: str) -> Panel:
         api_visibility="private",
         concurrency_limit=1,
     )
+    scenario.change(
+        fn=partial(_sync_missing_rate, label=text["rate"]),
+        inputs=[scenario, missing_rate],
+        outputs=missing_rate,
+        show_progress="hidden",
+        api_name=f"missingness_control_{lang}",
+        api_visibility="private",
+    )
     for view_index, component in enumerate((metric, horizon), start=1):
         component.change(
             fn=partial(_update_view, lang=lang),
@@ -342,11 +390,14 @@ def build_app() -> gr.Blocks:
                 chinese = _build_panel("zh")
 
         def load_default():
-            result = run_a6_forecast(EXAMPLE_PATH, ensemble=ENSEMBLE)
-            exported = export_outputs(result)
+            result = run_forecast(EXAMPLE_PATH, ensemble=ENSEMBLE)
             return (
-                *_render_result(result, "dl_prb", 1, "en", exported),
-                *_render_result(result, "dl_prb", 1, "zh", exported),
+                *_render_result(
+                    result, "dl_prb", 1, "en", create_exports=False
+                ),
+                *_render_result(
+                    result, "dl_prb", 1, "zh", create_exports=False
+                ),
             )
 
         app.load(
@@ -354,6 +405,33 @@ def build_app() -> gr.Blocks:
             outputs=[*english.result_outputs, *chinese.result_outputs],
             api_name="load_default",
             api_visibility="private",
+            concurrency_limit=1,
+        )
+
+        deployment_smoke = gr.Button(visible=False)
+        deployment_smoke_output = gr.JSON(visible=False)
+
+        def run_deployment_smoke():
+            result = run_forecast(EXAMPLE_PATH, ensemble=ENSEMBLE)
+            return {
+                "source_commit": source_commit(),
+                "model_revision": result.model_revision,
+                "member_count": len(result.members),
+                "prediction_shape": list(result.prediction.shape),
+                "first_prediction": [
+                    round(float(value), 7) for value in result.prediction[0]
+                ],
+            }
+
+        deployment_smoke.click(
+            fn=run_deployment_smoke,
+            outputs=deployment_smoke_output,
+            api_name="deployment_smoke",
+            api_description=(
+                "Run the bundled request through the deployed five-model predictor "
+                "and report its exact source and model revisions."
+            ),
+            api_visibility="public",
             concurrency_limit=1,
         )
     return app

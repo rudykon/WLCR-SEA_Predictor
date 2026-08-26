@@ -40,6 +40,21 @@ Demo 只接收同一个小区连续 336 小时的数据。必须使用以下表�
 
 [查看合成请求](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/demo/examples/synthetic_traffic.csv){ .md-button }
 
+## 研究数据集
+
+研究流程使用[华为官方托管的线上阶段数据压缩包](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip)
+中的 `线上阶段数据集/AI数据集/train_data.csv`。请将它解压到
+`data/train_data.csv`。
+
+| 文件 | SHA-256 |
+| --- | --- |
+| 来源 ZIP | `17d87ae40a9ddfd263ea60cba7f2a4ff05037b92cebdd37f9bb89a6c9e3094bf` |
+| 解压后的 `train_data.csv` | `d274407a3db51ba4871851ab447bcc75202bb567337464d85ea280662f3bf1da` |
+
+压缩包未附单独的数据许可文件。本项目不重新分发该数据；Apache-2.0 只覆盖本仓库代码，
+不授予数据使用权。使用前请遵守来源方适用条款。完整下载、校验和解压命令见
+[`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md#3-input-data)。
+
 ## 模型资源
 
 公开模型仓库包含种子 42–46 的五个检查点。每个文件保存所选配置和轮次、冻结的
@@ -47,7 +62,7 @@ Demo 只接收同一个小区连续 336 小时的数据。必须使用以下表�
 预测执行算术平均。检查点文件名保留论文内部编号 `A6_mixed_aug`，用于精确追溯；网站
 其他位置统一称为 **WLCR-SEA 五模型集成**。
 
-[查看模型权重](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button }
+[查看固定版本模型权重](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button }
 [打开在线 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary }
 
 ## 验证
@@ -70,7 +85,7 @@ mkdocs build --strict
 
 ## 完整研究流程
 
-Git 不保存研究数据。请将登记数据放到 `data/train_data.csv`，校验哈希，安装
+Git 不保存研究数据。请将校验后的数据放到 `data/train_data.csv`，安装
 `requirements.txt`，并把新结果写入 `artifacts/reproduction/`。完整五种子训练需要
 GPU。权威指南列出了主模型训练、基线、缺失、请求内计算、小区不重叠、可审计性和延迟
 各阶段的准确命令。

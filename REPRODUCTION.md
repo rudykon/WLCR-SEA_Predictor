@@ -31,9 +31,9 @@ uses GPUs; unit tests and public inference run on CPU.
 ## 2. Public model assets
 
 The Demo downloads five checkpoints from
-[`config-h/WLCR-SEA-Predictor`](https://huggingface.co/config-h/WLCR-SEA-Predictor)
+[`config-h/WLCR-SEA-Predictor`](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)
 at pinned revision `eb4447f4ebab8f9caa003d92c838ed8e750963bd`. Startup verifies
-the registered SHA-256 for every file before loading it. Each checkpoint
+the recorded SHA-256 for every file before loading it. Each checkpoint
 contains its seed, selected architecture, selected epoch, frozen `(24, 4)`
 training prior, and `state_dict`.
 
@@ -50,9 +50,11 @@ python demo/app.py
 ```
 
 The primary prediction is the arithmetic mean of all five forecast arrays in
-linear traffic space. The audit JSON records the model revision, hashes,
-configuration, seed, per-member output, expert values, weights, residuals, and
-bound checks.
+linear traffic space. The audit JSON records the GitHub source commit, runtime
+and library versions, model revision, hashes, missingness seed and effective
+mask, plus per-member output, expert values, weights, residuals, envelopes, and
+violation counts. Deterministic replay requires that JSON, the original request
+matching its input hash, and the pinned source and model revisions.
 
 ## 3. Input data
 
@@ -75,10 +77,29 @@ contains no operator traffic.
 
 ### Research trace
 
-Download the registered trace from the link in the project website and place
-it at `data/train_data.csv`. The current code registers SHA-256
-`d274407a3db51ba4871851ab447bcc75202bb567337464d85ea280662f3bf1da`.
-Do not commit the trace, credentials, held-out traffic, checkpoints, or generated
+Download the
+[Huawei-hosted online-stage archive](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip).
+The required archive member is
+`线上阶段数据集/AI数据集/train_data.csv`; extract it to
+`data/train_data.csv`:
+
+```bash
+curl -L \
+  'https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip' \
+  -o /tmp/wlcr-sea-online-stage.zip
+echo '17d87ae40a9ddfd263ea60cba7f2a4ff05037b92cebdd37f9bb89a6c9e3094bf  /tmp/wlcr-sea-online-stage.zip' \
+  | sha256sum --check
+mkdir -p data
+unzip -p /tmp/wlcr-sea-online-stage.zip \
+  '线上阶段数据集/AI数据集/train_data.csv' > data/train_data.csv
+echo 'd274407a3db51ba4871851ab447bcc75202bb567337464d85ea280662f3bf1da  data/train_data.csv' \
+  | sha256sum --check
+```
+
+The source archive contains no separate data-license file. This repository
+does not redistribute it, and the repository's Apache-2.0 license covers code,
+not the dataset. Follow the source provider's applicable terms and do not
+commit the trace, credentials, held-out traffic, checkpoints, or generated
 artifacts.
 
 ## 4. Verification
@@ -119,7 +140,7 @@ python experiments/train_wlcr_sea.py \
 ```
 
 Append `--smoke` for a short implementation check. Smoke results are diagnostic
-and must not replace the registered evidence.
+and must not replace the reported evidence.
 
 Train the controlled neural baselines with their declared batch size:
 
@@ -136,12 +157,12 @@ python experiments/train_neural_baselines.py \
 
 The traffic-only LightGBM and GRU-D controls have separate `train_*.py`
 entrypoints. Run `python <script> --help` before launching them and preserve the
-registered seeds, augmentation mode, and batch sizes recorded by each output
+specified seeds, augmentation mode, and batch sizes recorded by each output
 manifest.
 
 ## 6. Regenerate evidence
 
-After the required model artifacts exist, run the registered analysis and audit
+After the required model artifacts exist, run the specified analysis and audit
 programs from the repository root:
 
 ```bash
