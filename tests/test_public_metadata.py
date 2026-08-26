@@ -5,11 +5,21 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DATASET_URL = (
+    "https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/"
+    "wuxian-gaoxiao2026/1780886490950118786.zip"
+)
+MODEL_REVISION = "eb4447f4ebab8f9caa003d92c838ed8e750963bd"
 
 
 class PublicMetadataTest(unittest.TestCase):
     def _public_text(self) -> str:
-        paths = [ROOT / "README.md", ROOT / "README_CN.md", ROOT / "REPRODUCTION.md"]
+        paths = [
+            ROOT / "README.md",
+            ROOT / "README_CN.md",
+            ROOT / "REPRODUCTION.md",
+            ROOT / "MODEL_CARD.md",
+        ]
         paths.extend((ROOT / "docs").rglob("*.md"))
         paths.extend(
             [
@@ -83,6 +93,7 @@ class PublicMetadataTest(unittest.TestCase):
                     self.assertTrue(
                         "macro-indicator" in line.lower()
                         or "宏指标" in line
+                        or "四指标宏平均" in line
                         or line.lstrip().startswith("|")
                         and "WAPE" not in line,
                         msg=f"Unqualified WAPE line in {relative}: {line}",
@@ -139,6 +150,106 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertEqual(app.count("@spaces.GPU"), 1)
         self.assertIn("def _host_hardware_compatibility_marker", app)
         self.assertNotIn("@spaces.GPU\ndef _run_request", app)
+        normalized = " ".join(text.split())
+        self.assertIn("legacy ZeroGPU host configuration", normalized)
+        self.assertIn("unused startup", normalized)
+
+    def test_research_dataset_entry_is_public_complete_and_regression_guarded(self) -> None:
+        paths = (
+            "README.md",
+            "README_CN.md",
+            "REPRODUCTION.md",
+            "docs/reference/reproduction.md",
+            "docs/reference/reproduction.zh.md",
+        )
+        train_hash = (
+            "d274407a3db51ba4871851ab447bcc75202bb567337464d85ea280662f3bf1da"
+        )
+        for relative in paths:
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertIn(DATASET_URL, text, msg=f"Dataset link missing: {relative}")
+            self.assertIn("data/train_data.csv", text)
+            self.assertIn(train_hash, text)
+
+        reproduction = (ROOT / "REPRODUCTION.md").read_text(encoding="utf-8")
+        self.assertIn(
+            "17d87ae40a9ddfd263ea60cba7f2a4ff05037b92cebdd37f9bb89a6c9e3094bf",
+            reproduction,
+        )
+        self.assertIn("线上阶段数据集/AI数据集/train_data.csv", reproduction)
+        self.assertIn("no separate data-license file", reproduction)
+        self.assertIn("does not redistribute", reproduction)
+
+    def test_routing_view_states_its_ensemble_summary_boundary(self) -> None:
+        app = (ROOT / "demo" / "app.py").read_text(encoding="utf-8")
+        runtime = (ROOT / "demo" / "runtime.py").read_text(encoding="utf-8")
+        self.assertNotIn("Why this forecast?", app)
+        self.assertNotIn("Why this forecast?", runtime)
+        self.assertIn("Ensemble routing summary", app)
+        self.assertIn("does not exactly", app)
+        self.assertIn("集成路由摘要", app)
+        self.assertIn("不能直接重构", app)
+
+    def test_audit_export_carries_replay_inputs_and_member_checks(self) -> None:
+        runtime = (ROOT / "demo" / "runtime.py").read_text(encoding="utf-8")
+        for value in (
+            'AUDIT_SCHEMA = "wlcr-sea-audit/v3"',
+            '"repository": SOURCE_REPOSITORY',
+            '"commit": _source_commit()',
+            '"runtime_version": RUNTIME_VERSION',
+            '"python_version": platform.python_version()',
+            '"torch_version": _package_version("torch")',
+            '"seed": DEMO_SEED',
+            'removed_positions = _removed_positions(result)',
+            '"removed_fraction_of_original_observations"',
+            '"effective_mask": result.effective_mask.astype(int).tolist()',
+            '"checks": _member_checks(member, result.availability)',
+        ):
+            self.assertIn(value, runtime)
+
+    def test_prb_terms_describe_counts_not_utilization(self) -> None:
+        card = (ROOT / "MODEL_CARD.md").read_text(encoding="utf-8")
+        self.assertIn("average used downlink PRBs", card)
+        self.assertIn("average used uplink PRBs", card)
+        self.assertNotIn("downlink PRB utilization", card)
+        self.assertNotIn("uplink PRB utilization", card)
+        self.assertIn("not\nutilization percentages", card)
+
+    def test_citation_and_links_pin_the_public_model_revision(self) -> None:
+        for relative in (
+            "README.md",
+            "README_CN.md",
+            "REPRODUCTION.md",
+            "MODEL_CARD.md",
+            "CITATION.cff",
+        ):
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertIn(MODEL_REVISION, text, msg=f"Revision not pinned: {relative}")
+        citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
+        self.assertIn("family-names: Kong", citation)
+        self.assertIn("repository-code:", citation)
+
+    def test_demo_resources_are_bounded_and_figures_avoid_pyplot_state(self) -> None:
+        runtime = (ROOT / "demo" / "runtime.py").read_text(encoding="utf-8")
+        app = (ROOT / "demo" / "app.py").read_text(encoding="utf-8")
+        self.assertNotIn("matplotlib.pyplot", runtime)
+        self.assertIn("from matplotlib.figure import Figure", runtime)
+        self.assertIn("EXPORT_TTL_SECONDS", runtime)
+        self.assertIn("EXPORT_DIRECTORY_LIMIT", runtime)
+        self.assertIn("create_exports=False", app)
+        self.assertIn('value=0.0,', app)
+        self.assertIn("interactive=False", app)
+        self.assertIn("Reset to sample", app)
+        self.assertIn("恢复内置样例", app)
+
+    def test_space_sync_records_source_and_runs_post_deploy_sample(self) -> None:
+        workflow = (
+            ROOT / ".github" / "workflows" / "hugging-face-space.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn('> "${HF_SPACE_STAGE}/SOURCE_REVISION"', workflow)
+        self.assertIn("tools/check_space_deployment.py", workflow)
+        self.assertIn("--expected-commit", workflow)
+        self.assertIn("Synchronize the public model card", workflow)
 
 
 if __name__ == "__main__":

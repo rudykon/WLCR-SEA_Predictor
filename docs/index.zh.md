@@ -15,6 +15,7 @@ hide:
     <a class="md-button md-button--primary" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">体验 Demo</a>
     <a class="md-button" href="guide/method/">方法</a>
     <a class="md-button" href="research/evidence/">实验结果</a>
+    <a class="md-button" href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd" target="_blank" rel="noopener">模型权重</a>
   </div>
 </section>
 
@@ -41,11 +42,11 @@ hide:
 
 ## 主要发现
 
-| 问题 | 已登记结果 |
+| 问题 | 报告结果 |
 | --- | --- |
-| 完整历史 | DLinear 的**宏指标 WAPE**更低：0.1854；WLCR-SEA 五模型集成为 0.1955。 |
-| 严重缺失 | 在研究设定的严重缺失场景中，WLCR-SEA 在与 DLinear-Aug、PatchTST-Aug、GRU-D 的 9 项预设对比中宏指标 WAPE 均更低。 |
-| 可审计性 | 不可用专家权重为 0；报告的预测边界违规为 0。 |
+| 完整历史 | DLinear 的**四指标宏平均 WAPE**更低：0.1854；WLCR-SEA 五模型集成为 0.1955。 |
+| 严重缺失 | 在研究设定的严重缺失场景中，WLCR-SEA 在与 DLinear-Aug、PatchTST-Aug、GRU-D 的 9 项预设对比中四指标宏平均 WAPE 均更低。 |
+| 可审计性 | 不可用专家权重为 0；未出现预测越界。 |
 | CPU 成本 | 单线程、batch=1 时，五模型集成中位/P99 延迟为 34.705/38.684 ms，模型资源为 148.8 KiB。 |
 
 [查看完整协议、区间与结果 →](research/evidence.md)

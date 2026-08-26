@@ -10,6 +10,7 @@
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/">Website</a> ·
   <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">Live Demo</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">Model Weights</a> ·
+  <a href="#research-dataset">Dataset</a> ·
   <a href="README_CN.md">中文</a>
 </p>
 
@@ -21,17 +22,18 @@ same released checkpoints used for the reported results.
 
 ## Why WLCR-SEA
 
-- **Uses one cell's data.** Each prediction is a sealed one-cell computation. Cell
-  identity is retained for validation and replay, but it is not used to query
-  another live data source.
+- **Uses one cell's data.** Each prediction is a sealed one-cell computation.
+  Cell identity is retained for validation and audit matching, but it is not
+  used to query another live data source.
 - **Handles missing readings.** Eight seasonal experts represent daily, weekly,
   robust-median, trend, request-level, and frozen-prior patterns. If an expert
   depends on unavailable history, hard masking gives it exactly zero routing
   weight.
 - **Shows how the forecast was built.** A request can export expert values,
   availability, routing weights, bounded residuals, checkpoint identities, and
-  range checks. These records explain the model's internal allocation; they
-  are not causal explanations or uncertainty estimates.
+  range checks. Paired with the original request and pinned source revision,
+  the record supports review and replay. It explains internal allocation, not
+  causal effects or calibrated uncertainty.
 
 This is a research implementation for constrained data access and missing
 telemetry. It is not presented as a universally best forecaster or as a privacy
@@ -57,7 +59,7 @@ The full expert definitions, availability rules, and equations are on the
 
 ## Evidence
 
-| Question | Registered finding |
+| Question | Reported result |
 | --- | --- |
 | Complete history | DLinear has lower macro-indicator WAPE in the reported comparison: **0.1854** versus **0.1955** for the five-member WLCR-SEA ensemble. |
 | Severe missingness | WLCR-SEA has lower macro-indicator WAPE in all **9 prespecified comparisons** against DLinear-Aug, PatchTST-Aug, and GRU-D under the study's severe missingness settings. |
@@ -89,12 +91,25 @@ a synthetic 336-hour sample, and exports both a forecast CSV and a versioned
 audit JSON. Public uploads are limited to 5 MB; use a local deployment for
 sensitive operator data.
 
+## Research dataset
+
+The experiments use the training CSV inside a
+[Huawei-hosted online-stage archive](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip).
+Extract `线上阶段数据集/AI数据集/train_data.csv` to `data/train_data.csv` and
+verify SHA-256 `d274407a3db51ba4871851ab447bcc75202bb567337464d85ea280662f3bf1da`.
+The source archive does not include a separate data-license file. This project
+does not redistribute the data, and its Apache-2.0 code license does not grant
+rights to the dataset; use it only under the source provider's applicable
+terms. Exact download, archive hash, and extraction commands are in
+[`REPRODUCTION.md`](REPRODUCTION.md#3-input-data).
+
 ## Reproduce, cite, and license
 
 - **Reproduce:** follow [`REPRODUCTION.md`](REPRODUCTION.md) for inputs,
   installation, public-checkpoint verification, tests, training, and evidence
   generation.
 - **Cite:** until formal publication metadata is available, cite the repository
-  commit and the pinned [Hugging Face model
-  revision](https://huggingface.co/config-h/WLCR-SEA-Predictor).
+  commit and model revision
+  [`eb4447f4ebab`](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd).
+  Machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
 - **License:** Apache License 2.0; see [`LICENSE`](LICENSE).

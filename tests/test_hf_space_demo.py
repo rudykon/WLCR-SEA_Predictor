@@ -4,7 +4,7 @@ import json
 import unittest
 from pathlib import Path
 
-import matplotlib.pyplot as plt
+from matplotlib._pylab_helpers import Gcf
 import numpy as np
 import torch
 
@@ -13,6 +13,7 @@ from demo.model_loader import (
     CHECKPOINT_SPECS,
     MODEL_REVISION,
     MODEL_VARIANT,
+    load_ensemble,
     load_a6_ensemble,
 )
 from experiments import wlcr_sea_model as sea
@@ -37,6 +38,7 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
 
     def test_public_registry_is_complete_pinned_and_cached(self) -> None:
         self.assertIs(self.ensemble, load_a6_ensemble())
+        self.assertIs(self.ensemble, load_ensemble())
         self.assertEqual(self.ensemble.variant, MODEL_VARIANT)
         self.assertEqual(self.ensemble.revision, MODEL_REVISION)
         self.assertEqual(tuple(member.seed for member in self.ensemble.members), (42, 43, 44, 45, 46))
@@ -64,6 +66,7 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
             )
         self.assertTrue(np.all(result.prediction >= result.lower_envelope - 1e-5))
         self.assertTrue(np.all(result.prediction <= result.upper_envelope + 1e-5))
+        self.assertEqual(result.applied_rate, 0.0)
         expected_first_hour = np.asarray(
             [17.2086716, 24.8728180, 32.3873444, 13.6604710], dtype=np.float32
         )
@@ -110,12 +113,21 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
             self.assertTrue(
                 np.allclose(member.attention.sum(axis=-1), 1.0, atol=1e-7)
             )
+        _, audit_path = runtime.export_outputs(result)
+        audit = json.loads(Path(audit_path).read_text(encoding="utf-8"))
+        self.assertEqual(audit["missingness"]["seed"], runtime.DEMO_SEED)
+        self.assertGreater(len(audit["missingness"]["removed_positions"]), 0)
+        self.assertGreater(
+            audit["missingness"]["removed_fraction_of_original_observations"], 0
+        )
+        self.assertEqual(len(audit["missingness"]["effective_mask"]), 336)
 
     def test_exports_record_real_a6_identity_and_per_seed_outputs(self) -> None:
         forecast_path, audit_path = runtime.export_outputs(self.clean)
         self.assertTrue(Path(forecast_path).is_file())
         self.assertTrue(Path(audit_path).is_file())
         audit = json.loads(Path(audit_path).read_text(encoding="utf-8"))
+        self.assertEqual(audit["schema"], "wlcr-sea-audit/v3")
         self.assertTrue(audit["paper_model"])
         self.assertEqual(audit["variant"], "A6_mixed_aug")
         self.assertEqual(audit["ensemble"]["revision"], MODEL_REVISION)
@@ -126,9 +138,46 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         )
         self.assertTrue(audit["checks"]["unavailable_expert_weight_is_zero"])
         self.assertTrue(audit["checks"]["prediction_within_ensemble_envelope"])
+        self.assertEqual(
+            audit["source"]["repository"],
+            "https://github.com/rudykon/WLCR-SEA_Predictor",
+        )
+        self.assertTrue(audit["source"]["commit"])
+        for key in (
+            "runtime_version",
+            "python_version",
+            "torch_version",
+            "numpy_version",
+            "pandas_version",
+            "gradio_version",
+        ):
+            self.assertIn(key, audit["source"])
+        self.assertEqual(audit["missingness"]["scenario"], "none")
+        self.assertEqual(audit["missingness"]["applied_rate"], 0.0)
+        self.assertEqual(audit["missingness"]["removed_positions"], [])
+        self.assertTrue(
+            all(member["checks"]["passed"] for member in audit["ensemble"]["members"])
+        )
+        self.assertTrue(
+            all(
+                member["checks"]["unavailable_weight_violation_count"] == 0
+                and member["checks"]["weight_normalization_violation_count"] == 0
+                and member["checks"]["lower_bound_violation_count"] == 0
+                and member["checks"]["upper_bound_violation_count"] == 0
+                for member in audit["ensemble"]["members"]
+            )
+        )
+        self.assertIn(
+            "do not exactly decompose",
+            audit["ensemble_output"]["routing_summary_note"],
+        )
+        self.assertEqual(
+            (forecast_path, audit_path), runtime.export_outputs(self.clean)
+        )
 
     def test_metric_and_horizon_are_view_only(self) -> None:
         prediction = self.clean.prediction.copy()
+        managers_before = Gcf.get_num_fig_managers()
         forecast_figure = runtime.make_forecast_figure(self.clean, "ul_users", "en")
         expert_figure = runtime.make_expert_figure(self.clean, "ul_users", 24, "en")
         rows = runtime.expert_dataframe(self.clean, "ul_users", 24, "en")
@@ -136,8 +185,16 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         self.assertEqual(len(expert_figure.axes), 2)
         self.assertEqual(len(rows), 8)
         self.assertTrue(np.array_equal(prediction, self.clean.prediction))
-        plt.close(forecast_figure)
-        plt.close(expert_figure)
+        self.assertEqual(Gcf.get_num_fig_managers(), managers_before)
+        forecast_figure.clear()
+        expert_figure.clear()
+
+    def test_reader_friendly_runtime_alias_matches_the_legacy_api(self) -> None:
+        result = runtime.run_forecast(SAMPLE, ensemble=self.ensemble)
+        self.assertTrue(
+            np.array_equal(result.prediction, self.clean.prediction)
+        )
+        self.assertEqual(result.requested_rate, 0.0)
 
 
 if __name__ == "__main__":

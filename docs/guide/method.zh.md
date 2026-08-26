@@ -85,10 +85,10 @@ $\hat{y} \in \mathbb{R}^{24 \times 4}$ 的预测。推理阶段可以读取当�
 `24 × 4` 预测。五个数组在**逆变换回原始流量空间后**执行算术平均。
 
 [打开在线 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary target="_blank" rel="noopener" }
-[查看检查点](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button target="_blank" rel="noopener" }
+[查看固定版本检查点](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button target="_blank" rel="noopener" }
 
 ## 5. 审计记录
 
-带版本的 JSON 导出包含输入哈希、模型仓库版本、检查点 SHA-256、种子、所选配置、
-各成员预测、专家值、可用性、可靠度、路由权重、基线、残差、集成输出以及掩码和边界
-检查。它支持回放和复核，但不宣称提供经过校准的不确定性或隐私保证。
+带版本的 JSON 导出包含源码 commit 和运行环境、输入哈希、缺失模拟种子与有效掩码、
+模型版本、检查点哈希，以及各成员预测、路由组成、边界和违规数量。它支持复核；与原始
+请求和固定源码版本配套时也支持回放，但不宣称提供经过校准的不确定性或隐私保证。

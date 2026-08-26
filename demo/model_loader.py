@@ -200,3 +200,9 @@ def load_a6_ensemble() -> A6Ensemble:
         device=str(device),
         members=members,
     )
+
+
+def load_ensemble() -> A6Ensemble:
+    """Public, reader-friendly alias for the verified five-model loader."""
+
+    return load_a6_ensemble()

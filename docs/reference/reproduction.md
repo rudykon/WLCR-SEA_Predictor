@@ -45,6 +45,24 @@ placeholders from entering expert summaries.
 
 [View the synthetic request](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/demo/examples/synthetic_traffic.csv){ .md-button }
 
+## Research dataset
+
+The research workflow uses
+`线上阶段数据集/AI数据集/train_data.csv` from the
+[Huawei-hosted online-stage archive](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip).
+Extract it to `data/train_data.csv`.
+
+| Item | SHA-256 |
+| --- | --- |
+| Source ZIP | `17d87ae40a9ddfd263ea60cba7f2a4ff05037b92cebdd37f9bb89a6c9e3094bf` |
+| Extracted `train_data.csv` | `d274407a3db51ba4871851ab447bcc75202bb567337464d85ea280662f3bf1da` |
+
+The archive does not include a separate data-license file. The project does
+not redistribute it, and Apache-2.0 applies to this repository's code, not the
+dataset. Follow the source provider's applicable terms. The exact download,
+verification, and extraction commands are in
+[`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md#3-input-data).
+
 ## Model assets
 
 The public model repository contains five checkpoints for seeds 42–46. Each
@@ -54,7 +72,7 @@ mean of the five predictions in linear traffic space. Their filenames retain
 the paper's internal identifier `A6_mixed_aug` for exact provenance; elsewhere
 the website calls them the **WLCR-SEA five-model ensemble**.
 
-[Inspect model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor){ .md-button }
+[Inspect pinned model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button }
 [Open the live Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary }
 
 ## Verify
@@ -77,7 +95,7 @@ mkdocs build --strict
 
 ## Full research workflow
 
-The research trace is not stored in Git. Place the registered file at
+The research trace is not stored in Git. Place the verified file at
 `data/train_data.csv`, verify its hash, install `requirements.txt`, and write
 new outputs below `artifacts/reproduction/`. Full five-seed training requires
 GPUs. The authoritative guide lists the exact primary training, baseline,

@@ -14,6 +14,12 @@ The built-in synthetic request runs automatically. Uploads must contain one
 cell, 336 contiguous hourly rows, and the four documented traffic indicators.
 Do not upload confidential operator traffic to the public Space.
 
+The **Ensemble routing summary** shows expert values and routing weights
+averaged separately across five members. It is useful for reviewing routing
+tendencies but does not exactly decompose the final ensemble prediction.
+
 The forecast CSV contains the full `24 × 4` output. The audit JSON records the
-model-repository revision, checkpoint hashes, seeds, configurations, per-member
-forecasts, expert values, routing weights, residuals, and bound checks.
+source commit and environment, input hash, missingness seed and effective mask,
+model revision, checkpoint hashes, and per-member forecasts, routing
+components, envelopes, and violation counts. Replay requires the original
+request matching the recorded input hash and the pinned source revision.
