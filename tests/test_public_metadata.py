@@ -129,6 +129,17 @@ class PublicMetadataTest(unittest.TestCase):
                 text,
             )
 
+    def test_chinese_strong_labels_use_a_commonmark_safe_boundary(self) -> None:
+        paths = [ROOT / "README_CN.md"]
+        paths.extend((ROOT / "docs").rglob("*.zh.md"))
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            self.assertNotRegex(
+                text,
+                r"\*\*[^*\n]+[：:]\*\*(?=\S)",
+                msg=f"Strong label may render as literal asterisks: {path.relative_to(ROOT)}",
+            )
+
     def test_reproduction_guide_has_no_removed_runtime_or_manuscript_paths(self) -> None:
         text = (ROOT / "REPRODUCTION.md").read_text(encoding="utf-8")
         self.assertNotIn(".runtime/", text)
