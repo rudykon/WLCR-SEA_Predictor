@@ -71,6 +71,9 @@ CSS = """
 .wlcr-header h1 { color: var(--wlcr-navy); font-size: 2rem; margin: 0 0 .25rem; }
 .wlcr-header p { color: #5b6573; margin: .2rem 0; }
 .wlcr-meta { color: var(--wlcr-teal) !important; font-size: .9rem; font-weight: 650; }
+.wlcr-links { display: flex; flex-wrap: wrap; gap: .85rem; margin-top: .55rem; }
+.wlcr-links a { color: var(--wlcr-blue); font-size: .9rem; font-weight: 650; text-decoration: none; }
+.wlcr-links a:hover { text-decoration: underline; }
 .primary-action { background: var(--wlcr-blue) !important; border-color: var(--wlcr-blue) !important; }
 .privacy-note { color: #5b6573; font-size: .86rem; }
 .status-table table { margin: .35rem 0 0 !important; }
@@ -118,6 +121,10 @@ TEXT = {
           <h1>WLCR-SEA Forecast Demo</h1>
           <p class="wlcr-meta">Five-model ensemble · Verified public checkpoints · CPU inference</p>
           <p>One cell · 336 hours of history → 24 hours of forecast</p>
+          <nav class="wlcr-links" aria-label="Project links">
+            <a href="https://github.com/rudykon/WLCR-SEA_Predictor" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+            <a href="https://rudykon.github.io/WLCR-SEA_Predictor/" target="_blank" rel="noopener noreferrer">Project website</a>
+          </nav>
         </section>
         """,
         "sample": "Reset to sample",
@@ -152,6 +159,10 @@ TEXT = {
           <h1>WLCR-SEA 流量预测 Demo</h1>
           <p class="wlcr-meta">五模型集成 · 公开检查点已校验 · CPU 推理</p>
           <p>单个小区 · 336 小时历史 → 未来 24 小时预测</p>
+          <nav class="wlcr-links" aria-label="项目链接">
+            <a href="https://github.com/rudykon/WLCR-SEA_Predictor" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
+            <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/" target="_blank" rel="noopener noreferrer">项目网站</a>
+          </nav>
         </section>
         """,
         "sample": "恢复内置样例",

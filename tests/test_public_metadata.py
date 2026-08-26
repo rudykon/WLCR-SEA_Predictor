@@ -248,6 +248,22 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertIn("点击“运行预测”后可下载", app)
         self.assertIn("exc.localized(lang)", app)
 
+    def test_demo_header_links_to_github_and_the_bilingual_website(self) -> None:
+        app = (ROOT / "demo" / "app.py").read_text(encoding="utf-8")
+        self.assertEqual(
+            app.count("https://github.com/rudykon/WLCR-SEA_Predictor"), 2
+        )
+        self.assertIn("https://rudykon.github.io/WLCR-SEA_Predictor/", app)
+        self.assertIn("https://rudykon.github.io/WLCR-SEA_Predictor/zh/", app)
+        for label in (
+            "GitHub repository",
+            "Project website",
+            "GitHub 仓库",
+            "项目网站",
+        ):
+            self.assertIn(label, app)
+        self.assertEqual(app.count('target="_blank" rel="noopener noreferrer"'), 4)
+
     def test_public_copy_separates_model_card_from_pinned_weights(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         readme_zh = (ROOT / "README_CN.md").read_text(encoding="utf-8")
