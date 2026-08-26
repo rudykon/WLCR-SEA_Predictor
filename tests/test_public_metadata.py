@@ -37,6 +37,37 @@ class PublicMetadataTest(unittest.TestCase):
         for phrase in banned:
             self.assertNotIn(phrase, text)
 
+    def test_reader_facing_surfaces_do_not_use_the_paper_experiment_id(self) -> None:
+        paths = (
+            "README.md",
+            "README_CN.md",
+            "docs/index.md",
+            "docs/index.zh.md",
+            "docs/guide/method.md",
+            "docs/guide/method.zh.md",
+            "docs/research/evidence.md",
+            "docs/research/evidence.zh.md",
+            "docs/deployment/hugging-face.md",
+            "docs/deployment/hugging-face.zh.md",
+            "demo/README.md",
+            "demo/space-readme-frontmatter.md",
+            "mkdocs.yml",
+        )
+        for relative in paths:
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertNotRegex(
+                text,
+                r"(?i)\ba6(?:\b|_)",
+                msg=f"Paper experiment ID leaked into reader-facing copy: {relative}",
+            )
+
+        space_card = (ROOT / "demo" / "space-readme-frontmatter.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("title: WLCR-SEA Cellular Traffic Forecast Demo", space_card)
+        self.assertIn("Live Demo", (ROOT / "README.md").read_text(encoding="utf-8"))
+        self.assertIn("体验 Demo", (ROOT / "docs/index.zh.md").read_text(encoding="utf-8"))
+
     def test_public_metrics_name_their_aggregation(self) -> None:
         for relative in (
             "README.md",

@@ -2,4 +2,4 @@
 
 # Demo moved
 
-[Open the A6 Demo on Hugging Face](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor).
+[Open the live Demo on Hugging Face](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor).

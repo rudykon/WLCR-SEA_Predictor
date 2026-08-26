@@ -16,12 +16,12 @@ comparisons and preserves a replayable routing record.
 | Data | 527,760 cell-hours from 736 cells in one anonymous region |
 | Request | One cell, 336-hour history, four indicators, observation mask |
 | Target | The same cell's next 24 hours and four indicators |
-| Primary model | `A6_mixed_aug`, seeds 42–46, mean in linear traffic space |
+| Primary model | WLCR-SEA five-model ensemble, seeds 42–46, mean in linear traffic space |
 | Complete-history test | Fixed later time period defined by the study |
 | Missingness test | Identical historical positions removed for every compared model |
 
 The [public model release](https://huggingface.co/config-h/WLCR-SEA-Predictor)
-reports the A6 ensemble's complete-history **macro-cell WAPE 0.177612**, **pooled
+reports the ensemble's complete-history **macro-cell WAPE 0.177612**, **pooled
 WAPE 0.184915**, and **macro-indicator WAPE 0.195511**. These values describe
 different aggregations of the same registered workflow and are not
 interchangeable.
@@ -39,7 +39,7 @@ interchangeable.
 | --- | ---: | --- |
 | DLinear | **0.1854** | Lowest complete-history error in this comparison |
 | Prior traffic-only method | 0.1951 | Similar error to WLCR-SEA |
-| WLCR-SEA A6, five-member ensemble | 0.1955 | Difference from prior method: +0.00045; 95% CI [-0.00312, 0.00366] |
+| WLCR-SEA five-model ensemble | 0.1955 | Difference from prior method: +0.00045; 95% CI [-0.00312, 0.00366] |
 
 **Finding:** DLinear is more accurate with complete history. WLCR-SEA and the
 prior method are not clearly different because the paired interval includes
@@ -99,8 +99,8 @@ With one CPU thread, batch size 1, and sequential requests:
 
 | Predictor | Median | P99 | Model assets |
 | --- | ---: | ---: | ---: |
-| One A6 member | 6.802 ms | 7.574 ms | 16.2 KiB |
-| Five-member A6 ensemble | 34.705 ms | 38.684 ms | 148.8 KiB |
+| One WLCR-SEA model | 6.802 ms | 7.574 ms | 16.2 KiB |
+| Five-model ensemble | 34.705 ms | 38.684 ms | 148.8 KiB |
 
 With disjoint training and test cells, WLCR-SEA reaches **macro-indicator WAPE 0.1967**.
 Differences from DLinear-Aug and the prior method remain unclear;

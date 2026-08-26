@@ -1,4 +1,4 @@
-"""Gradio interface for the public five-checkpoint WLCR-SEA A6 ensemble."""
+"""Gradio interface for the public five-model WLCR-SEA ensemble."""
 
 from __future__ import annotations
 
@@ -115,7 +115,7 @@ TEXT = {
         "header": """
         <section class="wlcr-header">
           <h1>WLCR-SEA Forecast Demo</h1>
-          <p class="wlcr-meta">A6 ensemble · 5 verified checkpoints · CPU inference</p>
+          <p class="wlcr-meta">Five-model ensemble · Verified public checkpoints · CPU inference</p>
           <p>One cell · 336 hours of history → 24 hours of forecast</p>
         </section>
         """,
@@ -139,7 +139,7 @@ TEXT = {
         "header": """
         <section class="wlcr-header">
           <h1>WLCR-SEA 流量预测 Demo</h1>
-          <p class="wlcr-meta">A6 五模型集成 · 5 个已校验检查点 · CPU 推理</p>
+          <p class="wlcr-meta">五模型集成 · 公开检查点已校验 · CPU 推理</p>
           <p>单个小区 · 336 小时历史 → 未来 24 小时预测</p>
         </section>
         """,
@@ -195,7 +195,7 @@ def _run_request(upload, scenario, missing_rate, metric, horizon, *, lang: str):
     except DemoInputError as exc:
         raise gr.Error(str(exc)) from exc
     except Exception as exc:
-        LOGGER.exception("WLCR-SEA A6 Demo failed")
+        LOGGER.exception("WLCR-SEA Forecast Demo failed")
         message = (
             "The forecast could not finish. Check the 336-row input and try again."
             if lang == "en"
@@ -334,7 +334,7 @@ def _build_panel(lang: str) -> Panel:
 
 
 def build_app() -> gr.Blocks:
-    with gr.Blocks(title="WLCR-SEA A6 Forecast Demo") as app:
+    with gr.Blocks(title="WLCR-SEA Cellular Traffic Forecast Demo") as app:
         with gr.Tabs():
             with gr.Tab("English"):
                 english = _build_panel("en")
