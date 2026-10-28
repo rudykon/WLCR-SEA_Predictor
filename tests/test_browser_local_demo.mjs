@@ -94,3 +94,25 @@ test('model computation ignores wrapper cell identity and routing has exact zero
   assert.deepEqual(entmax15([10]), [1]);
   const p = entmax15([10, -10]); assert.equal(p[0], 1); assert.equal(p[1], 0);
 });
+
+test('routing inspection follows the selected hour and preserves the ensemble bounds', async () => {
+  const { routingAt, ensembleEnvelope } = await import('../docs/javascripts/local-demo-view.mjs');
+  const request = await corruptRequest(parseRequest(sample), 'recent_tail', 0.5);
+  const result = forecast(request, bundle);
+  const first = routingAt(result, 2, 0), last = routingAt(result, 2, 23);
+  assert.notDeepEqual(first.map(r => r.weight), last.map(r => r.weight), 'a future-hour change must inspect that hour, not repeat the 24-hour mean');
+  for (const h of [0, 23]) {
+    const rows = routingAt(result, 2, h);
+    close(rows.reduce((sum, row) => sum + row.weight, 0), 1);
+    rows.forEach((row, j) => {
+      close(row.weight, result.members.reduce((sum, m) => sum + m.attention[h][2][j], 0) / 5);
+      if (!row.available) { assert.equal(row.value, null); assert.equal(row.weight, 0); }
+    });
+  }
+  const bounds = ensembleEnvelope(result);
+  for (let h = 0; h < 24; h++) for (let q = 0; q < 4; q++) {
+    assert.ok(bounds.lower[h][q] <= result.prediction[h][q] + 1e-4);
+    assert.ok(bounds.upper[h][q] >= result.prediction[h][q] - 1e-4);
+  }
+  assert.throws(() => routingAt(result, 2, 24), RangeError);
+});

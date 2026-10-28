@@ -211,6 +211,12 @@ an inference API and sends no request CSV to a server. Open it through the
 website's Local Demo tab, or build the docs and serve `site/` over localhost.
 Modern browsers require HTTPS or localhost for the worker's cryptographic API.
 
+The interface follows the hosted Demo: controls alongside the forecast and audit
+status, an automatic sample preview, and a routing view for the selected
+indicator and future hour. Advanced details contain the full forecast, selected
+expert table, member table, and downloads. Explicitly run the forecast to enable
+downloads after the automatic preview. View changes reuse the calculated result.
+
 The browser weights are a lossless little-endian float32 export of the public
 checkpoints pinned in `demo/model_loader.py`. The export verifies every original
 checkpoint SHA-256 before serialization, and the browser verifies the exported
