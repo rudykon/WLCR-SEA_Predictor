@@ -12,7 +12,8 @@ hide:
   <p class="project-subtitle">Forecast one cell's next 24 hours from its own recent history</p>
   <p class="project-lead">Use one cell's previous 336 hours and four traffic indicators to forecast its next 24 hours. Unavailable historical references are hard-masked, and every request can export expert values, routing weights, residuals, and bound checks.</p>
   <div class="project-actions">
-    <a class="md-button md-button--primary" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">Try the Demo</a>
+    <a class="md-button md-button--primary" href="local-demo/">Run locally</a>
+    <a class="md-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">Hosted Demo</a>
     <a class="md-button" href="guide/method/">Method</a>
     <a class="md-button" href="research/evidence/">Results</a>
     <a class="md-button" href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd" target="_blank" rel="noopener">Model weights</a>

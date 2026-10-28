@@ -15,6 +15,7 @@
 
 <p align="center">
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/">项目网站</a> ·
+  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/">本地 Demo</a> ·
   <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">在线 Demo</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">模型卡</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd">固定权重</a> ·

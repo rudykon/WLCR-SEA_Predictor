@@ -203,6 +203,33 @@ the four data figures using a shared blue, sage, teal, and slate palette.
 It checks the plotted WAPE, planning-cost, paired-difference, and deletion values
 against the frozen expected values before writing the figure manifest.
 
+### Browser-local Demo
+
+The bilingual Local Demo page runs the five published checkpoints on the
+visitor's CPU, in a module Web Worker. It uses static site assets rather than
+an inference API and sends no request CSV to a server. Open it through the
+website's Local Demo tab, or build the docs and serve `site/` over localhost.
+Modern browsers require HTTPS or localhost for the worker's cryptographic API.
+
+The browser weights are a lossless little-endian float32 export of the public
+checkpoints pinned in `demo/model_loader.py`. The export verifies every original
+checkpoint SHA-256 before serialization, and the browser verifies the exported
+binary's SHA-256 before using it. To regenerate the assets and synthetic test
+references with the project Python dependencies installed:
+
+```bash
+python tools/browser/export_model.py
+python tools/browser/make_reference.py
+node --test tests/test_browser_local_demo.mjs
+```
+
+The Node.js 22 test suite checks eight synthetic request cases against the
+published Python implementation, deterministic removal masks, exact zero weight
+for unavailable experts, bounded residuals, CSV validation, and local downloads.
+Prediction comparisons use absolute tolerance `1e-4` plus relative tolerance
+`5e-5`; the JavaScript runtime does not claim bitwise identity with PyTorch.
+All sample and reference inputs are synthetic, not operator traffic.
+
 ## 7. Code map
 
 | Path | Responsibility |

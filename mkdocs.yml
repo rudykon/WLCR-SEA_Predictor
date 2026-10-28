@@ -86,7 +86,7 @@ plugins:
             Method: 方法
             Results: 实验结果
             Reproduce: 复现
-            Demo ↗: Demo ↗
+            Local Demo: 本地 Demo
 
 markdown_extensions:
   - admonition
@@ -106,6 +106,7 @@ extra_css:
   - stylesheets/extra.css
 
 extra_javascript:
+  - javascripts/local-demo.js
   - javascripts/mathjax.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
@@ -126,4 +127,4 @@ nav:
   - Method: guide/method.md
   - Results: research/evidence.md
   - Reproduce: reference/reproduction.md
-  - Demo ↗: https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor
+  - Local Demo: local-demo.md

@@ -1,0 +1,811 @@
+{
+  "schema": "wlcr-sea-browser-model/v1",
+  "repo_id": "config-h/WLCR-SEA-Predictor",
+  "revision": "eb4447f4ebab8f9caa003d92c838ed8e750963bd",
+  "variant": "A6_mixed_aug",
+  "aggregation": "arithmetic mean of individually inverse-transformed and floored predictions",
+  "weights": {
+    "file": "weights.bin",
+    "dtype": "float32-le",
+    "byte_length": 121576,
+    "sha256": "715c737f419228f06fa5c076334fe727bf780159a0e2483987f85d846e50d0d8"
+  },
+  "members": [
+    {
+      "seed": 42,
+      "checkpoint": "A6_mixed_aug_seed42.pt",
+      "checkpoint_sha256": "9d9ab530566f74612a235dc6ed60c02caf09d4f0b862c68af52fdd61863b8956",
+      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed42.pt",
+      "selected_config": {
+        "name": "d16_h32_lr1e3_delta025",
+        "token_dim": 16,
+        "hidden_dim": 32,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "residual_bound": 0.25
+      },
+      "selected_epoch": 67,
+      "tensors": {
+        "prior_log": {
+          "shape": [
+            24,
+            4
+          ],
+          "offset": 0,
+          "length": 96
+        },
+        "reliability_beta_raw": {
+          "shape": [],
+          "offset": 96,
+          "length": 1
+        },
+        "fixed_weights": {
+          "shape": [
+            8
+          ],
+          "offset": 97,
+          "length": 8
+        },
+        "expert_distance": {
+          "shape": [
+            8
+          ],
+          "offset": 105,
+          "length": 8
+        },
+        "horizon_embedding.weight": {
+          "shape": [
+            24,
+            4
+          ],
+          "offset": 113,
+          "length": 96
+        },
+        "metric_embedding.weight": {
+          "shape": [
+            4,
+            4
+          ],
+          "offset": 209,
+          "length": 16
+        },
+        "expert_embedding.weight": {
+          "shape": [
+            8,
+            4
+          ],
+          "offset": 225,
+          "length": 32
+        },
+        "query_network.0.weight": {
+          "shape": [
+            32,
+            13
+          ],
+          "offset": 257,
+          "length": 416
+        },
+        "query_network.0.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 673,
+          "length": 32
+        },
+        "query_network.2.weight": {
+          "shape": [
+            16,
+            32
+          ],
+          "offset": 705,
+          "length": 512
+        },
+        "query_network.2.bias": {
+          "shape": [
+            16
+          ],
+          "offset": 1217,
+          "length": 16
+        },
+        "key_network.0.weight": {
+          "shape": [
+            32,
+            8
+          ],
+          "offset": 1233,
+          "length": 256
+        },
+        "key_network.0.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 1489,
+          "length": 32
+        },
+        "key_network.2.weight": {
+          "shape": [
+            16,
+            32
+          ],
+          "offset": 1521,
+          "length": 512
+        },
+        "key_network.2.bias": {
+          "shape": [
+            16
+          ],
+          "offset": 2033,
+          "length": 16
+        },
+        "residual_network.0.weight": {
+          "shape": [
+            32,
+            15
+          ],
+          "offset": 2049,
+          "length": 480
+        },
+        "residual_network.0.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 2529,
+          "length": 32
+        },
+        "residual_network.2.weight": {
+          "shape": [
+            1,
+            32
+          ],
+          "offset": 2561,
+          "length": 32
+        },
+        "residual_network.2.bias": {
+          "shape": [
+            1
+          ],
+          "offset": 2593,
+          "length": 1
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "checkpoint": "A6_mixed_aug_seed43.pt",
+      "checkpoint_sha256": "84de30c603c0df9729a56a27490aef70eec3db795494676bf5a637cf04cccd26",
+      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed43.pt",
+      "selected_config": {
+        "name": "d32_h64_lr5e4_delta050",
+        "token_dim": 32,
+        "hidden_dim": 64,
+        "learning_rate": 0.0005,
+        "weight_decay": 0.0001,
+        "residual_bound": 0.5
+      },
+      "selected_epoch": 40,
+      "tensors": {
+        "prior_log": {
+          "shape": [
+            24,
+            4
+          ],
+          "offset": 2594,
+          "length": 96
+        },
+        "reliability_beta_raw": {
+          "shape": [],
+          "offset": 2690,
+          "length": 1
+        },
+        "fixed_weights": {
+          "shape": [
+            8
+          ],
+          "offset": 2691,
+          "length": 8
+        },
+        "expert_distance": {
+          "shape": [
+            8
+          ],
+          "offset": 2699,
+          "length": 8
+        },
+        "horizon_embedding.weight": {
+          "shape": [
+            24,
+            8
+          ],
+          "offset": 2707,
+          "length": 192
+        },
+        "metric_embedding.weight": {
+          "shape": [
+            4,
+            8
+          ],
+          "offset": 2899,
+          "length": 32
+        },
+        "expert_embedding.weight": {
+          "shape": [
+            8,
+            8
+          ],
+          "offset": 2931,
+          "length": 64
+        },
+        "query_network.0.weight": {
+          "shape": [
+            64,
+            21
+          ],
+          "offset": 2995,
+          "length": 1344
+        },
+        "query_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 4339,
+          "length": 64
+        },
+        "query_network.2.weight": {
+          "shape": [
+            32,
+            64
+          ],
+          "offset": 4403,
+          "length": 2048
+        },
+        "query_network.2.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 6451,
+          "length": 32
+        },
+        "key_network.0.weight": {
+          "shape": [
+            64,
+            12
+          ],
+          "offset": 6483,
+          "length": 768
+        },
+        "key_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 7251,
+          "length": 64
+        },
+        "key_network.2.weight": {
+          "shape": [
+            32,
+            64
+          ],
+          "offset": 7315,
+          "length": 2048
+        },
+        "key_network.2.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 9363,
+          "length": 32
+        },
+        "residual_network.0.weight": {
+          "shape": [
+            64,
+            23
+          ],
+          "offset": 9395,
+          "length": 1472
+        },
+        "residual_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 10867,
+          "length": 64
+        },
+        "residual_network.2.weight": {
+          "shape": [
+            1,
+            64
+          ],
+          "offset": 10931,
+          "length": 64
+        },
+        "residual_network.2.bias": {
+          "shape": [
+            1
+          ],
+          "offset": 10995,
+          "length": 1
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "checkpoint": "A6_mixed_aug_seed44.pt",
+      "checkpoint_sha256": "93725821eb9dd226479e4fe4964aa53bc8e0fc71caa1eb9ec80d51f9f793489e",
+      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed44.pt",
+      "selected_config": {
+        "name": "d16_h32_lr1e3_delta025",
+        "token_dim": 16,
+        "hidden_dim": 32,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "residual_bound": 0.25
+      },
+      "selected_epoch": 65,
+      "tensors": {
+        "prior_log": {
+          "shape": [
+            24,
+            4
+          ],
+          "offset": 10996,
+          "length": 96
+        },
+        "reliability_beta_raw": {
+          "shape": [],
+          "offset": 11092,
+          "length": 1
+        },
+        "fixed_weights": {
+          "shape": [
+            8
+          ],
+          "offset": 11093,
+          "length": 8
+        },
+        "expert_distance": {
+          "shape": [
+            8
+          ],
+          "offset": 11101,
+          "length": 8
+        },
+        "horizon_embedding.weight": {
+          "shape": [
+            24,
+            4
+          ],
+          "offset": 11109,
+          "length": 96
+        },
+        "metric_embedding.weight": {
+          "shape": [
+            4,
+            4
+          ],
+          "offset": 11205,
+          "length": 16
+        },
+        "expert_embedding.weight": {
+          "shape": [
+            8,
+            4
+          ],
+          "offset": 11221,
+          "length": 32
+        },
+        "query_network.0.weight": {
+          "shape": [
+            32,
+            13
+          ],
+          "offset": 11253,
+          "length": 416
+        },
+        "query_network.0.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 11669,
+          "length": 32
+        },
+        "query_network.2.weight": {
+          "shape": [
+            16,
+            32
+          ],
+          "offset": 11701,
+          "length": 512
+        },
+        "query_network.2.bias": {
+          "shape": [
+            16
+          ],
+          "offset": 12213,
+          "length": 16
+        },
+        "key_network.0.weight": {
+          "shape": [
+            32,
+            8
+          ],
+          "offset": 12229,
+          "length": 256
+        },
+        "key_network.0.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 12485,
+          "length": 32
+        },
+        "key_network.2.weight": {
+          "shape": [
+            16,
+            32
+          ],
+          "offset": 12517,
+          "length": 512
+        },
+        "key_network.2.bias": {
+          "shape": [
+            16
+          ],
+          "offset": 13029,
+          "length": 16
+        },
+        "residual_network.0.weight": {
+          "shape": [
+            32,
+            15
+          ],
+          "offset": 13045,
+          "length": 480
+        },
+        "residual_network.0.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 13525,
+          "length": 32
+        },
+        "residual_network.2.weight": {
+          "shape": [
+            1,
+            32
+          ],
+          "offset": 13557,
+          "length": 32
+        },
+        "residual_network.2.bias": {
+          "shape": [
+            1
+          ],
+          "offset": 13589,
+          "length": 1
+        }
+      }
+    },
+    {
+      "seed": 45,
+      "checkpoint": "A6_mixed_aug_seed45.pt",
+      "checkpoint_sha256": "e05c14b8478aeed7f84e1e0733c22aa25d3c30fd60e685fe0cf75037e0b38a9a",
+      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed45.pt",
+      "selected_config": {
+        "name": "d32_h64_lr5e4_delta050",
+        "token_dim": 32,
+        "hidden_dim": 64,
+        "learning_rate": 0.0005,
+        "weight_decay": 0.0001,
+        "residual_bound": 0.5
+      },
+      "selected_epoch": 56,
+      "tensors": {
+        "prior_log": {
+          "shape": [
+            24,
+            4
+          ],
+          "offset": 13590,
+          "length": 96
+        },
+        "reliability_beta_raw": {
+          "shape": [],
+          "offset": 13686,
+          "length": 1
+        },
+        "fixed_weights": {
+          "shape": [
+            8
+          ],
+          "offset": 13687,
+          "length": 8
+        },
+        "expert_distance": {
+          "shape": [
+            8
+          ],
+          "offset": 13695,
+          "length": 8
+        },
+        "horizon_embedding.weight": {
+          "shape": [
+            24,
+            8
+          ],
+          "offset": 13703,
+          "length": 192
+        },
+        "metric_embedding.weight": {
+          "shape": [
+            4,
+            8
+          ],
+          "offset": 13895,
+          "length": 32
+        },
+        "expert_embedding.weight": {
+          "shape": [
+            8,
+            8
+          ],
+          "offset": 13927,
+          "length": 64
+        },
+        "query_network.0.weight": {
+          "shape": [
+            64,
+            21
+          ],
+          "offset": 13991,
+          "length": 1344
+        },
+        "query_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 15335,
+          "length": 64
+        },
+        "query_network.2.weight": {
+          "shape": [
+            32,
+            64
+          ],
+          "offset": 15399,
+          "length": 2048
+        },
+        "query_network.2.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 17447,
+          "length": 32
+        },
+        "key_network.0.weight": {
+          "shape": [
+            64,
+            12
+          ],
+          "offset": 17479,
+          "length": 768
+        },
+        "key_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 18247,
+          "length": 64
+        },
+        "key_network.2.weight": {
+          "shape": [
+            32,
+            64
+          ],
+          "offset": 18311,
+          "length": 2048
+        },
+        "key_network.2.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 20359,
+          "length": 32
+        },
+        "residual_network.0.weight": {
+          "shape": [
+            64,
+            23
+          ],
+          "offset": 20391,
+          "length": 1472
+        },
+        "residual_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 21863,
+          "length": 64
+        },
+        "residual_network.2.weight": {
+          "shape": [
+            1,
+            64
+          ],
+          "offset": 21927,
+          "length": 64
+        },
+        "residual_network.2.bias": {
+          "shape": [
+            1
+          ],
+          "offset": 21991,
+          "length": 1
+        }
+      }
+    },
+    {
+      "seed": 46,
+      "checkpoint": "A6_mixed_aug_seed46.pt",
+      "checkpoint_sha256": "f37247358733003d55651af35bd4587f5ba9284485749be40548ddbf9fdc5713",
+      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed46.pt",
+      "selected_config": {
+        "name": "d32_h64_lr5e4_delta050",
+        "token_dim": 32,
+        "hidden_dim": 64,
+        "learning_rate": 0.0005,
+        "weight_decay": 0.0001,
+        "residual_bound": 0.5
+      },
+      "selected_epoch": 65,
+      "tensors": {
+        "prior_log": {
+          "shape": [
+            24,
+            4
+          ],
+          "offset": 21992,
+          "length": 96
+        },
+        "reliability_beta_raw": {
+          "shape": [],
+          "offset": 22088,
+          "length": 1
+        },
+        "fixed_weights": {
+          "shape": [
+            8
+          ],
+          "offset": 22089,
+          "length": 8
+        },
+        "expert_distance": {
+          "shape": [
+            8
+          ],
+          "offset": 22097,
+          "length": 8
+        },
+        "horizon_embedding.weight": {
+          "shape": [
+            24,
+            8
+          ],
+          "offset": 22105,
+          "length": 192
+        },
+        "metric_embedding.weight": {
+          "shape": [
+            4,
+            8
+          ],
+          "offset": 22297,
+          "length": 32
+        },
+        "expert_embedding.weight": {
+          "shape": [
+            8,
+            8
+          ],
+          "offset": 22329,
+          "length": 64
+        },
+        "query_network.0.weight": {
+          "shape": [
+            64,
+            21
+          ],
+          "offset": 22393,
+          "length": 1344
+        },
+        "query_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 23737,
+          "length": 64
+        },
+        "query_network.2.weight": {
+          "shape": [
+            32,
+            64
+          ],
+          "offset": 23801,
+          "length": 2048
+        },
+        "query_network.2.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 25849,
+          "length": 32
+        },
+        "key_network.0.weight": {
+          "shape": [
+            64,
+            12
+          ],
+          "offset": 25881,
+          "length": 768
+        },
+        "key_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 26649,
+          "length": 64
+        },
+        "key_network.2.weight": {
+          "shape": [
+            32,
+            64
+          ],
+          "offset": 26713,
+          "length": 2048
+        },
+        "key_network.2.bias": {
+          "shape": [
+            32
+          ],
+          "offset": 28761,
+          "length": 32
+        },
+        "residual_network.0.weight": {
+          "shape": [
+            64,
+            23
+          ],
+          "offset": 28793,
+          "length": 1472
+        },
+        "residual_network.0.bias": {
+          "shape": [
+            64
+          ],
+          "offset": 30265,
+          "length": 64
+        },
+        "residual_network.2.weight": {
+          "shape": [
+            1,
+            64
+          ],
+          "offset": 30329,
+          "length": 64
+        },
+        "residual_network.2.bias": {
+          "shape": [
+            1
+          ],
+          "offset": 30393,
+          "length": 1
+        }
+      }
+    }
+  ],
+  "sample": {
+    "file": "sample.csv",
+    "source": "demo/examples/synthetic_traffic.csv",
+    "synthetic": true,
+    "sha256": "37bf789a5a24d9f5d3031fc00d7f661718648b975e30fb2602c691cf3251fafd"
+  }
+}

@@ -15,6 +15,7 @@
 
 <p align="center">
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/">Website</a> ·
+  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/">Local Demo</a> ·
   <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">Live Demo</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">Model Card</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd">Pinned Weights</a> ·
