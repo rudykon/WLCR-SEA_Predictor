@@ -23,8 +23,8 @@ hide:
 
 <div class="setting-layout">
   <figure class="paper-figure">
-    <a href="../images/paper_figure_architecture.png" target="_blank" rel="noopener">
-      <img src="../images/paper_figure_architecture.png" alt="WLCR-SEA 从单小区请求到八个季节专家、严格掩码路由、有界预测与审计记录的架构">
+    <a href="../images/paper_figure_framework.png" target="_blank" rel="noopener">
+      <img src="../images/paper_figure_framework.png" alt="WLCR-SEA 从单小区请求到八个季节专家、严格掩码路由、有界预测与审计记录的架构">
     </a>
     <figcaption>单个小区的历史数据与公开模型检查点共同生成预测和审计记录。</figcaption>
   </figure>

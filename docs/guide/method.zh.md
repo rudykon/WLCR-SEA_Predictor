@@ -17,8 +17,8 @@ $\hat{y} \in \mathbb{R}^{24 \times 4}$ 的预测。推理阶段可以读取当�
 网站、Demo、导出文件和代码统一使用以上术语。
 
 <figure class="paper-figure">
-  <a href="../../../images/paper_figure_architecture.png" target="_blank" rel="noopener">
-    <img src="../../../images/paper_figure_architecture.png" alt="WLCR-SEA 季节专家构造、可用性掩码、带可靠度的 Entmax 路由、有界残差、预测与审计记录">
+  <a href="../../../images/paper_figure_framework.png" target="_blank" rel="noopener">
+    <img src="../../../images/paper_figure_framework.png" alt="WLCR-SEA 季节专家构造、可用性掩码、带可靠度的 Entmax 路由、有界残差、预测与审计记录">
   </a>
   <figcaption>八个季节专家经过筛选和路由，再在固定边界内完成修正。</figcaption>
 </figure>

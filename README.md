@@ -50,8 +50,8 @@ system.
 ## Method
 
 <p align="center">
-  <a href="docs/images/paper_figure_architecture.png">
-    <img src="docs/images/paper_figure_architecture.png" width="94%" alt="WLCR-SEA architecture: eight seasonal experts, hard availability masking, sparse routing, bounded residual, forecast, and audit record">
+  <a href="docs/images/paper_figure_framework.png">
+    <img src="docs/images/paper_figure_framework.png" width="94%" alt="WLCR-SEA architecture: eight seasonal experts, hard availability masking, sparse routing, bounded residual, forecast, and audit record">
   </a>
 </p>
 

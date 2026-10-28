@@ -25,13 +25,6 @@ WLCR-SEA 并不是所有情况下都最准确的模型。历史完整时 DLinear
 
 ## 完整历史
 
-<figure class="paper-figure">
-  <a href="../../../images/paper_figure_clean_accuracy.png" target="_blank" rel="noopener">
-    <img src="../../../images/paper_figure_clean_accuracy.png" alt="明确标注四指标宏平均 WAPE 的完整历史模型对比">
-  </a>
-  <figcaption>本次留出评估中的完整历史对比。</figcaption>
-</figure>
-
 | 模型 | 四指标宏平均 WAPE | 解释 |
 | --- | ---: | --- |
 | DLinear | **0.1854** | 当前对比中完整历史误差最低 |
@@ -41,11 +34,20 @@ WLCR-SEA 并不是所有情况下都最准确的模型。历史完整时 DLinear
 **结论**：完整历史下 DLinear 更准确。WLCR-SEA 与先前方法的配对区间包含 0，
 差异不明确。
 
+## 完整历史与缺失输入的对比
+
+<figure class="paper-figure">
+  <a href="../../../images/paper_figure_comparison.png" target="_blank" rel="noopener">
+    <img src="../../../images/paper_figure_comparison.png" alt="50% 证据缺失下的四指标宏平均 WAPE、规划成本，以及完整历史与严重缺失误差的权衡">
+  </a>
+  <figcaption>50% 证据缺失下：（a）四指标宏平均 WAPE；（b）规划成本；（c）完整历史与严重缺失平均误差。</figcaption>
+</figure>
+
 ## 遥测缺失
 
 <figure class="paper-figure">
-  <a href="../../../images/paper_figure_missingness.png" target="_blank" rel="noopener">
-    <img src="../../../images/paper_figure_missingness.png" alt="连续区块、最近尾部和指标异步缺失下的匹配对比">
+  <a href="../../../images/paper_figure_robustness.png" target="_blank" rel="noopener">
+    <img src="../../../images/paper_figure_robustness.png" alt="连续区块、最近尾部和指标异步缺失下的匹配对比">
   </a>
   <figcaption>所有模型接收完全相同的历史缺失位置。</figcaption>
 </figure>
@@ -64,13 +66,26 @@ PatchTST-Aug 的配对区间仍包含 0。
 
 **结论**：优势只适用于已测试的缺失模式、缺失率、数据和本次训练结果，不代表任意故障。
 
+## 离线规划代理指标
+
+<figure class="paper-figure">
+  <a href="../../../images/paper_figure_planning.png" target="_blank" rel="noopener">
+    <img src="../../../images/paper_figure_planning.png" alt="短缺与冗余成本比为 3 时的离线规划成本，以及 50% 输入缺失下不同假定成本比的比较">
+  </a>
+  <figcaption>共享每日预算规则下的规划成本代理指标，越低越好。</figcaption>
+</figure>
+
+四个增强匹配模型使用相同的每日预算规则。在 50% 连续区块、时间线尾部和指标异步
+缺失下，假定短缺与冗余成本比为 3 和 9 时，WLCR-SEA 的代理成本更低。模型排序
+取决于成本假设；该离线代理指标不衡量已部署调度器或实际业务收益。
+
 ## 可审计性
 
 <figure class="paper-figure">
-  <a href="../../../images/paper_figure_auditability.png" target="_blank" rel="noopener">
-    <img src="../../../images/paper_figure_auditability.png" alt="严格掩码、预测边界、请求内计算和专家删除审计">
+  <a href="../../../images/paper_figure_audit.png" target="_blank" rel="noopener">
+    <img src="../../../images/paper_figure_audit.png" alt="专家删除审计：删除后的四指标宏平均 WAPE 增量，以及专家平均权重与删除效应的关系">
   </a>
-  <figcaption>结构检查与删除季节专家后的实际影响。</figcaption>
+  <figcaption>删除最高权重专家的实际影响大于匹配随机删除。</figcaption>
 </figure>
 
 | 检查 | 报告结果 |

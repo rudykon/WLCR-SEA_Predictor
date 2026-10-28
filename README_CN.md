@@ -42,8 +42,8 @@ WLCR-SEA 读取单个小区过去 **336 小时 × 4 项流量指标**，预测�
 ## 方法
 
 <p align="center">
-  <a href="docs/images/paper_figure_architecture.png">
-    <img src="docs/images/paper_figure_architecture.png" width="94%" alt="WLCR-SEA 架构：八个季节专家、严格可用性掩码、稀疏路由、有界残差、预测与审计记录">
+  <a href="docs/images/paper_figure_framework.png">
+    <img src="docs/images/paper_figure_framework.png" width="94%" alt="WLCR-SEA 架构：八个季节专家、严格可用性掩码、稀疏路由、有界残差、预测与审计记录">
   </a>
 </p>
 

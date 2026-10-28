@@ -23,8 +23,8 @@ hide:
 
 <div class="setting-layout">
   <figure class="paper-figure">
-    <a href="images/paper_figure_architecture.png" target="_blank" rel="noopener">
-      <img src="images/paper_figure_architecture.png" alt="WLCR-SEA architecture from one-cell request to eight seasonal experts, hard-masked routing, bounded forecast, and audit record">
+    <a href="images/paper_figure_framework.png" target="_blank" rel="noopener">
+      <img src="images/paper_figure_framework.png" alt="WLCR-SEA architecture from one-cell request to eight seasonal experts, hard-masked routing, bounded forecast, and audit record">
     </a>
     <figcaption>One cell's history and the published model checkpoints produce a forecast and audit record.</figcaption>
   </figure>

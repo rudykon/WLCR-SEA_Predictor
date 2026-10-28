@@ -182,6 +182,27 @@ writing clean-data, missingness, request-locality, cell-disjoint, auditability,
 and latency evidence. This public repository intentionally does not contain or
 build the unpublished manuscript source.
 
+### Regenerate the current public figures
+
+The five current PNG previews are in `docs/images/`; older previews are removed
+when they are replaced. Their vector originals are in `paper/figures/`.
+The figure renderer reads the four local aggregate CSV exports recorded in
+`paper/figures/www2027_figures_manifest.json`; provide the matching analysis
+outputs before rendering. This update publishes the figure assets and renderer;
+it does not include those aggregate CSVs or redistribute the cell-hour trace.
+
+With the matching local analysis outputs, Matplotlib, pdfLaTeX (including
+Libertine and newtxmath), and Poppler's `pdftocairo` installed, run:
+
+```bash
+python tools/figures/render_www2027_figures.py
+```
+
+The renderer preserves the authored framework PDF, exports its PNG, and redraws
+the four data figures using a shared blue, sage, teal, and slate palette.
+It checks the plotted WAPE, planning-cost, paired-difference, and deletion values
+against the frozen expected values before writing the figure manifest.
+
 ## 7. Code map
 
 | Path | Responsibility |

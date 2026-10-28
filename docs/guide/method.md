@@ -17,8 +17,8 @@ and frozen model assets, but it does not fetch live traffic from another cell.
 These terms are used consistently across the website, Demo, exports, and code.
 
 <figure class="paper-figure">
-  <a href="../../images/paper_figure_architecture.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_architecture.png" alt="WLCR-SEA candidate construction, availability masking, reliability-aware Entmax routing, bounded residual, forecast, and audit record">
+  <a href="../../images/paper_figure_framework.png" target="_blank" rel="noopener">
+    <img src="../../images/paper_figure_framework.png" alt="WLCR-SEA candidate construction, availability masking, reliability-aware Entmax routing, bounded residual, forecast, and audit record">
   </a>
   <figcaption>Eight seasonal experts are filtered, routed, and corrected within a fixed bound.</figcaption>
 </figure>

@@ -29,13 +29,6 @@ interchangeable.
 
 ## Complete history
 
-<figure class="paper-figure">
-  <a href="../../images/paper_figure_clean_accuracy.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_clean_accuracy.png" alt="Complete-history model comparison with explicitly labeled macro-indicator WAPE">
-  </a>
-  <figcaption>Complete-history comparison on the reported holdout workflow.</figcaption>
-</figure>
-
 | Model | Macro-indicator WAPE | Interpretation |
 | --- | ---: | --- |
 | DLinear | **0.1854** | Lowest complete-history error in this comparison |
@@ -46,11 +39,20 @@ interchangeable.
 prior method are not clearly different because the paired interval includes
 zero.
 
+## Complete and missing-history comparison
+
+<figure class="paper-figure">
+  <a href="../../images/paper_figure_comparison.png" target="_blank" rel="noopener">
+    <img src="../../images/paper_figure_comparison.png" alt="Models under 50% evidence loss: macro-indicator WAPE, planning cost, and the clean versus severe-loss error trade-off">
+  </a>
+  <figcaption>At 50% evidence loss: (a) macro-indicator WAPE, (b) planning cost, and (c) clean versus mean severe-loss error.</figcaption>
+</figure>
+
 ## Missing telemetry
 
 <figure class="paper-figure">
-  <a href="../../images/paper_figure_missingness.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_missingness.png" alt="Matched missing-telemetry comparison under block, recent-tail, and asynchronous patterns">
+  <a href="../../images/paper_figure_robustness.png" target="_blank" rel="noopener">
+    <img src="../../images/paper_figure_robustness.png" alt="Matched missing-telemetry comparison under block, recent-tail, and asynchronous patterns">
   </a>
   <figcaption>Every model receives the same removed historical positions.</figcaption>
 </figure>
@@ -71,13 +73,28 @@ paired intervals against DLinear-Aug and PatchTST-Aug still include zero.
 **Finding:** the advantage is specific to the tested missingness patterns,
 rates, data, and reported runs. It is not a guarantee for arbitrary outages.
 
+## Offline planning proxy
+
+<figure class="paper-figure">
+  <a href="../../images/paper_figure_planning.png" target="_blank" rel="noopener">
+    <img src="../../images/paper_figure_planning.png" alt="Offline planning cost at a shortfall-to-surplus cost ratio of 3 and across assumed cost ratios under 50% missing inputs">
+  </a>
+  <figcaption>Planning-cost proxy with a shared daily budget rule; lower is better.</figcaption>
+</figure>
+
+The four augmentation-matched models use the same daily budget rule. Under
+50% block, timeline-tail, and asynchronous loss, WLCR-SEA has lower proxy cost
+at the assumed shortfall-to-surplus cost ratios of 3 and 9. The ranking depends
+on the cost assumption; this offline proxy does not measure a deployed scheduler
+or business outcomes.
+
 ## Auditability
 
 <figure class="paper-figure">
-  <a href="../../images/paper_figure_auditability.png" target="_blank" rel="noopener">
-    <img src="../../images/paper_figure_auditability.png" alt="Hard-mask, bounded-envelope, request-locality, and expert-deletion audits">
+  <a href="../../images/paper_figure_audit.png" target="_blank" rel="noopener">
+    <img src="../../images/paper_figure_audit.png" alt="Expert deletion audit: macro-indicator WAPE increases after deletion and mean expert weight versus deletion effect">
   </a>
-  <figcaption>Structural checks and measured influence after expert deletion.</figcaption>
+  <figcaption>Deleting the highest-weight expert has a larger measured effect than matched-random deletion.</figcaption>
 </figure>
 
 | Check | Reported result |

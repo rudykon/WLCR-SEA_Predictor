@@ -1,0 +1,75 @@
+{
+  "script": "tools/figures/render_www2027_figures.py",
+  "inputs": [
+    {
+      "path": "artifacts/reproduction/analysis/missingness/comparative_missingness.csv",
+      "sha256": "c91f41687ee28071d0fa9aa46b66c61a8cd919da04ff408b15f376e230986c96"
+    },
+    {
+      "path": "artifacts/reproduction/analysis/downstream_prb_20261019/scores.csv",
+      "sha256": "ec500f357ff52b2db962325c909d26e105c4b2a0753a9fd2484ea58171f96e64"
+    },
+    {
+      "path": "artifacts/reproduction/figures/readability_20261019/wlcr_sea_auditability_panel_a_data.csv",
+      "sha256": "d653cbeba67365d034e1a33508ec52444a8e5f51cf15eaed2a5045d92cd8f724"
+    },
+    {
+      "path": "artifacts/reproduction/figures/readability_20261019/wlcr_sea_auditability_panel_c_data.csv",
+      "sha256": "63195d4734742f14ca6f66e19600786bd8760434523b82b7909f688407f6b80d"
+    },
+    {
+      "path": "tools/figures/render_www2027_figures.py",
+      "sha256": "13c7e8299278d827bfe33a35b443f7f851332cd49ecb3dfa5ad5ee4b32bf6776"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "paper/figures/fig2_comparison.pdf",
+      "sha256": "b290ec2dd9fbafdb9d6e1c87f7bc1de1bb65e213a2545809bcbf475523290525",
+      "figure": 2
+    },
+    {
+      "path": "paper/figures/fig3_robustness.pdf",
+      "sha256": "2e5d91f294f3cae8b3726d134b9bfdb6b8923bc61b40b0be13197f957783d5bd",
+      "figure": 3
+    },
+    {
+      "path": "paper/figures/fig4_planning.pdf",
+      "sha256": "c57f28bf454f28e24b73c51564e79c5056df09483d29588244f1a97f04e4c139",
+      "figure": 4
+    },
+    {
+      "path": "paper/figures/fig5_audit.pdf",
+      "sha256": "477e2ae552bad4f2aa5232afa77a7777a49e310ee98a28d1ec6166186643666c",
+      "figure": 5
+    }
+  ],
+  "schematics": [
+    {
+      "path": "paper/figures/fig1_framework.pdf",
+      "sha256": "090d0948365925518eaa2fe7e3fd6bb4e54d6a450641131c0f8bf6f2e01cd61d",
+      "figure": 1,
+      "note": "Externally authored framework; preserved by this script."
+    }
+  ],
+  "unused_figures": [],
+  "palette": {
+    "reference": "paper/figures/fig1_framework.pdf",
+    "model_colors": {
+      "wlcr": "#508DCF",
+      "dlinear": "#8EB79B",
+      "patchtst": "#75AEC3",
+      "grud": "#617383",
+      "lightgbm": "#7F7F7F"
+    },
+    "note": "Blue, sage, teal and slate coordinated with Figure 1."
+  },
+  "previews": [
+    "docs/images/paper_figure_framework.png",
+    "docs/images/paper_figure_comparison.png",
+    "docs/images/paper_figure_robustness.png",
+    "docs/images/paper_figure_planning.png",
+    "docs/images/paper_figure_audit.png"
+  ],
+  "model_training_or_evaluation": false
+}
