@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   retire:
-    name: Pause and privatize the former hosted Demo
+    name: Delete the former hosted Demo Space
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -27,5 +27,5 @@ jobs:
       - name: Verify the retirement target and idempotence
         run: uv run python -m unittest tests.test_retire_hf_space -q
 
-      - name: Retire only the Space and verify public model availability
+      - name: Delete only the Space and verify public model availability
         run: uv run --with huggingface-hub python tools/retire_hf_space.py

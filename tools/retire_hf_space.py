@@ -1,7 +1,7 @@
-"""Retire the former hosted Demo without deleting its source or model repository.
+"""Delete only the former hosted Demo; keep the public model repository intact.
 
 Runs only with the existing repository-scoped HF_TOKEN in the manual retirement
-workflow. All mutation calls target the exact Space named by the user.
+workflow. The Space implementation remains versioned in this GitHub repository.
 """
 from __future__ import annotations
 
@@ -16,44 +16,49 @@ MODEL_REVISION = "eb4447f4ebab8f9caa003d92c838ed8e750963bd"
 
 def retire() -> dict:
     from huggingface_hub import HfApi
+    from huggingface_hub.errors import RepositoryNotFoundError
 
     if not os.environ.get("HF_TOKEN"):
         raise RuntimeError("The existing HF_TOKEN Actions secret is required")
     api = HfApi(token=os.environ["HF_TOKEN"])
     if api.whoami()["name"] != "config-h":
         raise RuntimeError("The retirement credential must belong to the Space owner")
-    info = api.space_info(repo_id=SPACE_ID)
-    if info.id != SPACE_ID or SPACE_ID == MODEL_ID:
+    if SPACE_ID != "config-h/WLCR-SEA_Predictor" or SPACE_ID == MODEL_ID:
         raise RuntimeError("Unexpected retirement target")
 
-    runtime = api.get_space_runtime(repo_id=SPACE_ID)
-    if getattr(runtime.stage, "value", runtime.stage) != "PAUSED":
-        api.pause_space(repo_id=SPACE_ID)
-    if not info.private:
-        api.update_repo_settings(repo_id=SPACE_ID, repo_type="space", private=True)
-
-    # Visibility changes can update runtime state asynchronously.
-    for _ in range(24):
+    # Read-only preflight: the separately published model must remain available.
+    public = HfApi(token=False)
+    model = public.model_info(repo_id=MODEL_ID, revision=MODEL_REVISION)
+    if model.private or model.sha != MODEL_REVISION:
+        raise RuntimeError("The existing public model release is not available")
+    try:
         info = api.space_info(repo_id=SPACE_ID)
-        runtime = api.get_space_runtime(repo_id=SPACE_ID)
-        stage = str(getattr(runtime.stage, "value", runtime.stage))
-        if info.private and stage == "PAUSED":
-            break
-        if stage not in {"PAUSED", "PAUSING"}:
-            api.pause_space(repo_id=SPACE_ID)
+    except RepositoryNotFoundError:
+        info = None  # Allow retry after successful deletion.
+    if info is not None and info.id != SPACE_ID:
+        raise RuntimeError("Unexpected retirement target")
+
+    api.delete_repo(repo_id=SPACE_ID, repo_type="space", missing_ok=True)
+
+    # Check as the owner: a private or paused Space still appears in this list.
+    for _ in range(24):
+        try:
+            api.space_info(repo_id=SPACE_ID)
+        except RepositoryNotFoundError:
+            if not any(space.id == SPACE_ID for space in api.list_spaces(author="config-h")):
+                break
         time.sleep(5)
     else:
-        raise RuntimeError("Space retirement did not reach private + PAUSED")
+        raise RuntimeError("The former hosted Space still exists after deletion")
 
-    # Read-only check: the separate public model stays available at its pin.
-    model = HfApi(token=False).model_info(repo_id=MODEL_ID, revision=MODEL_REVISION)
+    model = public.model_info(repo_id=MODEL_ID, revision=MODEL_REVISION)
     if model.private or model.sha != MODEL_REVISION:
         raise RuntimeError("The existing public model release is not available")
     result = {
         "space": SPACE_ID,
-        "private": bool(info.private),
-        "stage": stage,
-        "source_deleted": False,
+        "space_exists": False,
+        "space_deleted": True,
+        "github_source_retained": True,
         "public_model": MODEL_ID,
         "model_revision": model.sha,
         "model_still_public": not model.private,
