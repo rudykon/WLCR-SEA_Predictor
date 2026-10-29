@@ -1,4 +1,4 @@
-name: Hugging Face Space demo
+name: Python Demo compatibility
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
       - "demo/**"
       - "tests/test_hf_space_demo.py"
       - "tests/test_public_metadata.py"
+      - "tests/test_retire_hf_space.py"
       - "README.md"
       - "README_CN.md"
       - "REPRODUCTION.md"
@@ -17,7 +18,8 @@ on:
       - "Model/traffic_window_forecasting.py"
       - "requirements-demo.txt"
       - ".github/workflows/demo.yml"
-      - ".github/workflows/hugging-face-space.yml"
+      - ".github/workflows/retire-hugging-face-space.yml"
+      - "tools/retire_hf_space.py"
   push:
     branches:
       - main
@@ -25,6 +27,7 @@ on:
       - "demo/**"
       - "tests/test_hf_space_demo.py"
       - "tests/test_public_metadata.py"
+      - "tests/test_retire_hf_space.py"
       - "README.md"
       - "README_CN.md"
       - "REPRODUCTION.md"
@@ -36,7 +39,8 @@ on:
       - "Model/traffic_window_forecasting.py"
       - "requirements-demo.txt"
       - ".github/workflows/demo.yml"
-      - ".github/workflows/hugging-face-space.yml"
+      - ".github/workflows/retire-hugging-face-space.yml"
+      - "tools/retire_hf_space.py"
   workflow_dispatch:
 
 permissions:
@@ -72,6 +76,7 @@ jobs:
           python -m unittest
           tests.test_hf_space_demo
           tests.test_public_metadata
+          tests.test_retire_hf_space
           -v
 
       - name: Build the Gradio interface

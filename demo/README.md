@@ -1,4 +1,6 @@
-# WLCR-SEA Forecast Demo
+# Optional local Python Demo
+
+The public experience is the [browser-local Demo](https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/). The former hosted HF Space is retired. This Python interface remains available for local use and reproducibility.
 
 The Demo runs a five-model ensemble from the public WLCR-SEA checkpoints on
 CPU. At startup it downloads the pinned Hugging Face revision, verifies every
@@ -13,8 +15,8 @@ python demo/app.py
 The built-in synthetic request runs automatically. Uploads must contain one
 cell, 336 contiguous hourly rows, and the four documented traffic indicators.
 The automatic preview does not create temporary downloads; click **Run
-forecast** to enable the forecast CSV and audit JSON. Do not upload
-confidential operator traffic to the public Space.
+forecast** to enable the forecast CSV and audit JSON. Files are handled by
+the Python process running this local interface.
 
 The **Ensemble routing summary** shows expert values and routing weights
 averaged separately across five members. It is useful for reviewing routing

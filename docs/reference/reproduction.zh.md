@@ -3,7 +3,13 @@
 本页统一提供环境安装、输入校验、公开模型集成推理、测试和代码地图。完整且唯一的权威流程见
 [`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md)。
 
-## 在本地运行 Demo
+## 在浏览器中运行
+
+[打开浏览器本地 Demo](../local-demo.md){ .md-button .md-button--primary }
+
+无需安装 Python。预测使用浏览者电脑的 CPU，CSV 留在本机。原 HF 云端体验已停用。
+
+## 可选：本机 Python 界面
 
 ```bash
 git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
@@ -33,7 +39,7 @@ Demo 只接收同一个小区连续 336 小时的数据。必须使用以下表�
 | `小区名称` | 336 行使用同一个非空值 |
 | 四项指标 | 有限非负数、`NIL` 或空白 |
 | 编码 | UTF-8 或带 BOM 的 UTF-8 |
-| 公开上传 | 不超过 5 MB；不得上传运营商机密流量 |
+| 本地 CSV | 不超过 5 MB，在本机处理 |
 
 预测从最后一行的下一小时开始，覆盖未来 24 小时。`NIL` 和空白表示缺失观测；掩码会
 阻止占位值进入专家汇总。
@@ -63,7 +69,7 @@ Demo 只接收同一个小区连续 336 小时的数据。必须使用以下表�
 其他位置统一称为 **WLCR-SEA 五模型集成**。
 
 [查看固定版本模型权重](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button }
-[打开在线 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary }
+[打开浏览器本地 Demo](../local-demo.md){ .md-button .md-button--primary }
 
 ## 验证
 
@@ -73,7 +79,7 @@ PYTHONPATH=. python -m unittest tests.test_hf_space_demo -v
 PYTHONPATH=. python -m unittest tests.test_request_locality_audit -v
 ```
 
-Space 一致性测试会通过核心模型路径独立计算固定样例，再将五成员的原始流量空间平均值与 Demo
+Python 运行时一致性测试会通过核心模型路径独立计算固定样例，再将五成员的原始流量空间平均值与 Demo
 运行时输出进行比较。
 
 严格构建中英文网站：
@@ -105,7 +111,7 @@ GPU。权威指南列出了主模型训练、基线、缺失、请求内计算�
 | `Model/traffic_window_forecasting.py` | 六列 CSV 解析和请求窗口校验 |
 | `demo/model_loader.py` | 固定版本下载、完整性检查和一次性 CPU 加载 |
 | `demo/runtime.py` | 五成员推理、图片、表格、CSV 与 JSON 导出 |
-| `tests/test_hf_space_demo.py` | 公开检查点和本地/Space 一致性检查 |
+| `tests/test_hf_space_demo.py` | 公开检查点和本机 Python 一致性检查 |
 
 生成模型、NumPy 文件、日志和结果目录均不进入版本化源码。公开流程不包含也不构建未发表
 论文正文。

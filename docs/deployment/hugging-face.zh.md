@@ -1,5 +1,7 @@
-<meta http-equiv="refresh" content="0; url=https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">
+<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/">
 
-# Demo 页面已跳转
+# 体验入口已迁移
 
-[在 Hugging Face 打开在线 Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor)。
+原 HF 云端体验已停用。
+
+[打开浏览器本地 Demo](../local-demo.md)。

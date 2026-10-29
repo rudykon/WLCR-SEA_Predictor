@@ -7,7 +7,7 @@
   const zh = root.dataset.lang === 'zh';
   const t = zh ? {
     meta: '五模型集成 · 公开检查点 · 本机 CPU 推理', subtitle: '单个小区 · 336 小时历史 → 未来 24 小时预测',
-    github: 'GitHub 仓库', cloud: '云端 Demo', languages: '界面语言',
+    github: 'GitHub 仓库', website: '项目网站', languages: '界面语言',
     reset: '恢复内置样例', choose: '选择 336 小时 CSV', drop: '拖放 CSV 到这里，或点击选择', builtin: '内置合成样例', localFile: '本地文件', emptyFile: '尚未选择 CSV',
     privacy: '文件留在浏览器中，使用本机 CPU 计算。', fileHint: 'UTF-8 · 336 行 · NIL 或空白表示缺失 · 最大 5 MB',
     sampleDownload: '下载样例 CSV', clear: '清除文件', pattern: '缺失模式', patterns: ['完整历史', '随机整小时缺失', '连续区块缺失', '最近时段中断', '指标异步缺失'], rate: '追加缺失率',
@@ -40,7 +40,7 @@
     }
   } : {
     meta: 'Five-model ensemble · Public checkpoints · On-device CPU inference', subtitle: 'One cell · 336 hours of history → 24 hours of forecast',
-    github: 'GitHub repository', cloud: 'Hosted Demo', languages: 'Interface language',
+    github: 'GitHub repository', website: 'Project website', languages: 'Interface language',
     reset: 'Reset to sample', choose: 'Choose a 336-hour CSV', drop: 'Drop a CSV here, or click to choose', builtin: 'Built-in synthetic sample', localFile: 'Local file', emptyFile: 'No CSV selected',
     privacy: 'Files stay in your browser and run on your CPU.', fileHint: 'UTF-8 · 336 rows · NIL or blanks for gaps · 5 MB max',
     sampleDownload: 'Download sample CSV', clear: 'Clear file', pattern: 'Missingness pattern', patterns: ['Complete history', 'Random whole-hour loss', 'Contiguous block loss', 'Recent-tail outage', 'Asynchronous indicator loss'], rate: 'Additional missingness',
@@ -79,7 +79,7 @@
     <header class="local-demo-header">
       <nav class="local-demo-languages" aria-label="${t.languages}"><a href="${localURL('local-demo/')}" ${!zh ? 'aria-current="page"' : ''}>English</a><a href="${localURL('zh/local-demo/')}" ${zh ? 'aria-current="page"' : ''}>中文</a></nav>
       <p class="local-demo-meta">${t.meta}</p><p class="local-demo-subtitle">${t.subtitle}</p>
-      <nav class="local-demo-links"><a href="https://github.com/rudykon/WLCR-SEA_Predictor" target="_blank" rel="noopener noreferrer">${t.github}</a><a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener noreferrer">${t.cloud}</a></nav>
+      <nav class="local-demo-links"><a href="https://github.com/rudykon/WLCR-SEA_Predictor" target="_blank" rel="noopener noreferrer">${t.github}</a><a href="${localURL(zh ? 'zh/' : '')}" target="_blank" rel="noopener noreferrer">${t.website}</a></nav>
     </header>
     <div class="local-demo-workspace">
       <section class="local-demo-controls" aria-label="${t.choose}">

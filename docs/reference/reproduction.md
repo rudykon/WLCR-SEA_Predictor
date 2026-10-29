@@ -4,7 +4,13 @@ This page is the practical entry point for installation, input validation,
 public ensemble inference, tests, and the research code map. The complete authoritative
 workflow lives in [`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md).
 
-## Run the Demo locally
+## Run in your browser
+
+[Open the browser-local Demo](../local-demo.md){ .md-button .md-button--primary }
+
+No Python installation is needed. Inference uses the visitor’s CPU and CSV contents stay on the device. The former hosted Space is retired.
+
+## Optional local Python interface
 
 ```bash
 git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
@@ -37,7 +43,7 @@ header:
 | `小区名称` | One non-empty value shared by all rows |
 | Four indicators | Finite non-negative number, `NIL`, or blank |
 | Encoding | UTF-8 or UTF-8 with BOM |
-| Public upload | At most 5 MB; never upload confidential operator traffic |
+| Local CSV file | At most 5 MB; processed on your device |
 
 The forecast begins one hour after the final row and covers the next 24 hours.
 `NIL` and blank fields are missing observations; the mask prevents their
@@ -73,7 +79,7 @@ the paper's internal identifier `A6_mixed_aug` for exact provenance; elsewhere
 the website calls them the **WLCR-SEA five-model ensemble**.
 
 [Inspect pinned model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button }
-[Open the live Demo](https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor){ .md-button .md-button--primary }
+[Open the browser-local Demo](../local-demo.md){ .md-button .md-button--primary }
 
 ## Verify
 
@@ -83,7 +89,7 @@ PYTHONPATH=. python -m unittest tests.test_hf_space_demo -v
 PYTHONPATH=. python -m unittest tests.test_request_locality_audit -v
 ```
 
-The Space consistency test independently evaluates the fixed sample through the core model
+The Python runtime consistency test independently evaluates the fixed sample through the core model
 path and compares the five-member linear-space mean with the Demo runtime.
 
 Build both website languages:
@@ -116,7 +122,7 @@ missingness, request-locality, cell-disjoint, auditability, and latency stages.
 | `Model/traffic_window_forecasting.py` | Six-column CSV parsing and request-window validation |
 | `demo/model_loader.py` | Pinned model download, integrity checks, one-time CPU load |
 | `demo/runtime.py` | Five-member inference, figures, tables, CSV and JSON exports |
-| `tests/test_hf_space_demo.py` | Public checkpoint and local/Space consistency checks |
+| `tests/test_hf_space_demo.py` | Public checkpoint and local Python consistency checks |
 
 Generated models, NumPy bundles, logs, and result folders remain outside the
 versioned source. The public workflow does not contain or build unpublished

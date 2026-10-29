@@ -13,7 +13,6 @@ hide:
   <p class="project-lead">使用单个小区过去 336 小时的四项流量指标，预测未来 24 小时。不可用历史参考被严格屏蔽，每次预测均可导出专家值、路由权重、残差与边界检查。</p>
   <div class="project-actions">
     <a class="md-button md-button--primary" href="local-demo/">本地运行 Demo</a>
-    <a class="md-button" href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor" target="_blank" rel="noopener">云端体验 Demo</a>
     <a class="md-button" href="guide/method/">方法</a>
     <a class="md-button" href="research/evidence/">实验结果</a>
     <a class="md-button" href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd" target="_blank" rel="noopener">模型权重</a>

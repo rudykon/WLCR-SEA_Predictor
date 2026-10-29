@@ -7,9 +7,11 @@ training data or generated experiment artifacts.
 
 ## 1. Environments
 
-Use Python 3.11 or newer; CI and the public Demo use Python 3.12.
+The public [browser-local Demo](https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/) needs no Python installation. The former hosted Space is retired.
 
-For public ensemble inference and the Gradio Demo:
+For the optional Python interface, use Python 3.11 or newer; CI uses Python 3.12.
+
+For Python ensemble inference and the local Gradio interface:
 
 ```bash
 python3 -m venv .venv
@@ -70,7 +72,7 @@ for one cell. The required header is:
 - Time format: `YYYY/MM/DD HH:MM`, strictly increasing by one hour.
 - Cell name: one non-empty value shared by every row.
 - Indicators: finite non-negative numbers; `NIL` or blank means missing.
-- Public upload limit: 5 MB.
+- Local CSV file limit: 5 MB.
 
 `demo/examples/synthetic_traffic.csv` is deterministic synthetic data and
 contains no operator traffic.
@@ -120,8 +122,8 @@ python -m pip install -r requirements-docs.txt
 mkdocs build --strict
 ```
 
-The Space consistency test independently reconstructs the fixed sample through the core
-evaluation path and compares its five-member linear-space mean with the Space
+The Python runtime consistency test independently reconstructs the fixed sample through the core
+evaluation path and compares its five-member linear-space mean with the local Python
 runtime output.
 
 ## 5. Refit the research models
@@ -211,7 +213,7 @@ an inference API and sends no request CSV to a server. Open it through the
 website's Local Demo tab, or build the docs and serve `site/` over localhost.
 Modern browsers require HTTPS or localhost for the worker's cryptographic API.
 
-The interface follows the hosted Demo: controls alongside the forecast and audit
+The interface retains the former hosted Demo’s layout: controls alongside the forecast and audit
 status, an automatic sample preview, and a routing view for the selected
 indicator and future hour. Advanced details contain the full forecast, selected
 expert table, member table, and downloads. Explicitly run the forecast to enable
@@ -248,7 +250,7 @@ All sample and reference inputs are synthetic, not operator traffic.
 | `experiments/benchmark_end_to_end_latency.py` | Matched CPU latency and asset-size measurement |
 | `demo/model_loader.py` | Pinned download, SHA-256 verification, and one-time ensemble loading |
 | `demo/runtime.py` | CSV-to-ensemble inference, plots, tables, and audit exports |
-| `tests/test_hf_space_demo.py` | Public checkpoint and local/Space consistency checks |
+| `tests/test_hf_space_demo.py` | Public checkpoint and local Python consistency checks |
 
 ## 8. Reporting checklist
 

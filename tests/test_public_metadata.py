@@ -75,8 +75,8 @@ class PublicMetadataTest(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn("title: WLCR-SEA Cellular Traffic Forecast Demo", space_card)
-        self.assertIn("Live Demo", (ROOT / "README.md").read_text(encoding="utf-8"))
-        self.assertIn("体验 Demo", (ROOT / "docs/index.zh.md").read_text(encoding="utf-8"))
+        self.assertIn("https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/", (ROOT / "README.md").read_text(encoding="utf-8"))
+        self.assertIn('href="local-demo/"', (ROOT / "docs/index.zh.md").read_text(encoding="utf-8"))
 
     def test_public_metrics_name_their_aggregation(self) -> None:
         for relative in (
@@ -116,7 +116,7 @@ class PublicMetadataTest(unittest.TestCase):
             for endpoint in (
                 "github/v/release/rudykon/WLCR-SEA_Predictor",
                 "github/actions/workflow/status/rudykon/WLCR-SEA_Predictor/demo.yml",
-                "badge/Hugging%20Face-Live%20Demo-FFD21E",
+                "badge/Local-Demo-0f766e",
                 "github/license/rudykon/WLCR-SEA_Predictor",
             ):
                 self.assertIn(f"https://img.shields.io/{endpoint}", text)
@@ -311,14 +311,37 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertNotIn("registered ensemble rule", reproduction.lower())
         self.assertNotIn("登记的集成规则", reproduction_zh)
 
-    def test_space_sync_records_source_and_runs_post_deploy_sample(self) -> None:
-        workflow = (
-            ROOT / ".github" / "workflows" / "hugging-face-space.yml"
-        ).read_text(encoding="utf-8")
-        self.assertIn('> "${HF_SPACE_STAGE}/SOURCE_REVISION"', workflow)
-        self.assertIn("tools/check_space_deployment.py", workflow)
-        self.assertIn("--expected-commit", workflow)
-        self.assertIn("Synchronize the public model card", workflow)
+    def test_hosted_space_cannot_be_republished_by_a_main_push(self) -> None:
+        workflows = ROOT / ".github" / "workflows"
+        self.assertFalse((workflows / "hugging-face-space.yml").exists())
+        workflow = (workflows / "retire-hugging-face-space.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("workflow_dispatch:", workflow)
+        self.assertNotIn("push:", workflow)
+        self.assertNotIn("schedule:", workflow)
+        self.assertIn("tools/retire_hf_space.py", workflow)
+
+    def test_public_experience_links_use_the_browser_demo(self) -> None:
+        paths = [ROOT / "README.md", ROOT / "README_CN.md"]
+        paths.extend((ROOT / "docs").rglob("*.md"))
+        paths.append(ROOT / "docs" / "javascripts" / "local-demo.js")
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn(
+                "https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor",
+                text,
+                msg=str(path.relative_to(ROOT)),
+            )
+        for lang in ("", ".zh"):
+            redirect = (ROOT / "docs" / "deployment" / f"hugging-face{lang}.md").read_text(
+                encoding="utf-8"
+            )
+            target = "zh/" if lang else ""
+            self.assertIn(
+                f"url=https://rudykon.github.io/WLCR-SEA_Predictor/{target}local-demo/",
+                redirect,
+            )
 
 
 if __name__ == "__main__":

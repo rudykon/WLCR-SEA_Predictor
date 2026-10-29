@@ -9,14 +9,13 @@
 <p align="center">
   <a href="https://github.com/rudykon/WLCR-SEA_Predictor/releases/latest"><img src="https://img.shields.io/github/v/release/rudykon/WLCR-SEA_Predictor?display_name=tag&amp;sort=semver&amp;label=release&amp;color=0f766e" alt="最新版本"></a>
   <a href="https://github.com/rudykon/WLCR-SEA_Predictor/actions/workflows/demo.yml"><img src="https://img.shields.io/github/actions/workflow/status/rudykon/WLCR-SEA_Predictor/demo.yml?branch=main&amp;label=demo%20CI&amp;logo=githubactions&amp;logoColor=white" alt="Demo CI 状态"></a>
-  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor"><img src="https://img.shields.io/badge/Hugging%20Face-Live%20Demo-FFD21E?logo=huggingface&amp;logoColor=000" alt="在线 Demo"></a>
+  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/"><img src="https://img.shields.io/badge/Local-Demo-0f766e?logo=javascript&amp;logoColor=white" alt="浏览器本地 Demo"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/rudykon/WLCR-SEA_Predictor?label=license&amp;color=3d6fb6" alt="Apache-2.0 许可证"></a>
 </p>
 
 <p align="center">
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/">项目网站</a> ·
   <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/">本地 Demo</a> ·
-  <a href="https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor">在线 Demo</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">模型卡</a> ·
   <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd">固定权重</a> ·
   <a href="#研究数据集">数据集</a> ·
@@ -68,6 +67,11 @@ WLCR-SEA 读取单个小区过去 **336 小时 × 4 项流量指标**，预测�
 
 ## 运行
 
+打开[浏览器本地 Demo](https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/)，无需安装 Python。五个模型使用你的电脑算力运行，CSV 内容不会上传服务器。原 Hugging Face 云端体验已停用。
+
+<details>
+<summary>可选：在本机运行 Python 界面</summary>
+
 ```bash
 git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
 cd WLCR-SEA_Predictor
@@ -76,8 +80,10 @@ python demo/app.py
 ```
 
 应用会校验并缓存五个公开模型检查点，并自动预览一个 336 小时合成样例。点击
-**运行预测**后才会生成可下载的预测 CSV 与带版本的审计 JSON。公开 Space 上传上限为
-5 MB；敏感运营数据请在本地运行。
+**运行预测**后才会生成可下载的预测 CSV 与带版本的审计 JSON。本机 Python 界面的
+CSV 文件大小上限为 5 MB。
+
+</details>
 
 ## 研究数据集
 
