@@ -1,4 +1,4 @@
-<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/research/evidence/#limitations">
+<meta http-equiv="refresh" content="0; url=../evidence/#limitations">
 
 # Limitations moved
 

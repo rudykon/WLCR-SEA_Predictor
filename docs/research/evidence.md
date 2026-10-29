@@ -21,7 +21,7 @@ requires the original request and pinned source and model revisions.
 | Complete-history test | Fixed later time period defined by the study |
 | Missingness test | Identical historical positions removed for every compared model |
 
-The [pinned public model release](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)
+The [pinned public model release](../assets/local-demo/model.json)
 reports the ensemble's complete-history **macro-cell WAPE 0.177612**, **pooled
 WAPE 0.184915**, and **macro-indicator WAPE 0.195511**. These values describe
 different aggregations of the same evaluation workflow and are not

@@ -1,4 +1,4 @@
-<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/">
+<meta http-equiv="refresh" content="0; url=../../local-demo/">
 
 # Demo moved
 

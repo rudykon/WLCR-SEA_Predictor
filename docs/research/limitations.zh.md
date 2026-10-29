@@ -1,4 +1,4 @@
-<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/zh/research/evidence/#limitations">
+<meta http-equiv="refresh" content="0; url=../evidence/#limitations">
 
 # 适用边界已合并
 

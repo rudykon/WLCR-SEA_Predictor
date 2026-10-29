@@ -93,7 +93,7 @@ the arithmetic mean of the five arrays **after inverse transformation to linear
 traffic space**.
 
 [Open the browser-local Demo](../local-demo.md){ .md-button .md-button--primary target="_blank" rel="noopener" }
-[Inspect the pinned checkpoints](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button target="_blank" rel="noopener" }
+[Inspect the pinned checkpoints](../assets/local-demo/model.json){ .md-button target="_blank" rel="noopener" }
 
 ## 5. Audit record
 

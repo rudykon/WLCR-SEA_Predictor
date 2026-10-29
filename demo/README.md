@@ -1,9 +1,9 @@
 # Optional local Python Demo
 
-The public experience is the [browser-local Demo](https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/). The former hosted HF Space is retired. This Python interface remains available for local use and reproducibility.
+The public experience is the [browser-local Demo](../docs/local-demo.md). The former hosted HF Space is retired. This Python interface remains available for local use and reproducibility.
 
 The Demo runs a five-model ensemble from the public WLCR-SEA checkpoints on
-CPU. At startup it downloads the pinned Hugging Face revision, verifies every
+CPU. At startup it reads the bundled checkpoints in `demo/checkpoints/`, verifies every
 SHA-256, loads each frozen training prior and model once, and averages member
 forecasts in linear traffic space.
 

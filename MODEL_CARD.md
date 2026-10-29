@@ -50,8 +50,8 @@ linear traffic space.
 
 ## Load the same predictor as the Demo
 
-Clone the
-[implementation repository](https://github.com/rudykon/WLCR-SEA_Predictor),
+Extract the
+[anonymous review package](REVIEW.md),
 install `requirements-demo.txt`, and use the verified ensemble loader:
 
 ```python
@@ -63,8 +63,8 @@ result = run_forecast("request.csv", ensemble=ensemble)
 forecast = result.prediction  # shape: (24, 4), linear traffic space
 ```
 
-The public runtime pins model revision
-[`eb4447f4ebab`](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd),
+The local runtime pins bundled release
+[`ensemble-v1`](demo/checkpoints/SHA256SUMS),
 verifies every checkpoint SHA-256, and checks model metadata before loading.
 Request parsing, observation-mask handling, five-member aggregation, and audit
 export all use the same code path as the public Demo.

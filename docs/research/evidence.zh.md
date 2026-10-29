@@ -19,7 +19,7 @@ WLCR-SEA 并不是所有情况下都最准确的模型。历史完整时 DLinear
 | 完整历史测试 | 研究预先定义的固定后续时间段 |
 | 缺失测试 | 所有对比模型移除完全相同的历史位置 |
 
-[固定版本的公开模型仓库](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)报告该集成在
+[固定版本的公开模型仓库](../assets/local-demo/model.json)报告该集成在
 完整历史下的**宏小区 WAPE 为 0.177612**、**池化 WAPE 为 0.184915**、
 **四指标宏平均 WAPE 为 0.195511**。它们是同一评估流程的不同聚合方式，不能混用。
 

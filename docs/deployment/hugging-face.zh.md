@@ -1,4 +1,4 @@
-<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/">
+<meta http-equiv="refresh" content="0; url=../../local-demo/">
 
 # 体验入口已迁移
 

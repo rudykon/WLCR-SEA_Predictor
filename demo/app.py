@@ -11,10 +11,8 @@ from pathlib import Path
 
 os.environ.setdefault("GRADIO_ANALYTICS_ENABLED", "False")
 
-# The existing hosted repository is assigned ZeroGPU hardware and Hugging Face
-# currently rejects an in-place downgrade for its free owner account. Startup
-# therefore requires one detectable decorator even though inference is CPU-only.
-# This marker is never connected to Gradio and is never called.
+# Legacy compatibility marker for Gradio environments with the spaces package.
+# Local inference is CPU-only; this marker is never connected or called.
 try:
     import spaces
 except ImportError:
@@ -61,7 +59,7 @@ from demo.runtime import (
 
 LOGGER = logging.getLogger(__name__)
 EXAMPLE_PATH = ROOT / "demo" / "examples" / "synthetic_traffic.csv"
-# Space startup resolves, verifies, and loads all five public checkpoints once.
+# Startup verifies and loads all five bundled checkpoints once.
 ENSEMBLE = load_ensemble()
 
 CSS = """
@@ -121,15 +119,11 @@ TEXT = {
           <h1>WLCR-SEA Forecast Demo</h1>
           <p class="wlcr-meta">Five-model ensemble · Verified public checkpoints · CPU inference</p>
           <p>One cell · 336 hours of history → 24 hours of forecast</p>
-          <nav class="wlcr-links" aria-label="Project links">
-            <a href="https://github.com/rudykon/WLCR-SEA_Predictor" target="_blank" rel="noopener noreferrer">GitHub repository</a>
-            <a href="https://rudykon.github.io/WLCR-SEA_Predictor/" target="_blank" rel="noopener noreferrer">Project website</a>
-          </nav>
         </section>
         """,
         "sample": "Reset to sample",
         "upload": "Upload a 336-hour CSV",
-        "privacy": "Public Demo. Do not upload confidential operator traffic.",
+        "privacy": "Local Demo. Files are processed by this Python process.",
         "scenario": "Missingness pattern",
         "rate": "Additional missingness",
         "run": "Run forecast",
@@ -159,15 +153,11 @@ TEXT = {
           <h1>WLCR-SEA 流量预测 Demo</h1>
           <p class="wlcr-meta">五模型集成 · 公开检查点已校验 · CPU 推理</p>
           <p>单个小区 · 336 小时历史 → 未来 24 小时预测</p>
-          <nav class="wlcr-links" aria-label="项目链接">
-            <a href="https://github.com/rudykon/WLCR-SEA_Predictor" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
-            <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/" target="_blank" rel="noopener noreferrer">项目网站</a>
-          </nav>
         </section>
         """,
         "sample": "恢复内置样例",
         "upload": "上传 336 小时 CSV",
-        "privacy": "这是公开 Demo，请勿上传运营商机密流量数据。",
+        "privacy": "本地 Demo，文件由本机 Python 进程处理。",
         "scenario": "缺失模式",
         "rate": "追加缺失率",
         "run": "运行预测",
@@ -342,11 +332,9 @@ def _build_panel(lang: str) -> Panel:
                 label=text["audit_download"], interactive=False
             )
         gr.Markdown(
-            "[Input schema](https://rudykon.github.io/WLCR-SEA_Predictor/reference/reproduction/#input-format) · "
-            "[Pinned model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)"
+            "Input format: see REPRODUCTION.md. Verified models: demo/checkpoints/."
             if lang == "en"
-            else "[输入格式](https://rudykon.github.io/WLCR-SEA_Predictor/zh/reference/reproduction/#input-format) · "
-            "[固定版本模型权重](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)"
+            else "输入格式见 REPRODUCTION.md；已校验的模型位于 demo/checkpoints/。"
         )
 
     panel = Panel(

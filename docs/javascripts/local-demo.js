@@ -7,7 +7,7 @@
   const zh = root.dataset.lang === 'zh';
   const t = zh ? {
     meta: '五模型集成 · 公开检查点 · 本机 CPU 推理', subtitle: '单个小区 · 336 小时历史 → 未来 24 小时预测',
-    github: 'GitHub 仓库', website: '项目网站', languages: '界面语言',
+    website: '项目网站', languages: '界面语言',
     reset: '恢复内置样例', choose: '选择 336 小时 CSV', drop: '拖放 CSV 到这里，或点击选择', builtin: '内置合成样例', localFile: '本地文件', emptyFile: '尚未选择 CSV',
     privacy: '文件留在浏览器中，使用本机 CPU 计算。', fileHint: 'UTF-8 · 336 行 · NIL 或空白表示缺失 · 最大 5 MB',
     sampleDownload: '下载样例 CSV', clear: '清除文件', pattern: '缺失模式', patterns: ['完整历史', '随机整小时缺失', '连续区块缺失', '最近时段中断', '指标异步缺失'], rate: '追加缺失率',
@@ -40,7 +40,7 @@
     }
   } : {
     meta: 'Five-model ensemble · Public checkpoints · On-device CPU inference', subtitle: 'One cell · 336 hours of history → 24 hours of forecast',
-    github: 'GitHub repository', website: 'Project website', languages: 'Interface language',
+    website: 'Project website', languages: 'Interface language',
     reset: 'Reset to sample', choose: 'Choose a 336-hour CSV', drop: 'Drop a CSV here, or click to choose', builtin: 'Built-in synthetic sample', localFile: 'Local file', emptyFile: 'No CSV selected',
     privacy: 'Files stay in your browser and run on your CPU.', fileHint: 'UTF-8 · 336 rows · NIL or blanks for gaps · 5 MB max',
     sampleDownload: 'Download sample CSV', clear: 'Clear file', pattern: 'Missingness pattern', patterns: ['Complete history', 'Random whole-hour loss', 'Contiguous block loss', 'Recent-tail outage', 'Asynchronous indicator loss'], rate: 'Additional missingness',
@@ -79,7 +79,7 @@
     <header class="local-demo-header">
       <nav class="local-demo-languages" aria-label="${t.languages}"><a href="${localURL('local-demo/')}" ${!zh ? 'aria-current="page"' : ''}>English</a><a href="${localURL('zh/local-demo/')}" ${zh ? 'aria-current="page"' : ''}>中文</a></nav>
       <p class="local-demo-meta">${t.meta}</p><p class="local-demo-subtitle">${t.subtitle}</p>
-      <nav class="local-demo-links"><a href="https://github.com/rudykon/WLCR-SEA_Predictor" target="_blank" rel="noopener noreferrer">${t.github}</a><a href="${localURL(zh ? 'zh/' : '')}" target="_blank" rel="noopener noreferrer">${t.website}</a></nav>
+      <nav class="local-demo-links"><a href="${localURL(zh ? 'zh/' : '')}" target="_blank" rel="noopener noreferrer">${t.website}</a></nav>
     </header>
     <div class="local-demo-workspace">
       <section class="local-demo-controls" aria-label="${t.choose}">
@@ -118,7 +118,7 @@
       <h3>${t.expertTable}</h3><div class="local-demo-table"><table><thead><tr>${[t.expert, t.available, t.support, t.expertValue, t.meanWeight].map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody id="local-expert-tbody"></tbody></table></div>
       <h3>${t.memberTable}</h3><div class="local-demo-table"><table><thead><tr>${[t.seed, t.config, t.memberPrediction, t.residual, t.bound, 'Checkpoint SHA-256'].map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody id="local-member-tbody"></tbody></table></div>
     </div><p id="local-download-hint" class="local-demo-help">${t.downloadHint}</p><div class="local-demo-downloads"><button type="button" id="local-csv" class="md-button" disabled>${t.csv}<small>wlcr-sea-forecast.csv</small></button><button type="button" id="local-audit" class="md-button" disabled>${t.auditDownload}<small>wlcr-sea-audit.json</small></button></div>
-    <p class="local-demo-help"><a href="${localURL((zh ? 'zh/' : '') + 'guide/data-contract/')}">${t.inputFormat}</a> · <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd" target="_blank" rel="noopener noreferrer">${t.modelWeights}</a></p><p class="local-demo-help">${t.note}</p></details>`;
+    <p class="local-demo-help"><a href="${localURL((zh ? 'zh/' : '') + 'guide/data-contract/')}">${t.inputFormat}</a> · <a href="${localURL('assets/local-demo/model.json')}" target="_blank" rel="noopener noreferrer">${t.modelWeights}</a></p><p class="local-demo-help">${t.note}</p></details>`;
   const el = id => root.querySelector(`#local-${id}`);
   const number = new Intl.NumberFormat(zh ? 'zh-CN' : 'en', { maximumFractionDigits: 3 });
   const percent = x => `${(x * 100).toFixed(1)}%`;

@@ -1,4 +1,4 @@
-<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/zh/guide/method/">
+<meta http-equiv="refresh" content="0; url=../method/">
 
 # 架构页面已合并
 

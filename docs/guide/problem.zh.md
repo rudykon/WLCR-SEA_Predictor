@@ -1,4 +1,4 @@
-<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/zh/">
+<meta http-equiv="refresh" content="0; url=../..">
 
 # 研究设定已合并
 

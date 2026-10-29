@@ -1,6 +1,6 @@
 {
   "schema": "wlcr-sea-browser-reference/v1",
-  "model_revision": "eb4447f4ebab8f9caa003d92c838ed8e750963bd",
+  "model_revision": "ensemble-v1",
   "weights_sha256": "715c737f419228f06fa5c076334fe727bf780159a0e2483987f85d846e50d0d8",
   "source": "Only the bundled synthetic sample; expected values calculated by the published PyTorch implementation.",
   "cases": [

@@ -1,7 +1,7 @@
 # 复现
 
 本页统一提供环境安装、输入校验、公开模型集成推理、测试和代码地图。完整且唯一的权威流程见
-[`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md)。
+审稿包根目录中的 `REPRODUCTION.md`。
 
 ## 在浏览器中运行
 
@@ -12,8 +12,7 @@
 ## 可选：本机 Python 界面
 
 ```bash
-git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
-cd WLCR-SEA_Predictor
+cd /path/to/review-package
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
@@ -21,9 +20,9 @@ python -m pip install -r requirements-demo.txt
 python demo/app.py
 ```
 
-应用会下载固定的 Hugging Face 模型版本，校验五个检查点的 SHA-256，在 CPU 上一次性
-加载模型及冻结训练先验，并自动运行合成样例。若已下载模型仓库，可设置
-`WLCR_SEA_CHECKPOINT_DIR`，避免重复下载。
+应用会读取并校验 `demo/checkpoints/` 中的五个模型，在 CPU 上加载模型和冻结训练先验，
+并自动预览合成样例。模型加载无需外部账号或网络下载。
+`WLCR_SEA_CHECKPOINT_DIR` 可用于指定包含已校验副本的其他目录。
 
 ## 输入格式 { #input-format }
 
@@ -44,7 +43,7 @@ Demo 只接收同一个小区连续 336 小时的数据。必须使用以下表�
 预测从最后一行的下一小时开始，覆盖未来 24 小时。`NIL` 和空白表示缺失观测；掩码会
 阻止占位值进入专家汇总。
 
-[查看合成请求](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/demo/examples/synthetic_traffic.csv){ .md-button }
+[查看合成请求](../assets/local-demo/sample.csv){ .md-button }
 
 ## 研究数据集
 
@@ -59,16 +58,16 @@ Demo 只接收同一个小区连续 336 小时的数据。必须使用以下表�
 
 压缩包未附单独的数据许可文件。本项目不重新分发该数据；Apache-2.0 只覆盖本仓库代码，
 不授予数据使用权。使用前请遵守来源方适用条款。完整下载、校验和解压命令见
-[`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md#3-input-data)。
+审稿包中的 `REPRODUCTION.md`。
 
 ## 模型资源
 
-公开模型仓库包含种子 42–46 的五个检查点。每个文件保存所选配置和轮次、冻结的
+审稿包包含种子 42–46 的五个检查点。每个文件保存所选配置和轮次、冻结的
 `(24, 4)` 训练先验以及 CPU `state_dict`。集成规则是在原始流量空间对五个
 预测执行算术平均。检查点文件名保留论文内部编号 `A6_mixed_aug`，用于精确追溯；网站
 其他位置统一称为 **WLCR-SEA 五模型集成**。
 
-[查看固定版本模型权重](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button }
+[查看固定版本模型权重](../assets/local-demo/model.json){ .md-button }
 [打开浏览器本地 Demo](../local-demo.md){ .md-button .md-button--primary }
 
 ## 验证
@@ -96,7 +95,7 @@ Git 不保存研究数据。请将校验后的数据放到 `data/train_data.csv`
 GPU。权威指南列出了主模型训练、基线、缺失、请求内计算、小区不重叠、可审计性和延迟
 各阶段的准确命令。
 
-[打开完整复现指南](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md){ .md-button .md-button--primary }
+完整命令见审稿包根目录中的 `REPRODUCTION.md`。
 
 ## 代码地图 { #code-map }
 
@@ -109,7 +108,7 @@ GPU。权威指南列出了主模型训练、基线、缺失、请求内计算�
 | `experiments/audit_method_evidence.py` | 请求内计算、掩码、删除和边界审计 |
 | `experiments/benchmark_end_to_end_latency.py` | 匹配 CPU 延迟和模型资源大小 |
 | `Model/traffic_window_forecasting.py` | 六列 CSV 解析和请求窗口校验 |
-| `demo/model_loader.py` | 固定版本下载、完整性检查和一次性 CPU 加载 |
+| `demo/model_loader.py` | 包内模型读取、完整性检查和一次性 CPU 加载 |
 | `demo/runtime.py` | 五成员推理、图片、表格、CSV 与 JSON 导出 |
 | `tests/test_hf_space_demo.py` | 公开检查点和本机 Python 一致性检查 |
 

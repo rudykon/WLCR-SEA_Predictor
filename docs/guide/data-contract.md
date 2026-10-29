@@ -1,4 +1,4 @@
-<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/reference/reproduction/#input-format">
+<meta http-equiv="refresh" content="0; url=../../reference/reproduction/#input-format">
 
 # Input format moved
 

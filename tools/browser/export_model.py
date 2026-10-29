@@ -49,7 +49,7 @@ def export(output: Path, checkpoint_dir: Path | None = None) -> dict:
         members.append({
             'seed': spec.seed, 'checkpoint': spec.filename,
             'checkpoint_sha256': spec.sha256,
-            'source_url': f'https://huggingface.co/{MODEL_REPO_ID}/resolve/{MODEL_REVISION}/checkpoints/{spec.filename}',
+            'checkpoint_path': f'demo/checkpoints/{spec.filename}',
             'selected_config': payload['selected_config'],
             'selected_epoch': int(payload['selected_epoch']), 'tensors': tensors,
         })

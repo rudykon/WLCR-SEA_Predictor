@@ -9,7 +9,7 @@ DATASET_URL = (
     "https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/"
     "wuxian-gaoxiao2026/1780886490950118786.zip"
 )
-MODEL_REVISION = "eb4447f4ebab8f9caa003d92c838ed8e750963bd"
+MODEL_REVISION = "ensemble-v1"
 
 
 class PublicMetadataTest(unittest.TestCase):
@@ -75,7 +75,7 @@ class PublicMetadataTest(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn("title: WLCR-SEA Cellular Traffic Forecast Demo", space_card)
-        self.assertIn("https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/", (ROOT / "README.md").read_text(encoding="utf-8"))
+        self.assertIn("docs/local-demo.md", (ROOT / "README.md").read_text(encoding="utf-8"))
         self.assertIn('href="local-demo/"', (ROOT / "docs/index.zh.md").read_text(encoding="utf-8"))
 
     def test_public_metrics_name_their_aggregation(self) -> None:
@@ -109,25 +109,13 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertNotIn("## Figures", readme)
         self.assertEqual(readme.count("paper_figure_"), 2)
 
-    def test_readmes_have_a_compact_shields_badge_row(self) -> None:
+    def test_review_readmes_use_local_navigation(self) -> None:
         for relative in ("README.md", "README_CN.md"):
             text = (ROOT / relative).read_text(encoding="utf-8")
-            self.assertEqual(text.count("https://img.shields.io/"), 4)
-            for endpoint in (
-                "github/v/release/rudykon/WLCR-SEA_Predictor",
-                "github/actions/workflow/status/rudykon/WLCR-SEA_Predictor/demo.yml",
-                "badge/Local-Demo-0f766e",
-                "github/license/rudykon/WLCR-SEA_Predictor",
-            ):
-                self.assertIn(f"https://img.shields.io/{endpoint}", text)
-            self.assertIn(
-                "https://github.com/rudykon/WLCR-SEA_Predictor/releases/latest",
-                text,
-            )
-            self.assertIn(
-                "https://github.com/rudykon/WLCR-SEA_Predictor/actions/workflows/demo.yml",
-                text,
-            )
+            self.assertIn('href="MODEL_CARD.md"', text)
+            self.assertIn('href="demo/checkpoints/"', text)
+            self.assertNotIn("img.shields.io/github/", text)
+            self.assertIn("REVIEW.md", text)
 
     def test_chinese_strong_labels_use_a_commonmark_safe_boundary(self) -> None:
         paths = [ROOT / "README_CN.md"]
@@ -249,19 +237,13 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertNotIn("uplink PRB utilization", card)
         self.assertIn("not\nutilization percentages", card)
 
-    def test_citation_and_links_pin_the_public_model_revision(self) -> None:
-        for relative in (
-            "README.md",
-            "README_CN.md",
-            "REPRODUCTION.md",
-            "MODEL_CARD.md",
-            "CITATION.cff",
-        ):
-            text = (ROOT / relative).read_text(encoding="utf-8")
-            self.assertIn(MODEL_REVISION, text, msg=f"Revision not pinned: {relative}")
+    def test_review_citation_withholds_authors_and_external_identifiers(self) -> None:
         citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-        self.assertIn("family-names: Kong", citation)
-        self.assertIn("repository-code:", citation)
+        self.assertIn("name: Anonymous Contributors", citation)
+        self.assertNotIn("family-names:", citation)
+        self.assertNotIn("given-names:", citation)
+        self.assertNotIn("repository-code:", citation)
+        self.assertNotIn("https://", citation)
 
     def test_demo_resources_are_bounded_and_figures_avoid_pyplot_state(self) -> None:
         runtime = (ROOT / "demo" / "runtime.py").read_text(encoding="utf-8")
@@ -279,21 +261,11 @@ class PublicMetadataTest(unittest.TestCase):
         self.assertIn("点击“运行预测”后可下载", app)
         self.assertIn("exc.localized(lang)", app)
 
-    def test_demo_header_links_to_github_and_the_bilingual_website(self) -> None:
+    def test_demo_header_and_downloads_do_not_link_to_accounts(self) -> None:
         app = (ROOT / "demo" / "app.py").read_text(encoding="utf-8")
-        self.assertEqual(
-            app.count("https://github.com/rudykon/WLCR-SEA_Predictor"), 2
-        )
-        self.assertIn("https://rudykon.github.io/WLCR-SEA_Predictor/", app)
-        self.assertIn("https://rudykon.github.io/WLCR-SEA_Predictor/zh/", app)
-        for label in (
-            "GitHub repository",
-            "Project website",
-            "GitHub 仓库",
-            "项目网站",
-        ):
-            self.assertIn(label, app)
-        self.assertEqual(app.count('target="_blank" rel="noopener noreferrer"'), 4)
+        self.assertNotIn('href="https://', app)
+        self.assertIn("demo/checkpoints/", app)
+        self.assertIn("REPRODUCTION.md", app)
 
     def test_public_copy_separates_model_card_from_pinned_weights(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -314,34 +286,20 @@ class PublicMetadataTest(unittest.TestCase):
     def test_hosted_space_cannot_be_republished_by_a_main_push(self) -> None:
         workflows = ROOT / ".github" / "workflows"
         self.assertFalse((workflows / "hugging-face-space.yml").exists())
-        workflow = (workflows / "retire-hugging-face-space.yml").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn("workflow_dispatch:", workflow)
-        self.assertNotIn("push:", workflow)
-        self.assertNotIn("schedule:", workflow)
-        self.assertIn("tools/retire_hf_space.py", workflow)
+        self.assertFalse((workflows / "retire-hugging-face-space.yml").exists())
 
-    def test_public_experience_links_use_the_browser_demo(self) -> None:
-        paths = [ROOT / "README.md", ROOT / "README_CN.md"]
-        paths.extend((ROOT / "docs").rglob("*.md"))
-        paths.append(ROOT / "docs" / "javascripts" / "local-demo.js")
-        for path in paths:
-            text = path.read_text(encoding="utf-8")
-            self.assertNotIn(
-                "https://huggingface.co/spaces/config-h/WLCR-SEA_Predictor",
-                text,
-                msg=str(path.relative_to(ROOT)),
-            )
+    def test_public_experience_links_are_relative(self) -> None:
         for lang in ("", ".zh"):
             redirect = (ROOT / "docs" / "deployment" / f"hugging-face{lang}.md").read_text(
                 encoding="utf-8"
             )
-            target = "zh/" if lang else ""
-            self.assertIn(
-                f"url=https://rudykon.github.io/WLCR-SEA_Predictor/{target}local-demo/",
-                redirect,
-            )
+            self.assertIn("url=../../local-demo/", redirect)
+        config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+        self.assertNotIn("repo_url:", config)
+        self.assertNotIn("site_url:", config)
+        script = (ROOT / "docs" / "javascripts" / "local-demo.js").read_text(encoding="utf-8")
+        self.assertNotIn('href="https://', script)
+
 
 
 if __name__ == "__main__":

@@ -31,6 +31,6 @@ Inference is CPU-only. The repository remains assigned to a legacy ZeroGPU
 host configuration; the GPU decorator in the source is an unused startup
 compatibility marker.
 
-[Project website](https://rudykon.github.io/WLCR-SEA_Predictor/) ·
-[Pinned model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd) ·
-[Source](https://github.com/rudykon/WLCR-SEA_Predictor)
+[Project website](../docs/index.md) ·
+[Pinned model weights](checkpoints/SHA256SUMS) ·
+[Source](../README.md)

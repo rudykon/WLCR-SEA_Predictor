@@ -1,7 +1,7 @@
 {
   "schema": "wlcr-sea-browser-model/v1",
-  "repo_id": "config-h/WLCR-SEA-Predictor",
-  "revision": "eb4447f4ebab8f9caa003d92c838ed8e750963bd",
+  "repo_id": "wlcr-sea-ensemble",
+  "revision": "ensemble-v1",
   "variant": "A6_mixed_aug",
   "aggregation": "arithmetic mean of individually inverse-transformed and floored predictions",
   "weights": {
@@ -15,7 +15,6 @@
       "seed": 42,
       "checkpoint": "A6_mixed_aug_seed42.pt",
       "checkpoint_sha256": "9d9ab530566f74612a235dc6ed60c02caf09d4f0b862c68af52fdd61863b8956",
-      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed42.pt",
       "selected_config": {
         "name": "d16_h32_lr1e3_delta025",
         "token_dim": 16,
@@ -167,13 +166,13 @@
           "offset": 2593,
           "length": 1
         }
-      }
+      },
+      "checkpoint_path": "demo/checkpoints/A6_mixed_aug_seed42.pt"
     },
     {
       "seed": 43,
       "checkpoint": "A6_mixed_aug_seed43.pt",
       "checkpoint_sha256": "84de30c603c0df9729a56a27490aef70eec3db795494676bf5a637cf04cccd26",
-      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed43.pt",
       "selected_config": {
         "name": "d32_h64_lr5e4_delta050",
         "token_dim": 32,
@@ -325,13 +324,13 @@
           "offset": 10995,
           "length": 1
         }
-      }
+      },
+      "checkpoint_path": "demo/checkpoints/A6_mixed_aug_seed43.pt"
     },
     {
       "seed": 44,
       "checkpoint": "A6_mixed_aug_seed44.pt",
       "checkpoint_sha256": "93725821eb9dd226479e4fe4964aa53bc8e0fc71caa1eb9ec80d51f9f793489e",
-      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed44.pt",
       "selected_config": {
         "name": "d16_h32_lr1e3_delta025",
         "token_dim": 16,
@@ -483,13 +482,13 @@
           "offset": 13589,
           "length": 1
         }
-      }
+      },
+      "checkpoint_path": "demo/checkpoints/A6_mixed_aug_seed44.pt"
     },
     {
       "seed": 45,
       "checkpoint": "A6_mixed_aug_seed45.pt",
       "checkpoint_sha256": "e05c14b8478aeed7f84e1e0733c22aa25d3c30fd60e685fe0cf75037e0b38a9a",
-      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed45.pt",
       "selected_config": {
         "name": "d32_h64_lr5e4_delta050",
         "token_dim": 32,
@@ -641,13 +640,13 @@
           "offset": 21991,
           "length": 1
         }
-      }
+      },
+      "checkpoint_path": "demo/checkpoints/A6_mixed_aug_seed45.pt"
     },
     {
       "seed": 46,
       "checkpoint": "A6_mixed_aug_seed46.pt",
       "checkpoint_sha256": "f37247358733003d55651af35bd4587f5ba9284485749be40548ddbf9fdc5713",
-      "source_url": "https://huggingface.co/config-h/WLCR-SEA-Predictor/resolve/eb4447f4ebab8f9caa003d92c838ed8e750963bd/checkpoints/A6_mixed_aug_seed46.pt",
       "selected_config": {
         "name": "d32_h64_lr5e4_delta050",
         "token_dim": 32,
@@ -799,7 +798,8 @@
           "offset": 30393,
           "length": 1
         }
-      }
+      },
+      "checkpoint_path": "demo/checkpoints/A6_mixed_aug_seed46.pt"
     }
   ],
   "sample": {

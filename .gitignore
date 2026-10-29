@@ -57,3 +57,6 @@ paper/*.synctex.gz
 paper/*.blg
 paper/*.xdv
 *.orig
+
+# Verified released model assets are included for offline anonymous review.
+!demo/checkpoints/*.pt

@@ -15,7 +15,7 @@ hide:
     <a class="md-button md-button--primary" href="local-demo/">Run locally</a>
     <a class="md-button" href="guide/method/">Method</a>
     <a class="md-button" href="research/evidence/">Results</a>
-    <a class="md-button" href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd" target="_blank" rel="noopener">Model weights</a>
+    <a class="md-button" href="assets/local-demo/model.json" target="_blank" rel="noopener">Model weights</a>
   </div>
 </section>
 

@@ -85,7 +85,7 @@ $\hat{y} \in \mathbb{R}^{24 \times 4}$ 的预测。推理阶段可以读取当�
 `24 × 4` 预测。五个数组在**逆变换回原始流量空间后**执行算术平均。
 
 [打开浏览器本地 Demo](../local-demo.md){ .md-button .md-button--primary target="_blank" rel="noopener" }
-[查看固定版本检查点](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button target="_blank" rel="noopener" }
+[查看固定版本检查点](../assets/local-demo/model.json){ .md-button target="_blank" rel="noopener" }
 
 ## 5. 审计记录
 

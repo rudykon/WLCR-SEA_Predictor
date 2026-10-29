@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import json
 import unittest
+import os
+import tempfile
+from unittest.mock import patch
 from pathlib import Path
 
 from matplotlib._pylab_helpers import Gcf
@@ -11,6 +14,7 @@ import torch
 from demo import runtime
 from demo.model_loader import (
     CHECKPOINT_SPECS,
+    _resolve_checkpoint,
     MODEL_REVISION,
     MODEL_VARIANT,
     load_ensemble,
@@ -49,6 +53,21 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         self.assertTrue(
             all(member.prior_log.shape == (24, 4) for member in self.ensemble.members)
         )
+
+    def test_bundled_checkpoint_resolution_needs_no_network(self) -> None:
+        with patch.dict(os.environ, {}, clear=True), patch(
+            "socket.socket.connect", side_effect=AssertionError("Network access is blocked")
+        ):
+            for spec in CHECKPOINT_SPECS:
+                self.assertEqual(_resolve_checkpoint(spec).parent, ROOT / "demo/checkpoints")
+
+    def test_checkpoint_override_still_rejects_corrupt_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            spec = CHECKPOINT_SPECS[0]
+            (Path(directory) / spec.filename).write_bytes(b"corrupt")
+            with patch.dict(os.environ, {"WLCR_SEA_CHECKPOINT_DIR": directory}):
+                with self.assertRaisesRegex(RuntimeError, "Checksum mismatch"):
+                    _resolve_checkpoint(spec)
 
     def test_clean_a6_path_is_finite_normalized_and_auditable(self) -> None:
         result = self.clean
@@ -155,9 +174,9 @@ class HuggingFaceSpaceDemoTest(unittest.TestCase):
         self.assertTrue(audit["checks"]["prediction_within_ensemble_envelope"])
         self.assertEqual(
             audit["source"]["repository"],
-            "https://github.com/rudykon/WLCR-SEA_Predictor",
+            "anonymous-review-package",
         )
-        self.assertTrue(audit["source"]["commit"])
+        self.assertTrue(audit["source"]["commit"].startswith("sha256:"))
         for key in (
             "runtime_version",
             "python_version",

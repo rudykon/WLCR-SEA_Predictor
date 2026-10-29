@@ -7,7 +7,6 @@ import json
 import os
 import platform
 import shutil
-import subprocess
 import sys
 import tempfile
 import threading
@@ -39,7 +38,7 @@ MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 DEMO_SEED = 2026
 AUDIT_SCHEMA = "wlcr-sea-audit/v4"
 RUNTIME_VERSION = "wlcr-sea-demo/4"
-SOURCE_REPOSITORY = "https://github.com/rudykon/WLCR-SEA_Predictor"
+SOURCE_REPOSITORY = "anonymous-review-package"
 EXPORT_ROOT = Path(tempfile.gettempdir()) / "wlcr-sea-exports"
 EXPORT_TTL_SECONDS = 6 * 60 * 60
 EXPORT_DIRECTORY_LIMIT = 128
@@ -713,30 +712,16 @@ def _array(values: np.ndarray) -> list:
 
 
 def _source_commit() -> str:
-    configured = os.getenv("WLCR_SEA_SOURCE_COMMIT", "").strip()
-    if configured:
-        return configured
-    revision_file = ROOT / "SOURCE_REVISION"
-    if revision_file.is_file():
-        return revision_file.read_text(encoding="utf-8").strip()
-    try:
-        revision = subprocess.run(
-            ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=2,
-        ).stdout.strip()
-        dirty = subprocess.run(
-            ["git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=no"],
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=2,
-        ).stdout.strip()
-        return f"{revision}-dirty" if dirty else revision
-    except (OSError, subprocess.SubprocessError):
-        return "unknown"
+    """Identify the implementation by content without exposing Git history."""
+    digest = hashlib.sha256()
+    for relative in (
+        "demo/runtime.py", "demo/model_loader.py",
+        "experiments/wlcr_sea_model.py", "experiments/missingness_protocol.py",
+        "Model/traffic_window_forecasting.py",
+    ):
+        digest.update(relative.encode("utf-8") + b"\0")
+        digest.update((ROOT / relative).read_bytes())
+    return "sha256:" + digest.hexdigest()
 
 
 def _package_version(name: str) -> str:

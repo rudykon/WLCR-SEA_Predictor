@@ -2,12 +2,12 @@
 
 This is the single authoritative guide for running the public five-model predictor,
 checking the implementation, and regenerating the research evidence. Commands
-assume a clean clone at the repository root. The repository does not include
+assume an extracted review package at its root. The repository does not include
 training data or generated experiment artifacts.
 
 ## 1. Environments
 
-The public [browser-local Demo](https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/) needs no Python installation. The former hosted Space is retired.
+The public [browser-local Demo](docs/local-demo.md) needs no Python installation. The former hosted Space is retired.
 
 For the optional Python interface, use Python 3.11 or newer; CI uses Python 3.12.
 
@@ -32,9 +32,9 @@ uses GPUs; unit tests and public inference run on CPU.
 
 ## 2. Public model assets
 
-The Demo downloads five checkpoints from
-[`config-h/WLCR-SEA-Predictor`](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)
-at pinned revision `eb4447f4ebab8f9caa003d92c838ed8e750963bd`. Startup verifies
+The Demo loads the five checkpoints bundled in
+[`demo/checkpoints/`](demo/checkpoints/SHA256SUMS)
+at pinned revision `ensemble-v1`. Startup verifies
 the recorded SHA-256 for every file before loading it. Each checkpoint
 contains its seed, selected architecture, selected epoch, frozen `(24, 4)`
 training prior, and `state_dict`.
@@ -43,7 +43,7 @@ The checkpoint filenames retain the paper's internal experiment identifier
 `A6_mixed_aug` so that hashes and result manifests remain reproducible. The
 reader-facing name is **WLCR-SEA five-model ensemble**.
 
-To use previously downloaded files, place them under a local `checkpoints/`
+To override the bundled files, place verified copies under a local `checkpoints/`
 directory and set:
 
 ```bash
@@ -248,7 +248,7 @@ All sample and reference inputs are synthetic, not operator traffic.
 | `experiments/train_neural_baselines.py` | DLinear, PatchTST, and GRU-D controls |
 | `experiments/audit_method_evidence.py` | Request-locality, masking, deletion, and envelope audits |
 | `experiments/benchmark_end_to_end_latency.py` | Matched CPU latency and asset-size measurement |
-| `demo/model_loader.py` | Pinned download, SHA-256 verification, and one-time ensemble loading |
+| `demo/model_loader.py` | Bundled loading, SHA-256 verification, and one-time ensemble loading |
 | `demo/runtime.py` | CSV-to-ensemble inference, plots, tables, and audit exports |
 | `tests/test_hf_space_demo.py` | Public checkpoint and local Python consistency checks |
 
@@ -263,3 +263,10 @@ All sample and reference inputs are synthetic, not operator traffic.
    temporal comparison.
 6. Treat routing weights as internal allocation records, not causal effects or
    calibrated uncertainty.
+
+## Anonymous review distribution
+
+Use the history-free archive described in [REVIEW.md](REVIEW.md). Source identity in
+audit exports is a SHA-256 of the implementation files rather than a Git commit.
+The included model files and browser weights are verified by their original
+SHA-256 checksums and do not need an external model account.

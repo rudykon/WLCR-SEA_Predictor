@@ -7,6 +7,9 @@ on:
     paths:
       - "docs/**"
       - "tools/browser/**"
+      - "tools/build_review_package.py"
+      - "tests/test_review_package.py"
+      - "demo/checkpoints/**"
       - "tests/test_browser_local_demo.mjs"
       - "tests/fixtures/browser_demo_reference.json"
       - "mkdocs.yml"
@@ -16,6 +19,9 @@ on:
     paths:
       - "docs/**"
       - "tools/browser/**"
+      - "tools/build_review_package.py"
+      - "tests/test_review_package.py"
+      - "demo/checkpoints/**"
       - "tests/test_browser_local_demo.mjs"
       - "tests/fixtures/browser_demo_reference.json"
       - "mkdocs.yml"
@@ -57,6 +63,9 @@ jobs:
 
       - name: Build bilingual documentation
         run: mkdocs build --strict
+
+      - name: Verify the anonymous review distribution
+        run: python tools/build_review_package.py --output "${RUNNER_TEMP}/wlcr-sea-anonymous-review.zip"
 
       - name: Configure GitHub Pages
         if: github.event_name != 'pull_request'

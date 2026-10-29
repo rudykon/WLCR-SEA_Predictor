@@ -7,17 +7,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/rudykon/WLCR-SEA_Predictor/releases/latest"><img src="https://img.shields.io/github/v/release/rudykon/WLCR-SEA_Predictor?display_name=tag&amp;sort=semver&amp;label=release&amp;color=0f766e" alt="最新版本"></a>
-  <a href="https://github.com/rudykon/WLCR-SEA_Predictor/actions/workflows/demo.yml"><img src="https://img.shields.io/github/actions/workflow/status/rudykon/WLCR-SEA_Predictor/demo.yml?branch=main&amp;label=demo%20CI&amp;logo=githubactions&amp;logoColor=white" alt="Demo CI 状态"></a>
-  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/"><img src="https://img.shields.io/badge/Local-Demo-0f766e?logo=javascript&amp;logoColor=white" alt="浏览器本地 Demo"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/rudykon/WLCR-SEA_Predictor?label=license&amp;color=3d6fb6" alt="Apache-2.0 许可证"></a>
-</p>
-
-<p align="center">
-  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/">项目网站</a> ·
-  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/">本地 Demo</a> ·
-  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">模型卡</a> ·
-  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd">固定权重</a> ·
+  <a href="docs/index.md">项目网站</a> ·
+  <a href="docs/local-demo.md">本地 Demo</a> ·
+  <a href="MODEL_CARD.md">模型卡</a> ·
+  <a href="demo/checkpoints/">固定权重</a> ·
   <a href="#研究数据集">数据集</a> ·
   <a href="README.md">English</a>
 </p>
@@ -51,7 +44,7 @@ WLCR-SEA 读取单个小区过去 **336 小时 × 4 项流量指标**，预测�
 执行带可靠度的 Entmax 路由，使不可用专家保持零权重；最后使用有界残差得到未来
 24 小时预测，并保留可检查的预测边界。五个训练模型在原始流量空间逐元素平均。
 
-完整专家定义、可用条件和公式见[方法页面](https://rudykon.github.io/WLCR-SEA_Predictor/zh/guide/method/)。
+完整专家定义、可用条件和公式见[方法页面](docs/guide/method.md)。
 
 ## 证据
 
@@ -63,23 +56,22 @@ WLCR-SEA 读取单个小区过去 **336 小时 × 4 项流量指标**，预测�
 | CPU 推理 | 单线程、batch=1 时，五模型集成中位/P99 延迟为 **34.705/38.684 ms**，模型资源共 **148.8 KiB**。 |
 
 这些结果来自一个匿名地区、约一个月的数据，不能直接视为部署保证。完整协议、置信区间、
-缺失模式和适用边界见[实验结果](https://rudykon.github.io/WLCR-SEA_Predictor/zh/research/evidence/)。
+缺失模式和适用边界见[实验结果](docs/research/evidence.md)。
 
 ## 运行
 
-打开[浏览器本地 Demo](https://rudykon.github.io/WLCR-SEA_Predictor/zh/local-demo/)，无需安装 Python。五个模型使用你的电脑算力运行，CSV 内容不会上传服务器。原 Hugging Face 云端体验已停用。
+[浏览器本地 Demo](docs/local-demo.md)无需安装模型依赖；在本机启动网站的方法见 [REVIEW.md](REVIEW.md)。五个模型使用你的电脑算力运行，CSV 内容不会上传服务器。原 Hugging Face 云端体验已停用。
 
 <details>
 <summary>可选：在本机运行 Python 界面</summary>
 
 ```bash
-git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
-cd WLCR-SEA_Predictor
+cd /path/to/review-package
 python -m pip install -r requirements-demo.txt
 python demo/app.py
 ```
 
-应用会校验并缓存五个公开模型检查点，并自动预览一个 336 小时合成样例。点击
+应用会读取并校验包内五个模型检查点，并自动预览一个 336 小时合成样例。点击
 **运行预测**后才会生成可下载的预测 CSV 与带版本的审计 JSON。本机 Python 界面的
 CSV 文件大小上限为 5 MB。
 
@@ -99,7 +91,6 @@ CSV 文件大小上限为 5 MB。
 
 - **复现**：按照 [`REPRODUCTION.md`](REPRODUCTION.md) 完成数据准备、环境安装、公开
   检查点校验、测试、训练和证据生成。
-- **引用**：正式发表信息公开前，请同时注明所用 GitHub commit 与固定模型版本
-  [`eb4447f4ebab`](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd)。
-  机器可读引用信息见 [`CITATION.cff`](CITATION.cff)。
+- **引用：** 匿名审稿期间隐去作者信息；使用发布标识 `ensemble-v1` 和
+  `demo/checkpoints/SHA256SUMS` 中的校验和。机器可读元数据见 [`CITATION.cff`](CITATION.cff)。
 - **许可**：Apache License 2.0，详见 [`LICENSE`](LICENSE)。

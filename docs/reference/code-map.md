@@ -1,4 +1,4 @@
-<meta http-equiv="refresh" content="0; url=https://rudykon.github.io/WLCR-SEA_Predictor/reference/reproduction/#code-map">
+<meta http-equiv="refresh" content="0; url=../reproduction/#code-map">
 
 # Code map moved
 

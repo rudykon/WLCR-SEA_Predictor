@@ -7,17 +7,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/rudykon/WLCR-SEA_Predictor/releases/latest"><img src="https://img.shields.io/github/v/release/rudykon/WLCR-SEA_Predictor?display_name=tag&amp;sort=semver&amp;label=release&amp;color=0f766e" alt="Latest release"></a>
-  <a href="https://github.com/rudykon/WLCR-SEA_Predictor/actions/workflows/demo.yml"><img src="https://img.shields.io/github/actions/workflow/status/rudykon/WLCR-SEA_Predictor/demo.yml?branch=main&amp;label=demo%20CI&amp;logo=githubactions&amp;logoColor=white" alt="Demo CI status"></a>
-  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/"><img src="https://img.shields.io/badge/Local-Demo-0f766e?logo=javascript&amp;logoColor=white" alt="Browser-local Demo"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/rudykon/WLCR-SEA_Predictor?label=license&amp;color=3d6fb6" alt="Apache-2.0 license"></a>
-</p>
-
-<p align="center">
-  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/">Website</a> ·
-  <a href="https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/">Local Demo</a> ·
-  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor">Model Card</a> ·
-  <a href="https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd">Pinned Weights</a> ·
+  <a href="docs/index.md">Website</a> ·
+  <a href="docs/local-demo.md">Local Demo</a> ·
+  <a href="MODEL_CARD.md">Model Card</a> ·
+  <a href="demo/checkpoints/">Pinned Weights</a> ·
   <a href="#research-dataset">Dataset</a> ·
   <a href="README_CN.md">中文</a>
 </p>
@@ -63,7 +56,7 @@ preserving a checkable envelope. The five trained models are combined by averagi
 their predictions in linear traffic space.
 
 The full expert definitions, availability rules, and equations are on the
-[Method page](https://rudykon.github.io/WLCR-SEA_Predictor/guide/method/).
+[Method page](docs/guide/method.md).
 
 ## Evidence
 
@@ -76,7 +69,7 @@ The full expert definitions, availability rules, and equations are on the
 
 These results come from one anonymous region and roughly one month of data.
 They should not be treated as deployment guarantees. See [Results and
-limitations](https://rudykon.github.io/WLCR-SEA_Predictor/research/evidence/)
+limitations](docs/research/evidence.md)
 for the protocol, confidence intervals, missingness patterns, and scope.
 
 Metric labels are intentionally explicit. **Macro-indicator WAPE** computes
@@ -87,19 +80,18 @@ different aggregation schemes are not silently compared.
 
 ## Run
 
-Open the [browser-local Demo](https://rudykon.github.io/WLCR-SEA_Predictor/local-demo/) without installing Python. The five models run on your computer and CSV contents stay on your device. The former hosted Hugging Face experience is retired.
+The [browser-local Demo](docs/local-demo.md) runs without installing model dependencies. See [REVIEW.md](REVIEW.md) to serve the bundled website on localhost. The five models run on your computer and CSV contents stay on your device. The former hosted Hugging Face experience is retired.
 
 <details>
 <summary>Optional: run the Python interface locally</summary>
 
 ```bash
-git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
-cd WLCR-SEA_Predictor
+cd /path/to/review-package
 python -m pip install -r requirements-demo.txt
 python demo/app.py
 ```
 
-The app verifies and caches the five public model checkpoints and automatically
+The app reads and verifies the five bundled model checkpoints and automatically
 previews a synthetic 336-hour sample. Click **Run forecast** to create the
 downloadable forecast CSV and versioned audit JSON. The local Python interface
 accepts CSV files up to 5 MB.
@@ -123,8 +115,7 @@ terms. Exact download, archive hash, and extraction commands are in
 - **Reproduce:** follow [`REPRODUCTION.md`](REPRODUCTION.md) for inputs,
   installation, public-checkpoint verification, tests, training, and evidence
   generation.
-- **Cite:** until formal publication metadata is available, cite the repository
-  commit and model revision
-  [`eb4447f4ebab`](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd).
+- **Cite:** author information is withheld during anonymous review. Refer to
+  release `ensemble-v1` and the checksums in `demo/checkpoints/SHA256SUMS`.
   Machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
 - **License:** Apache License 2.0; see [`LICENSE`](LICENSE).

@@ -2,7 +2,7 @@
 
 This page is the practical entry point for installation, input validation,
 public ensemble inference, tests, and the research code map. The complete authoritative
-workflow lives in [`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md).
+workflow is `REPRODUCTION.md` in the review package.
 
 ## Run in your browser
 
@@ -13,8 +13,7 @@ No Python installation is needed. Inference uses the visitor’s CPU and CSV con
 ## Optional local Python interface
 
 ```bash
-git clone https://github.com/rudykon/WLCR-SEA_Predictor.git
-cd WLCR-SEA_Predictor
+cd /path/to/review-package
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
@@ -22,11 +21,10 @@ python -m pip install -r requirements-demo.txt
 python demo/app.py
 ```
 
-The app downloads a pinned Hugging Face model revision, verifies all five
-checkpoint SHA-256 values, loads the models and frozen training priors once on
-CPU, and automatically runs the synthetic sample. Set
-`WLCR_SEA_CHECKPOINT_DIR` to a local model-repository checkout to run without a
-second download.
+The app verifies all five bundled checkpoints in `demo/checkpoints/`, loads
+the models and frozen training priors once on CPU, and automatically runs the
+synthetic sample. No model download or account is needed.
+`WLCR_SEA_CHECKPOINT_DIR` can select another directory containing verified copies.
 
 ## Input format { #input-format }
 
@@ -49,7 +47,7 @@ The forecast begins one hour after the final row and covers the next 24 hours.
 `NIL` and blank fields are missing observations; the mask prevents their
 placeholders from entering expert summaries.
 
-[View the synthetic request](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/demo/examples/synthetic_traffic.csv){ .md-button }
+[View the synthetic request](../assets/local-demo/sample.csv){ .md-button }
 
 ## Research dataset
 
@@ -67,18 +65,18 @@ The archive does not include a separate data-license file. The project does
 not redistribute it, and Apache-2.0 applies to this repository's code, not the
 dataset. Follow the source provider's applicable terms. The exact download,
 verification, and extraction commands are in
-[`REPRODUCTION.md`](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md#3-input-data).
+`REPRODUCTION.md` in the review package.
 
 ## Model assets
 
-The public model repository contains five checkpoints for seeds 42–46. Each
+The review package contains five checkpoints for seeds 42–46. Each
 file stores the selected configuration and epoch, a frozen `(24, 4)` training
 prior, and the CPU `state_dict`. The ensemble rule is an arithmetic
 mean of the five predictions in linear traffic space. Their filenames retain
 the paper's internal identifier `A6_mixed_aug` for exact provenance; elsewhere
 the website calls them the **WLCR-SEA five-model ensemble**.
 
-[Inspect pinned model weights](https://huggingface.co/config-h/WLCR-SEA-Predictor/tree/eb4447f4ebab8f9caa003d92c838ed8e750963bd){ .md-button }
+[Inspect pinned model weights](../assets/local-demo/model.json){ .md-button }
 [Open the browser-local Demo](../local-demo.md){ .md-button .md-button--primary }
 
 ## Verify
@@ -107,7 +105,7 @@ new outputs below `artifacts/reproduction/`. Full five-seed training requires
 GPUs. The authoritative guide lists the exact primary training, baseline,
 missingness, request-locality, cell-disjoint, auditability, and latency stages.
 
-[Open the complete reproduction guide](https://github.com/rudykon/WLCR-SEA_Predictor/blob/main/REPRODUCTION.md){ .md-button .md-button--primary }
+See `REPRODUCTION.md` in the review package for the complete commands.
 
 ## Code map { #code-map }
 
@@ -120,7 +118,7 @@ missingness, request-locality, cell-disjoint, auditability, and latency stages.
 | `experiments/audit_method_evidence.py` | Request-locality, masking, deletion, and bound audits |
 | `experiments/benchmark_end_to_end_latency.py` | Matched CPU latency and model-asset size |
 | `Model/traffic_window_forecasting.py` | Six-column CSV parsing and request-window validation |
-| `demo/model_loader.py` | Pinned model download, integrity checks, one-time CPU load |
+| `demo/model_loader.py` | Bundled model loading, integrity checks, one-time CPU load |
 | `demo/runtime.py` | Five-member inference, figures, tables, CSV and JSON exports |
 | `tests/test_hf_space_demo.py` | Public checkpoint and local Python consistency checks |
 

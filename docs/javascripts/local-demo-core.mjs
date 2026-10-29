@@ -6,7 +6,7 @@ export const HOURS = 336;
 export const HORIZON = 24;
 export const METRICS = 4;
 export const EXPERTS = 8;
-export const REVISION = 'eb4447f4ebab8f9caa003d92c838ed8e750963bd';
+export const REVISION = 'ensemble-v1';
 export const HEADER = ['时间', '小区名称', '小区上行平均激活用户数', '小区下行平均激活用户数', '下行平均使用的PRB个数', '上行平均使用的PRB个数'];
 const f32 = Math.fround;
 const fail = (code) => { throw new Error(code); };
@@ -109,7 +109,7 @@ export async function corruptRequest(request, scenario = 'none', rate = 0) {
 }
 
 export async function decodeModel(manifest, buffer) {
-  if (manifest.schema !== 'wlcr-sea-browser-model/v1' || manifest.repo_id !== 'config-h/WLCR-SEA-Predictor' || manifest.revision !== REVISION || manifest.variant !== 'A6_mixed_aug') fail('invalid_model');
+  if (manifest.schema !== 'wlcr-sea-browser-model/v1' || manifest.repo_id !== 'wlcr-sea-ensemble' || manifest.revision !== REVISION || manifest.variant !== 'A6_mixed_aug') fail('invalid_model');
   if (manifest.weights?.dtype !== 'float32-le' || buffer.byteLength !== manifest.weights.byte_length || buffer.byteLength % 4) fail('invalid_model');
   if (await sha256(buffer) !== manifest.weights.sha256) fail('model_checksum');
   if (manifest.members.length !== 5 || manifest.members.some((m, i) => m.seed !== 42 + i)) fail('invalid_model');

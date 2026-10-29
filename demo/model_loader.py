@@ -1,4 +1,4 @@
-"""Download, verify, and load the public WLCR-SEA five-model ensemble once."""
+"""Verify and load the bundled WLCR-SEA five-model ensemble once."""
 
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ from typing import Mapping
 import numpy as np
 
 
-MODEL_REPO_ID = "config-h/WLCR-SEA-Predictor"
-MODEL_REVISION = "eb4447f4ebab8f9caa003d92c838ed8e750963bd"
+MODEL_REPO_ID = "wlcr-sea-ensemble"
+MODEL_REVISION = "ensemble-v1"
 MODEL_VARIANT = "A6_mixed_aug"
 ENSEMBLE_AGGREGATION = "arithmetic mean in linear traffic space"
 
@@ -105,15 +105,12 @@ def _resolve_checkpoint(spec: CheckpointSpec) -> Path:
     if local is not None:
         path = local
     else:
-        from huggingface_hub import hf_hub_download
-
-        path = Path(
-            hf_hub_download(
-                repo_id=MODEL_REPO_ID,
-                filename=f"checkpoints/{spec.filename}",
-                revision=MODEL_REVISION,
+        path = Path(__file__).with_name("checkpoints") / spec.filename
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"Bundled checkpoint {spec.filename} is missing. Use the complete "
+                "review package or set WLCR_SEA_CHECKPOINT_DIR to verified local copies."
             )
-        )
     actual = _sha256(path)
     if actual != spec.sha256:
         raise RuntimeError(

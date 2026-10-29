@@ -1,11 +1,7 @@
 site_name: WLCR-SEA Predictor
-site_url: https://rudykon.github.io/WLCR-SEA_Predictor/
 site_description: >-
   Forecast one cell's next 24 hours from its own recent history, with missing-data handling and transparent expert routing.
 
-repo_name: rudykon/WLCR-SEA_Predictor
-repo_url: https://github.com/rudykon/WLCR-SEA_Predictor
-edit_uri: edit/main/docs/
 
 exclude_docs: |
   README.md
@@ -111,13 +107,6 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/rudykon/WLCR-SEA_Predictor
-      name: Source on GitHub
-    - icon: fontawesome/solid/cube
-      link: https://huggingface.co/config-h/WLCR-SEA-Predictor
-      name: WLCR-SEA model weights on Hugging Face
   generator: false
 
 copyright: Copyright &copy; 2026 WLCR-SEA contributors · Apache-2.0
