@@ -1,0 +1,105 @@
+name: Python Demo compatibility
+
+on:
+  pull_request:
+    paths:
+      - "demo/**"
+      - "tools/build_review_package.py"
+      - "tests/test_review_package.py"
+      - "tests/test_hf_space_demo.py"
+      - "tests/test_public_metadata.py"
+      - "README.md"
+      - "README_CN.md"
+      - "REPRODUCTION.md"
+      - "MODEL_CARD.md"
+      - "CITATION.cff"
+      - "docs/**"
+      - "experiments/wlcr_sea_model.py"
+      - "experiments/missingness_protocol.py"
+      - "Model/traffic_window_forecasting.py"
+      - "requirements-demo.txt"
+      - ".github/workflows/demo.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "demo/**"
+      - "tools/build_review_package.py"
+      - "tests/test_review_package.py"
+      - "tests/test_hf_space_demo.py"
+      - "tests/test_public_metadata.py"
+      - "README.md"
+      - "README_CN.md"
+      - "REPRODUCTION.md"
+      - "MODEL_CARD.md"
+      - "CITATION.cff"
+      - "docs/**"
+      - "experiments/wlcr_sea_model.py"
+      - "experiments/missingness_protocol.py"
+      - "Model/traffic_window_forecasting.py"
+      - "requirements-demo.txt"
+      - ".github/workflows/demo.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: space-demo-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-demo.txt
+
+      - name: Install CPU Demo dependencies
+        run: python -m pip install -r requirements-demo.txt
+
+      - name: Run ensemble consistency and public-metadata tests
+        env:
+          MPLBACKEND: Agg
+          MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
+          TORCH_NUM_THREADS: "2"
+        run: >-
+          python -m unittest
+          tests.test_hf_space_demo
+          tests.test_public_metadata
+          tests.test_review_package
+          -v
+
+      - name: Build the Gradio interface
+        env:
+          MPLBACKEND: Agg
+          MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
+          TORCH_NUM_THREADS: "2"
+        run: python -c "from demo.app import demo; assert demo is not None"
+
+      - name: Start the Gradio entrypoint
+        env:
+          GRADIO_ANALYTICS_ENABLED: "False"
+          MPLBACKEND: Agg
+          MPLCONFIGDIR: ${{ runner.temp }}/matplotlib
+          TORCH_NUM_THREADS: "2"
+        run: |
+          python demo/app.py > "${RUNNER_TEMP}/gradio.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "${server_pid}" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 45); do
+            if curl --fail --silent --show-error \
+              http://127.0.0.1:7860/config > "${RUNNER_TEMP}/gradio-config.json"; then
+              exit 0
+            fi
+            sleep 1
+          done
+          sed -n '1,200p' "${RUNNER_TEMP}/gradio.log"
+          exit 1

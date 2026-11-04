@@ -1,0 +1,5 @@
+lightgbm>=4.0
+matplotlib>=3.8
+numpy>=1.24
+pandas>=2.0
+torch>=2.8.0

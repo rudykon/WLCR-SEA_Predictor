@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: >-
+  Anonymous review release. Cite the release version and the bundled
+  checkpoint SHA-256 checksums; author information is withheld for review.
+title: WLCR-SEA Predictor
+type: software
+authors:
+  - name: Anonymous Contributors
+version: 1.0.0
+license: Apache-2.0
+keywords:
+  - cellular traffic forecasting
+  - time series
+  - missing telemetry
+  - mixture of experts
+  - auditable machine learning

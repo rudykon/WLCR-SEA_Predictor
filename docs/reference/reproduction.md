@@ -1,0 +1,127 @@
+# Reproduce
+
+This page is the practical entry point for installation, input validation,
+public ensemble inference, tests, and the research code map. The complete authoritative
+workflow is `REPRODUCTION.md` in the review package.
+
+## Run in your browser
+
+[Open the browser-local Demo](../local-demo.md){ .md-button .md-button--primary }
+
+No Python installation is needed. Inference uses the visitor’s CPU and CSV contents stay on the device. The former hosted Space is retired.
+
+## Optional local Python interface
+
+```bash
+cd /path/to/review-package
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements-demo.txt
+python demo/app.py
+```
+
+The app verifies all five bundled checkpoints in `demo/checkpoints/`, loads
+the models and frozen training priors once on CPU, and automatically runs the
+synthetic sample. No model download or account is needed.
+`WLCR_SEA_CHECKPOINT_DIR` can select another directory containing verified copies.
+
+## Input format { #input-format }
+
+The Demo accepts exactly 336 contiguous hourly rows for one cell. Required
+header:
+
+```text
+时间,小区名称,小区上行平均激活用户数,小区下行平均激活用户数,下行平均使用的PRB个数,上行平均使用的PRB个数
+```
+
+| Field | Rule |
+| --- | --- |
+| `时间` | `YYYY/MM/DD HH:MM`, strictly hourly and increasing |
+| `小区名称` | One non-empty value shared by all rows |
+| Four indicators | Finite non-negative number, `NIL`, or blank |
+| Encoding | UTF-8 or UTF-8 with BOM |
+| Local CSV file | At most 5 MB; processed on your device |
+
+The forecast begins one hour after the final row and covers the next 24 hours.
+`NIL` and blank fields are missing observations; the mask prevents their
+placeholders from entering expert summaries.
+
+[View the synthetic request](../assets/local-demo/sample.csv){ .md-button }
+
+## Research dataset
+
+The research workflow uses
+`线上阶段数据集/AI数据集/train_data.csv` from the
+[Huawei-hosted online-stage archive](https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wuxian-gaoxiao2026/1780886490950118786.zip).
+Extract it to `data/train_data.csv`.
+
+| Item | SHA-256 |
+| --- | --- |
+| Source ZIP | `17d87ae40a9ddfd263ea60cba7f2a4ff05037b92cebdd37f9bb89a6c9e3094bf` |
+| Extracted `train_data.csv` | `d274407a3db51ba4871851ab447bcc75202bb567337464d85ea280662f3bf1da` |
+
+The archive does not include a separate data-license file. The project does
+not redistribute it, and Apache-2.0 applies to this repository's code, not the
+dataset. Follow the source provider's applicable terms. The exact download,
+verification, and extraction commands are in
+`REPRODUCTION.md` in the review package.
+
+## Model assets
+
+The review package contains five checkpoints for seeds 42–46. Each
+file stores the selected configuration and epoch, a frozen `(24, 4)` training
+prior, and the CPU `state_dict`. The ensemble rule is an arithmetic
+mean of the five predictions in linear traffic space. Their filenames retain
+the paper's internal identifier `A6_mixed_aug` for exact provenance; elsewhere
+the website calls them the **WLCR-SEA five-model ensemble**.
+
+[Inspect pinned model weights](../assets/local-demo/model.json){ .md-button }
+[Open the browser-local Demo](../local-demo.md){ .md-button .md-button--primary }
+
+## Verify
+
+```bash
+PYTHONPATH=. python -m unittest tests.test_wlcr_sea_model -v
+PYTHONPATH=. python -m unittest tests.test_hf_space_demo -v
+PYTHONPATH=. python -m unittest tests.test_request_locality_audit -v
+```
+
+The Python runtime consistency test independently evaluates the fixed sample through the core model
+path and compares the five-member linear-space mean with the Demo runtime.
+
+Build both website languages:
+
+```bash
+python -m pip install -r requirements-docs.txt
+mkdocs build --strict
+```
+
+## Full research workflow
+
+The research trace is not stored in Git. Place the verified file at
+`data/train_data.csv`, verify its hash, install `requirements.txt`, and write
+new outputs below `artifacts/reproduction/`. Full five-seed training requires
+GPUs. The authoritative guide lists the exact primary training, baseline,
+missingness, request-locality, cell-disjoint, auditability, and latency stages.
+
+See `REPRODUCTION.md` in the review package for the complete commands.
+
+## Code map { #code-map }
+
+| Path | Responsibility |
+| --- | --- |
+| `experiments/wlcr_sea_model.py` | Seasonal experts, masks, Entmax routing, bounded residual, losses, metrics |
+| `experiments/missingness_protocol.py` | Repeatable missing-telemetry patterns |
+| `experiments/train_wlcr_sea.py` | Multi-seed training, model selection, evaluation, checkpoint schema |
+| `experiments/train_neural_baselines.py` | DLinear, PatchTST, and GRU-D controls |
+| `experiments/audit_method_evidence.py` | Request-locality, masking, deletion, and bound audits |
+| `experiments/benchmark_end_to_end_latency.py` | Matched CPU latency and model-asset size |
+| `Model/traffic_window_forecasting.py` | Six-column CSV parsing and request-window validation |
+| `demo/model_loader.py` | Bundled model loading, integrity checks, one-time CPU load |
+| `demo/runtime.py` | Five-member inference, figures, tables, CSV and JSON exports |
+| `tests/test_hf_space_demo.py` | Public checkpoint and local Python consistency checks |
+
+Generated models, NumPy bundles, logs, and result folders remain outside the
+versioned source. The public workflow does not contain or build unpublished
+manuscript text.

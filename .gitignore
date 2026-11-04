@@ -1,0 +1,65 @@
+# Python caches and local environments
+.venv/
+.runtime/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Local private credentials and machine-specific config
+/config/
+github_token.json
+config/private/*.json
+.env
+.env.*
+*.pem
+*.key
+
+# Large local-only competition artifacts
+/data/
+/artifacts/
+*.zip
+dist/
+site/
+artifacts/final_solution_4024_13/final_submission_4024_13.zip
+archive/early_submission_zips/
+archive/early_model_artifacts/
+archive/early_code/third_party/
+
+# Generated model/binary artifacts
+*.pt
+*.pth
+*.pkl
+*.joblib
+*.npz
+
+# Runtime logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# OS/editor noise
+.DS_Store
+*~
+
+# Unpublished paper sources and generated outputs (local only)
+/paper/main.tex
+/paper/main_zh.tex
+/paper/references.bib
+/paper/rq4_evidence.tex
+/paper/main.pdf
+/paper/main_zh.pdf
+paper/*.aux
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/*.blg
+paper/*.xdv
+*.orig
+
+# Verified released model assets are included for offline anonymous review.
+!demo/checkpoints/*.pt

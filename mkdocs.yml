@@ -1,0 +1,119 @@
+site_name: WLCR-SEA Predictor
+site_description: >-
+  Forecast one cell's next 24 hours from its own recent history, with missing-data handling and transparent expert routing.
+
+
+exclude_docs: |
+  README.md
+  CODE_STRUCTURE.md
+  REPRODUCTION_GUIDE.md
+  RESEARCH_REPRODUCTION.md
+
+theme:
+  name: material
+  language: en
+  logo: assets/brand/logo-icon.svg
+  favicon: assets/brand/favicon.svg
+  font: false
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search:
+      lang: en
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: zh
+          name: 简体中文
+          build: true
+          site_name: WLCR-SEA 蜂窝流量预测
+          site_description: >-
+            只用单个小区的近期历史预测未来 24 小时，并提供缺失数据处理和透明专家路由。
+          theme:
+            palette:
+              - media: "(prefers-color-scheme: light)"
+                scheme: default
+                primary: custom
+                accent: custom
+                toggle:
+                  icon: material/weather-night
+                  name: 切换至深色模式
+              - media: "(prefers-color-scheme: dark)"
+                scheme: slate
+                primary: custom
+                accent: custom
+                toggle:
+                  icon: material/weather-sunny
+                  name: 切换至浅色模式
+          nav_translations:
+            Overview: 概览
+            Method: 方法
+            Results: 实验结果
+            Reproduce: 复现
+            Local Demo: 本地 Demo
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/local-demo.js
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+extra:
+  generator: false
+
+copyright: Copyright &copy; 2026 WLCR-SEA contributors · Apache-2.0
+
+nav:
+  - Overview: index.md
+  - Method: guide/method.md
+  - Results: research/evidence.md
+  - Reproduce: reference/reproduction.md
+  - Local Demo: local-demo.md
