@@ -58,6 +58,28 @@ pre {
   box-shadow: none;
 }
 
+/* Keep the repository icon in the header at every screen size. */
+.md-header__source {
+  display: block;
+  flex-shrink: 0;
+  width: 2.4rem;
+  max-width: none;
+}
+
+[dir] .md-header__source { margin-inline: 0; }
+.md-header__source .md-source { width: 2.4rem; }
+.md-header__source .md-source__icon { width: 2.4rem; }
+
+/* Preserve the link's accessible name while showing only its icon. */
+.md-header__source .md-source__repository {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .md-header__button.md-logo img,
 .md-header__button.md-logo svg {
   width: 1.9rem;

@@ -67,6 +67,11 @@ jobs:
       - name: Verify the anonymous review distribution
         run: python tools/build_review_package.py --output "${RUNNER_TEMP}/wlcr-sea-anonymous-review.zip"
 
+      - name: Build public website with repository link
+        env:
+          WLCR_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: mkdocs build --strict
+
       - name: Configure GitHub Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
