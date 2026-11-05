@@ -4,18 +4,20 @@ hide:
 ---
 
 <section class="project-hero">
+  <div class="project-copy">
+    <h1>WLCR-SEA</h1>
+    <p class="project-subtitle">只用单个小区的近期历史预测未来 24 小时</p>
+    <p class="project-lead">使用单个小区过去 336 小时的四项流量指标，预测未来 24 小时。不可用历史参考被严格屏蔽，每次预测均可导出专家值、路由权重、残差与边界检查。</p>
+    <div class="project-actions">
+      <a class="md-button md-button--primary" href="local-demo/">本地运行 Demo</a>
+      <a class="md-button" href="guide/method/">方法</a>
+      <a class="md-button" href="research/evidence/">实验结果</a>
+      <a class="md-button" href="../assets/local-demo/model.json" target="_blank" rel="noopener">模型权重</a>
+    </div>
+  </div>
   <div class="project-wordmark">
     <img class="wordmark-light" src="../assets/brand/logo.svg" alt="WLCR-SEA Predictor">
     <img class="wordmark-dark" src="../assets/brand/logo-dark.svg" alt="WLCR-SEA Predictor">
-  </div>
-  <h1>WLCR-SEA</h1>
-  <p class="project-subtitle">只用单个小区的近期历史预测未来 24 小时</p>
-  <p class="project-lead">使用单个小区过去 336 小时的四项流量指标，预测未来 24 小时。不可用历史参考被严格屏蔽，每次预测均可导出专家值、路由权重、残差与边界检查。</p>
-  <div class="project-actions">
-    <a class="md-button md-button--primary" href="local-demo/">本地运行 Demo</a>
-    <a class="md-button" href="guide/method/">方法</a>
-    <a class="md-button" href="research/evidence/">实验结果</a>
-    <a class="md-button" href="../assets/local-demo/model.json" target="_blank" rel="noopener">模型权重</a>
   </div>
 </section>
 

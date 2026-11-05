@@ -4,18 +4,20 @@ hide:
 ---
 
 <section class="project-hero">
+  <div class="project-copy">
+    <h1>WLCR-SEA</h1>
+    <p class="project-subtitle">Forecast one cell's next 24 hours from its own recent history</p>
+    <p class="project-lead">Use one cell's previous 336 hours and four traffic indicators to forecast its next 24 hours. Unavailable historical references are hard-masked, and every request can export expert values, routing weights, residuals, and bound checks.</p>
+    <div class="project-actions">
+      <a class="md-button md-button--primary" href="local-demo/">Run locally</a>
+      <a class="md-button" href="guide/method/">Method</a>
+      <a class="md-button" href="research/evidence/">Results</a>
+      <a class="md-button" href="assets/local-demo/model.json" target="_blank" rel="noopener">Model weights</a>
+    </div>
+  </div>
   <div class="project-wordmark">
     <img class="wordmark-light" src="assets/brand/logo.svg" alt="WLCR-SEA Predictor">
     <img class="wordmark-dark" src="assets/brand/logo-dark.svg" alt="WLCR-SEA Predictor">
-  </div>
-  <h1>WLCR-SEA</h1>
-  <p class="project-subtitle">Forecast one cell's next 24 hours from its own recent history</p>
-  <p class="project-lead">Use one cell's previous 336 hours and four traffic indicators to forecast its next 24 hours. Unavailable historical references are hard-masked, and every request can export expert values, routing weights, residuals, and bound checks.</p>
-  <div class="project-actions">
-    <a class="md-button md-button--primary" href="local-demo/">Run locally</a>
-    <a class="md-button" href="guide/method/">Method</a>
-    <a class="md-button" href="research/evidence/">Results</a>
-    <a class="md-button" href="assets/local-demo/model.json" target="_blank" rel="noopener">Model weights</a>
   </div>
 </section>
 

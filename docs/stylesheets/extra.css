@@ -185,14 +185,20 @@ pre {
 .md-footer-meta { background: #101f36; }
 
 .project-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 18rem);
+  align-items: center;
+  gap: 2rem;
   max-width: 62rem;
   padding: 2.4rem 0 2.2rem;
   border-bottom: 1px solid var(--wl-border);
 }
 
 .project-wordmark {
-  width: min(18rem, 65vw);
-  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 18rem;
+  margin: 0;
+  justify-self: end;
 }
 
 .project-wordmark img { display: block; width: 100%; height: auto; }
@@ -281,6 +287,11 @@ pre {
 @media screen and (max-width: 56rem) {
   .setting-layout { grid-template-columns: 1fr; }
   .md-typeset table:not([class]) { display: block; width: max-content; max-width: 100%; }
+}
+
+@media screen and (max-width: 60rem) {
+  .project-hero { grid-template-columns: minmax(0, 1fr); }
+  .project-wordmark { width: min(14rem, 65vw); justify-self: center; }
 }
 
 @media screen and (max-width: 36rem) {
