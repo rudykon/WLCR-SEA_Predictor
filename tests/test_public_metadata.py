@@ -301,7 +301,7 @@ class PublicMetadataTest(unittest.TestCase):
             self.assertIn("url=../../local-demo/", redirect)
         config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
         self.assertNotRegex(config, r"(?m)^repo_url:\s*https?://")
-        self.assertNotIn("site_url:", config)
+        self.assertNotRegex(config, r"(?m)^site_url:\s*https?://")
         script = (ROOT / "docs" / "javascripts" / "local-demo.js").read_text(encoding="utf-8")
         self.assertNotIn('href="https://', script)
 

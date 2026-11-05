@@ -3,6 +3,7 @@ site_description: >-
   Forecast one cell's next 24 hours from its own recent history, with missing-data handling and transparent expert routing.
 
 # Public deployments set this; review builds keep account links disabled.
+site_url: !ENV [WLCR_SITE_URL, ""]
 repo_url: !ENV [WLCR_REPO_URL, ""]
 repo_name: GitHub
 edit_uri: ""

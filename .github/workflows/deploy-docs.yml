@@ -8,6 +8,7 @@ on:
       - "docs/**"
       - "tools/browser/**"
       - "tools/build_review_package.py"
+      - "tools/check_docs_navigation.py"
       - "tests/test_review_package.py"
       - "demo/checkpoints/**"
       - "tests/test_browser_local_demo.mjs"
@@ -20,6 +21,7 @@ on:
       - "docs/**"
       - "tools/browser/**"
       - "tools/build_review_package.py"
+      - "tools/check_docs_navigation.py"
       - "tests/test_review_package.py"
       - "demo/checkpoints/**"
       - "tests/test_browser_local_demo.mjs"
@@ -67,14 +69,18 @@ jobs:
       - name: Verify the anonymous review distribution
         run: python tools/build_review_package.py --output "${RUNNER_TEMP}/wlcr-sea-anonymous-review.zip"
 
-      - name: Build public website with repository link
-        env:
-          WLCR_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
-        run: mkdocs build --strict
-
       - name: Configure GitHub Pages
         if: github.event_name != 'pull_request'
+        id: pages
         uses: actions/configure-pages@v5
+
+      - name: Build and verify public website
+        env:
+          WLCR_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          WLCR_SITE_URL: ${{ steps.pages.outputs.base_url || 'https://example.invalid/project-preview/' }}
+        run: |
+          mkdocs build --strict
+          python tools/check_docs_navigation.py --site-dir site --site-url "$WLCR_SITE_URL"
 
       - name: Upload GitHub Pages artifact
         if: github.event_name != 'pull_request'
